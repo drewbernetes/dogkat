@@ -18,21 +18,19 @@ It will test the following:
 See the [Helm Chart README](https://github.com/drew-viles/helm-charts/blob/main/charts/e2e-basic/README.md) for more info
 
 # TODO
-* AWS Connectivity - Confirms OIDC is working as it should
-* Istio detection and testing
-* Code the tests workloads into the application rather than relying on a 3rd party set of yaml files.
-  * This allows for in-app testing
-  * Detecting ingress controllers and deploying workloads to detect them rather than programmatically guessing based on **-a** or **-b** being on the end of the name.
-
+* Implement Go Testing to validate the code.
+* Implement threading to allow test to run simultaneously.
+* Test cloud connectivity.
+* Istio detection and testing.
 
 See below for a comprehensive list of tests and what can be confirmed using this tool.
 
 # Usage
 ```
 A End-2-End tester that can be used to spin up a sandbox cluster in EKS, 
-                test all elements of a cluster rollout,
-				and then spin it down again.
-				Documentation is available here: SOME-WEB-LINK
+                        test all elements of a cluster rollout,
+                        and then spin it down again.
+                        Documentation is available here: https://github.com/drew-viles/k8s-e2e-tester/blob/main/README.md
 
 Usage:
   k8s-e2e-test [flags]
@@ -44,15 +42,13 @@ Available Commands:
   version     Print the version number of EKS E2E-Tester
 
 Flags:
-  -n, --cluster-name string      Cluster Name - required
-  -c, --create                   Supply this flag if a new cluster is required
   -h, --help                     help for k8s-e2e-test
-  -k, --kubeconfig string        Cluster Name - required (default "filepath.Join(home, \".kube\", \"config\")")
-  -t, --run-terraform            Run Terraform against the cluster
+  -k, --kubeconfig string        kubeconfig to use defaults to: /home/drew/.kube/config (default "/home/drew/.kube/config")
+  -n, --namespace string         The Namespace to deploy the tests to (default "default")
   -a, --test-all                 Simply tests everything it can - invokes all test commands - won't test Istio
-  -m, --test-istio               Test that the istio service mesh is working at a basic level
-  -o, --test-oidc                Test that the AWS connectivity works via OIDC
-  -w, --test-standard-workload   Test that a workload can be deployed - this also tests Ingress, Storage and Scaling
+  -w, --test-standard-workload   Test that a workload can be deployed - this also tests Ingress, Cluster DNS, Storage and Scaling
+  -v, --values string            The Helm values file to use - required
 
 Use "k8s-e2e-test [command] --help" for more information about a command.
+
 ```

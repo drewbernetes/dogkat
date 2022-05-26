@@ -18,9 +18,9 @@ var (
 		Use:   "k8s-e2e-test",
 		Short: "K8S End-2-End tester is an end-2-end tester which can locate an available sandbox and deploy workloads to it.",
 		Long: `A End-2-End tester that can be used to spin up a sandbox cluster in EKS, 
-                test all elements of a cluster rollout,
-				and then spin it down again.
-				Documentation is available here: SOME-WEB-LINK`,
+			test all elements of a cluster rollout,
+			and then spin it down again.
+			Documentation is available here: https://github.com/drew-viles/k8s-e2e-tester/blob/main/README.md`,
 		Run: func(cmd *cobra.Command, args []string) {
 			test_cases.ConnectToKubernetes(kubeconfig)
 			determineTestCase()

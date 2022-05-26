@@ -99,7 +99,9 @@ func CoreWorkloadTests(valuesFile, namespaceName string) {
 		log.Println(resp.Info)
 	}
 
-	log.Println("the helm release has been removed - please remove the namespace e2e-testing manually - (this will be automated in a future release)")
+	log.Println("**ALL AVAILABLE TESTS COMPLETED**")
+	log.Println("See logs above for results")
+	log.Println("The helm release has been removed - please remove the namespace e2e-test manually - (this will be automated in a future release)")
 }
 
 func checkIfResourceIsReady(v Resource, counter int, delaySeconds time.Duration) bool {
@@ -117,6 +119,10 @@ func checkIfResourceIsReady(v Resource, counter int, delaySeconds time.Duration)
 
 //parseResourceKind will check the kind and return a valid K8S object so that it can be validated
 func parseResourceKind(obj runtime.Object) (r Resource) {
+	if obj.GetObjectKind().GroupVersionKind().Kind == "" {
+		return nil
+	}
+
 	switch obj.GetObjectKind().GroupVersionKind().Kind {
 	case "ConfigMap":
 		r = &ConfigMapResource{

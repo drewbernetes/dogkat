@@ -43,7 +43,7 @@ func (r *IngressResource) GetResourceKind() string {
 
 func (r *IngressResource) IsReady() bool {
 	for _, v := range r.Resource.Status.LoadBalancer.Ingress {
-		if v.Hostname == "" {
+		if v.Hostname == "" && v.IP == "" {
 			return false
 		}
 	}
@@ -91,12 +91,12 @@ func testHostEndpoints(host string, counter int) error {
 		return errors.New("reached the limit for checks")
 	}
 
-	resp, err := http.Get(strings.Join([]string{"https", host}, "://"))
+	resp, err := http.Get(strings.Join([]string{"https://", host, "/index.php"}, ""))
 	if err != nil {
 		if strings.Contains(err.Error(), strings.ToLower("no such host")) {
 			log.Printf("dns is not resolving for %s - retrying in %s seconds\n", host, delay)
 			testHostEndpoints(host, counter+1)
-		} else if strings.Contains(err.Error(), "x509: certificate is valid") {
+		} else if strings.Contains(err.Error(), "x509: certificate") {
 			log.Printf("There is a certificate error for %s - retrying in %s seconds\n", host, delay)
 			testHostEndpoints(host, counter+1)
 		} else if strings.Contains(err.Error(), "No address associated with hostname") {
@@ -108,12 +108,14 @@ func testHostEndpoints(host string, counter int) error {
 	}
 
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return errors.New("status was not 200")
-	}
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)
+	}
+	fmt.Println(string(bodyBytes))
+
+	if resp.StatusCode != http.StatusOK {
+		return errors.New("status was not 200")
 	}
 	var result struct {
 		Success bool   `json:"success"`
