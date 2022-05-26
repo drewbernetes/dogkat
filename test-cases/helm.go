@@ -21,6 +21,7 @@ import (
 
 var (
 	chartVersion = "0.0.2"
+	chartPath    = "/tmp/chart.tgz"
 	releaseName  = "e2e-test"
 )
 
@@ -72,7 +73,6 @@ func parseValues(valuesFile string) map[string]interface{} {
 
 //unpackChart unpacks the tgz making the Chart accessible for installation.
 func unpackChart() (*chart.Chart, error) {
-	chartPath := "/tmp/chart.tgz"
 	err := fetchHelmChart(chartPath)
 	if err != nil {
 		return nil, err
@@ -183,5 +183,11 @@ func uninstallChart(actionCfg *action.Configuration) (*release.UninstallReleaseR
 	if err != nil {
 		return nil, err
 	}
+
+	err = os.Remove(chartPath)
+	if err != nil {
+		return nil, err
+	}
+
 	return resp, nil
 }

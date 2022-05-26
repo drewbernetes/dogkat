@@ -91,7 +91,7 @@ func testHostEndpoints(host string, counter int) error {
 		return errors.New("reached the limit for checks")
 	}
 
-	resp, err := http.Get(strings.Join([]string{"https://", host, "/index.php"}, ""))
+	resp, err := http.Get(strings.Join([]string{"https", host}, "://"))
 	if err != nil {
 		if strings.Contains(err.Error(), strings.ToLower("no such host")) {
 			log.Printf("dns is not resolving for %s - retrying in %s seconds\n", host, delay)
