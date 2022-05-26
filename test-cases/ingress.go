@@ -97,7 +97,7 @@ func testHostEndpoints(host string, counter int) error {
 			log.Printf("dns is not resolving for %s - retrying in %s seconds\n", host, delay)
 			testHostEndpoints(host, counter+1)
 		} else if strings.Contains(err.Error(), "x509: certificate") {
-			log.Printf("There is a certificate error for %s - retrying in %s seconds\n", host, delay)
+			log.Printf("There is a certificate error for %s - Have you got a problem with cert-manager or external DNS? Retrying in %s seconds\n", host, delay)
 			testHostEndpoints(host, counter+1)
 		} else if strings.Contains(err.Error(), "No address associated with hostname") {
 			log.Printf("Address error for %s - retrying in %s seconds\n", host, delay)
@@ -112,7 +112,6 @@ func testHostEndpoints(host string, counter int) error {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(string(bodyBytes))
 
 	if resp.StatusCode != http.StatusOK {
 		return errors.New("status was not 200")
