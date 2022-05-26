@@ -1,0 +1,5 @@
+vendor
+.idea
+# These are ignored and deprecated as they may no longer be required.
+git
+values.yaml
