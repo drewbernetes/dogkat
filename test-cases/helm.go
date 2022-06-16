@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	chartVersion = "0.0.2"
+	chartVersion = "0.0.3"
 	chartPath    = "/tmp/chart.tgz"
 	releaseName  = "e2e-test"
 )
