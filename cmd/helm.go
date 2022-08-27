@@ -1,4 +1,4 @@
-package test_cases
+package cmd
 
 import (
 	errors "errors"
@@ -8,7 +8,6 @@ import (
 	"helm.sh/helm/v3/pkg/cli"
 	"helm.sh/helm/v3/pkg/release"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -20,12 +19,12 @@ import (
 )
 
 var (
-	chartVersion = "0.0.3"
+	chartVersion = "0.0.5"
 	chartPath    = "/tmp/chart.tgz"
 	releaseName  = "e2e-test"
 )
 
-//fetchHelmChart will fetch the helm chart from the GitHub repo.
+// fetchHelmChart will fetch the helm chart from the GitHub repo.
 func fetchHelmChart(filepath string) error {
 	//If the tar.gz exists, skip this step.
 	if _, err := os.Stat(filepath); err == nil {
@@ -53,10 +52,10 @@ func fetchHelmChart(filepath string) error {
 	return err
 }
 
-//parseValues will parse the provided values file.
+// parseValues will parse the provided values file.
 func parseValues(valuesFile string) map[string]interface{} {
 	values := map[string]interface{}{}
-	reader, err := ioutil.ReadFile(valuesFile)
+	reader, err := os.ReadFile(valuesFile)
 	if err != nil {
 		log.Printf("reading values file error %s\n", err)
 		return nil
@@ -71,7 +70,7 @@ func parseValues(valuesFile string) map[string]interface{} {
 	return values
 }
 
-//unpackChart unpacks the tgz making the Chart accessible for installation.
+// unpackChart unpacks the tgz making the Chart accessible for installation.
 func unpackChart() (*chart.Chart, error) {
 	err := fetchHelmChart(chartPath)
 	if err != nil {
@@ -86,7 +85,7 @@ func unpackChart() (*chart.Chart, error) {
 	return chart, nil
 }
 
-//initHelm prepares the helm go client for interaction with the cluster.
+// initHelm prepares the helm go client for interaction with the cluster.
 func initHelm(namespace string) (*chart.Chart, *action.Configuration, error) {
 	settings := cli.New()
 	settings.SetNamespace(namespace)
@@ -106,7 +105,7 @@ func initHelm(namespace string) (*chart.Chart, *action.Configuration, error) {
 	return chart, actionConfig, nil
 }
 
-//isChartDeployed checks if the chart is deployed and if so, returns it.
+// isChartDeployed checks if the chart is deployed and if so, returns it.
 func isChartDeployed(releaseName string, actionConfig *action.Configuration) *release.Release {
 	client := action.NewList(actionConfig)
 	// Only list deployed
@@ -127,7 +126,7 @@ func isChartDeployed(releaseName string, actionConfig *action.Configuration) *re
 	return nil
 }
 
-//installChart deploys the chart to the cluster.
+// installChart deploys the chart to the cluster.
 func installChart(releaseName, namespace string, chart *chart.Chart, values map[string]interface{}, actionConfig *action.Configuration) (*release.Release, error) {
 	client := action.NewInstall(actionConfig)
 	client.CreateNamespace = true
@@ -152,8 +151,8 @@ func installChart(releaseName, namespace string, chart *chart.Chart, values map[
 	return release, nil
 }
 
-//deployChart checks if the chart is already deployed and if not deploys it.
-//If the chart exists already it'll return that release.
+// deployChart checks if the chart is already deployed and if not deploys it.
+// If the chart exists already it'll return that release.
 func deployChart(namespace string, values map[string]interface{}) (*action.Configuration, *release.Release, error) {
 	chart, actionConfig, err := initHelm(namespace)
 	if err != nil {
@@ -170,7 +169,7 @@ func deployChart(namespace string, values map[string]interface{}) (*action.Confi
 	return actionConfig, rel, err
 }
 
-//uninstallChart removes the chart to ensure no resources are left hanging around
+// uninstallChart removes the chart to ensure no resources are left hanging around
 func uninstallChart(actionCfg *action.Configuration) (*release.UninstallReleaseResponse, error) {
 	release := isChartDeployed(releaseName, actionCfg)
 

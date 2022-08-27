@@ -1,4 +1,4 @@
-package test_cases
+package resources
 
 import (
 	"context"
@@ -17,7 +17,7 @@ type PeerAuthenticationResource struct {
 }
 
 func (r *PeerAuthenticationResource) GetObject() runtime.Object {
-	//fmt.Printf("%#v\n\n", r.Resource)
+	//fmt.Printf("%#v\n\n", r.ApiResource)
 	return r.Resource
 }
 
@@ -41,8 +41,8 @@ func (r *PeerAuthenticationResource) IsReady() bool {
 	return true
 }
 
-func (r *PeerAuthenticationResource) GetClient(namespace string) {
-	r.Client = istioClientset.SecurityV1beta1().PeerAuthentications(namespace)
+func (r *PeerAuthenticationResource) GetClient(namespace string, clientset *ClientSets) {
+	r.Client = clientset.Istio.SecurityV1beta1().PeerAuthentications(namespace)
 }
 
 func (r *PeerAuthenticationResource) Get() {

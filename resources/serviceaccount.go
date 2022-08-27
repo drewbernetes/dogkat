@@ -1,4 +1,4 @@
-package test_cases
+package resources
 
 import (
 	"context"
@@ -17,7 +17,7 @@ type ServiceAccountResource struct {
 }
 
 func (r *ServiceAccountResource) GetObject() runtime.Object {
-	//fmt.Printf("%#v\n\n", r.Resource)
+	//fmt.Printf("%#v\n\n", r.ApiResource)
 	return r.Resource
 }
 
@@ -41,8 +41,8 @@ func (r *ServiceAccountResource) IsReady() bool {
 	return true
 }
 
-func (r *ServiceAccountResource) GetClient(namespace string) {
-	r.Client = clientset.CoreV1().ServiceAccounts(namespace)
+func (r *ServiceAccountResource) GetClient(namespace string, clientset *ClientSets) {
+	r.Client = clientset.K8S.CoreV1().ServiceAccounts(namespace)
 }
 
 func (r *ServiceAccountResource) Get() {
