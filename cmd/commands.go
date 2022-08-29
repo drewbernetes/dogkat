@@ -1,15 +1,18 @@
 package cmd
 
 import (
-	test_cases "e2e-test/test-cases"
+	"e2e-test/resources"
 	"fmt"
 	"github.com/spf13/cobra"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/util/homedir"
+	"log"
 	"path/filepath"
 )
 
 var (
-	cfgFile           string
+	//cfgFile           string
 	kubeconfig        string
 	valuesFile        string
 	testAllFlag       bool
@@ -22,18 +25,19 @@ var (
 			and then spin it down again.
 			Documentation is available here: https://github.com/drew-viles/k8s-e2e-tester/blob/main/README.md`,
 		Run: func(cmd *cobra.Command, args []string) {
-			test_cases.ConnectToKubernetes(kubeconfig)
+			ConnectToKubernetes(kubeconfig)
 			determineTestCase()
 		},
 	}
 	namespaceName = "e2e-testing"
 )
 
+// Execute is run by main and starts the program
 func Execute() error {
 	return rootCmd.Execute()
 }
 
-// This is auto run by cobra - all commands should be added here.
+// init is auto run by cobra - all commands should be added here.
 func init() {
 	home := homedir.HomeDir()
 	kubeConfigPath := filepath.Join(home, ".kube", "config")
@@ -41,7 +45,7 @@ func init() {
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.Flags().StringVarP(&kubeconfig, "kubeconfig", "k", kubeConfigPath, fmt.Sprintf("kubeconfig to use defaults to: %s", kubeConfigPath))
 	rootCmd.Flags().StringVarP(&valuesFile, "values", "v", "", "The Helm values file to use - required")
-	rootCmd.Flags().StringVarP(&namespaceName, "namespace", "n", "default", "The Namespace to deploy the tests to")
+	rootCmd.Flags().StringVarP(&namespaceName, "namespace", "n", "e2e-testing", "The Namespace to deploy the tests to")
 	rootCmd.Flags().BoolVarP(&testAllFlag, "test-all", "a", false, "Simply tests everything it can - invokes all test commands - won't test Istio")
 	rootCmd.Flags().BoolVarP(&testWorkloadsFlag, "test-standard-workload", "w", false, "Test that a workload can be deployed - this also tests Ingress, Cluster DNS, Storage and Scaling")
 
@@ -57,16 +61,40 @@ func init() {
 	//rootCmd.MarkFlagsMutuallyExclusive("test-all", "test-istio")
 	//rootCmd.MarkFlagsMutuallyExclusive("test-standard-workload", "test-istio")
 	//rootCmd.MarkFlagsMutuallyExclusive("test-oidc", "test-istio")
-
 }
 
-//determineTestCase will parse the flags and run the appropriate test
+// determineTestCase will parse the flags and run the appropriate test
 func determineTestCase() {
 	if testAllFlag {
-		test_cases.CoreWorkloadTests(valuesFile, namespaceName)
+		runCoreTests(valuesFile)
+		//test_cases.CoreWorkloadChecks(valuesFile, namespaceName, clientsets)
+		//TODO: Add more here as more are added.
 	} else {
 		if testWorkloadsFlag {
-			test_cases.CoreWorkloadTests(valuesFile, namespaceName)
+			runCoreTests(valuesFile)
+			//test_cases.CoreWorkloadChecks(valuesFile, namespaceName, clientsets)
 		}
 	}
+}
+
+// parseResource will read through the supplied manifest file and work out what kind of API resource they are.
+func parseResource(manifest string) resources.ApiResource {
+	obj := decodeManifestToObject(manifest)
+	r := resources.ParseResourceKind(obj)
+	if r == nil {
+		return nil
+	}
+	r.GetClient(namespaceName, clientsets)
+	return r
+}
+
+// decodeManifestToObject will read the manifest file and parse it into a runtime.Object.
+func decodeManifestToObject(manifest string) runtime.Object {
+	decode := scheme.Codecs.UniversalDeserializer().Decode
+	obj, _, err := decode([]byte(manifest), nil, nil)
+	if err != nil {
+		log.Printf("There was an error decoding: %s, %s", manifest, err)
+		return nil
+	}
+	return obj
 }

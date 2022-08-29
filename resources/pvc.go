@@ -1,4 +1,4 @@
-package test_cases
+package resources
 
 import (
 	"context"
@@ -17,7 +17,7 @@ type PersistentVolumeClaimResource struct {
 }
 
 func (r *PersistentVolumeClaimResource) GetObject() runtime.Object {
-	//fmt.Printf("%#v\n\n", r.Resource)
+	//fmt.Printf("%#v\n\n", r.ApiResource)
 	return r.Resource
 }
 
@@ -41,8 +41,8 @@ func (r *PersistentVolumeClaimResource) IsReady() bool {
 	return true
 }
 
-func (r *PersistentVolumeClaimResource) GetClient(namespace string) {
-	r.Client = clientset.CoreV1().PersistentVolumeClaims(namespace)
+func (r *PersistentVolumeClaimResource) GetClient(namespace string, clientset *ClientSets) {
+	r.Client = clientset.K8S.CoreV1().PersistentVolumeClaims(namespace)
 }
 
 func (r *PersistentVolumeClaimResource) Get() {

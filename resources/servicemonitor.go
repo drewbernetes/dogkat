@@ -1,4 +1,4 @@
-package test_cases
+package resources
 
 import (
 	"context"
@@ -17,7 +17,7 @@ type ServiceMonitorResource struct {
 }
 
 func (r *ServiceMonitorResource) GetObject() runtime.Object {
-	//fmt.Printf("%#v\n\n", r.Resource)
+	//fmt.Printf("%#v\n\n", r.ApiResource)
 	return r.Resource
 }
 
@@ -41,8 +41,8 @@ func (r *ServiceMonitorResource) IsReady() bool {
 	return true
 }
 
-func (r *ServiceMonitorResource) GetClient(namespace string) {
-	r.Client = promClientset.MonitoringV1().ServiceMonitors(namespace)
+func (r *ServiceMonitorResource) GetClient(namespace string, clientset *ClientSets) {
+	r.Client = clientset.Prometheus.MonitoringV1().ServiceMonitors(namespace)
 }
 
 func (r *ServiceMonitorResource) Get() {
