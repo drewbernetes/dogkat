@@ -19,7 +19,6 @@ See the [Helm Chart README](https://github.com/drew-viles/helm-charts/blob/main/
 
 # TODO
 * Implement Go Testing to validate the code.
-* Implement threading to allow test to run simultaneously.
 * Test cloud connectivity.
 * Istio detection and testing.
 

@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"context"
 	"e2e-test/resources"
 	test_cases "e2e-test/test-cases"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"log"
 	"strings"
 )
@@ -74,8 +76,17 @@ func runCoreTests(valuesFile string) {
 		log.Println(resp.Info)
 	}
 
+	// Remove the namespace
+	err = clientsets.K8S.CoreV1().Namespaces().Delete(context.TODO(), namespaceName, metav1.DeleteOptions{})
+	if err != nil {
+		log.Println(err.Error())
+		log.Printf("The namespace could not be removed. Please remove the namespace %s manually\n", namespaceName)
+		return
+	} else {
+		log.Printf("The namespace %s has been removed\n", namespaceName)
+	}
+
 	//TODO: Remove the namespace
 	log.Println("**ALL AVAILABLE TESTS COMPLETED**")
 	log.Println("See logs above for results")
-	log.Println("The helm release has been removed - please remove the namespace e2e-test manually - (this will be automated in a future release)")
 }
