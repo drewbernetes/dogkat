@@ -22,7 +22,7 @@ func CoreWorkloadChecks(obj resources.ApiResource, res chan struct {
 		Ready    bool
 		Resource resources.ApiResource
 	}{}
-	statusResults := checkIfResourceIsReady(obj, 0, 20)
+	statusResults := checkIfResourceIsReady(r, 0, 60)
 	if !statusResults {
 		log.Printf("%s:%s is not ready\n", obj.GetResourceKind(), obj.GetResourceName())
 		r.Ready = false
