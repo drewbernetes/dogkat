@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"context"
-	"e2e-test/resources"
-	test_cases "e2e-test/test-cases"
+	"github.com/drew-viles/k8s-e2e-tester/resources"
+	test_cases "github.com/drew-viles/k8s-e2e-tester/test-cases"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"log"
 	"strings"
@@ -35,10 +35,7 @@ func runCoreTests(valuesFile string) {
 	}
 
 	//Thread the tests to run in parallel
-	checksCompleted := make(chan struct {
-		Ready    bool
-		Resource resources.ApiResource
-	})
+	checksCompleted := make(chan resources.ResourceReady)
 
 	defer close(checksCompleted)
 	for _, r := range res {
@@ -57,7 +54,9 @@ func runCoreTests(valuesFile string) {
 	scalingTested := false
 	for _, r := range res {
 		test_cases.ScalingValidation(r)
-		if r.GetResourceKind() == "Deployment" || r.GetResourceKind() == "StatefulSet" {
+		//TODO: The RunScaling test need supdating to work with StatefulSets too.
+		//if r.GetResourceKind() == "Deployment" || r.GetResourceKind() == "StatefulSet" {
+		if r.GetResourceKind() == "Deployment" {
 			if !scalingTested {
 				scalingTested = test_cases.RunScalingTest(r, clientsets)
 			} else {
@@ -86,7 +85,6 @@ func runCoreTests(valuesFile string) {
 		log.Printf("The namespace %s has been removed\n", namespaceName)
 	}
 
-	//TODO: Remove the namespace
 	log.Println("**ALL AVAILABLE TESTS COMPLETED**")
 	log.Println("See logs above for results")
 }

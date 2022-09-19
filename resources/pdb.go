@@ -35,7 +35,7 @@ func (r *PDBResource) GetResourceKind() string {
 }
 
 func (r *PDBResource) IsReady() bool {
-	if r.Resource.Status.CurrentHealthy != r.Resource.Status.DesiredHealthy {
+	if r.Resource.Status.CurrentHealthy < r.Resource.Status.DesiredHealthy || r.Resource.Status.DisruptionsAllowed == 0 {
 		return false
 	}
 	return true

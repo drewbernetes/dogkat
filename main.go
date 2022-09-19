@@ -1,8 +1,6 @@
 package main
 
-import (
-	"e2e-test/cmd"
-)
+import "github.com/drew-viles/k8s-e2e-tester/cmd"
 
 func main() {
 	cmd.Execute()

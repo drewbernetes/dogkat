@@ -105,29 +105,9 @@ func initHelm(namespace string) (*chart.Chart, *action.Configuration, error) {
 	return chart, actionConfig, nil
 }
 
-// isChartDeployed checks if the chart is deployed and if so, returns it.
-func isChartDeployed(releaseName string, actionConfig *action.Configuration) *release.Release {
-	client := action.NewList(actionConfig)
-	// Only list deployed
-	client.Deployed = true
-	client.AllNamespaces = false
-
-	results, err := client.Run()
-	if err != nil {
-		log.Printf("%s", err.Error())
-		os.Exit(1)
-	}
-
-	for _, rel := range results {
-		if rel.Name == releaseName {
-			return rel
-		}
-	}
-	return nil
-}
-
 // installChart deploys the chart to the cluster.
 func installChart(releaseName, namespace string, chart *chart.Chart, values map[string]interface{}, actionConfig *action.Configuration) (*release.Release, error) {
+	log.Println("installing chart")
 	client := action.NewInstall(actionConfig)
 	client.CreateNamespace = true
 	client.ReleaseName = releaseName
@@ -154,6 +134,7 @@ func installChart(releaseName, namespace string, chart *chart.Chart, values map[
 // deployChart checks if the chart is already deployed and if not deploys it.
 // If the chart exists already it'll return that release.
 func deployChart(namespace string, values map[string]interface{}) (*action.Configuration, *release.Release, error) {
+	log.Println("deploying chart")
 	chart, actionConfig, err := initHelm(namespace)
 	if err != nil {
 		return nil, nil, err
@@ -189,4 +170,26 @@ func uninstallChart(actionCfg *action.Configuration) (*release.UninstallReleaseR
 	}
 
 	return resp, nil
+}
+
+// isChartDeployed checks if the chart is deployed and if so, returns it.
+func isChartDeployed(releaseName string, actionConfig *action.Configuration) *release.Release {
+	log.Println("checking if chart deployed")
+	client := action.NewList(actionConfig)
+	// Only list deployed
+	client.Deployed = true
+	client.AllNamespaces = false
+
+	results, err := client.Run()
+	if err != nil {
+		log.Printf("%s", err.Error())
+		os.Exit(1)
+	}
+
+	for _, rel := range results {
+		if rel.Name == releaseName {
+			return rel
+		}
+	}
+	return nil
 }
