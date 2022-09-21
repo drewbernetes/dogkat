@@ -35,7 +35,7 @@ func checkIfResourceIsReady(r resources.ApiResource, counter int, delaySeconds t
 		return false
 	}
 	r.Get()
-	log.Printf("Checking Resource: %s/%s\n", r.GetResourceKind(), r.GetResourceName())
+	log.Printf("Waiting for resource to be ready: %s/%s\n", r.GetResourceKind(), r.GetResourceName())
 	if !r.IsReady() {
 		time.Sleep(delay)
 		return checkIfResourceIsReady(r, counter+1, delaySeconds)

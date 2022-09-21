@@ -57,13 +57,13 @@ func parseValues(valuesFile string) map[string]interface{} {
 	values := map[string]interface{}{}
 	reader, err := os.ReadFile(valuesFile)
 	if err != nil {
-		log.Printf("reading values file error %s\n", err)
+		log.Printf("Reading values file error %s\n", err)
 		return nil
 	}
 
 	err = yaml.Unmarshal(reader, values)
 	if err != nil {
-		log.Printf("unmarshal values file error %s\n", err)
+		log.Printf("Unmarshal values file error %s\n", err)
 		return nil
 	}
 
@@ -107,7 +107,6 @@ func initHelm(namespace string) (*chart.Chart, *action.Configuration, error) {
 
 // installChart deploys the chart to the cluster.
 func installChart(releaseName, namespace string, chart *chart.Chart, values map[string]interface{}, actionConfig *action.Configuration) (*release.Release, error) {
-	log.Println("installing chart")
 	client := action.NewInstall(actionConfig)
 	client.CreateNamespace = true
 	client.ReleaseName = releaseName
@@ -119,7 +118,7 @@ func installChart(releaseName, namespace string, chart *chart.Chart, values map[
 	}
 
 	for i := 0; release.Info.Status.IsPending(); i++ {
-		log.Println("chart is deploying")
+		log.Println("Chart is deploying")
 		time.Sleep(time.Second * 10)
 
 		if i > 12 {
@@ -134,7 +133,6 @@ func installChart(releaseName, namespace string, chart *chart.Chart, values map[
 // deployChart checks if the chart is already deployed and if not deploys it.
 // If the chart exists already it'll return that release.
 func deployChart(namespace string, values map[string]interface{}) (*action.Configuration, *release.Release, error) {
-	log.Println("deploying chart")
 	chart, actionConfig, err := initHelm(namespace)
 	if err != nil {
 		return nil, nil, err
@@ -174,7 +172,6 @@ func uninstallChart(actionCfg *action.Configuration) (*release.UninstallReleaseR
 
 // isChartDeployed checks if the chart is deployed and if so, returns it.
 func isChartDeployed(releaseName string, actionConfig *action.Configuration) *release.Release {
-	log.Println("checking if chart deployed")
 	client := action.NewList(actionConfig)
 	// Only list deployed
 	client.Deployed = true

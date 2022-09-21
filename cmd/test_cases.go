@@ -49,7 +49,7 @@ func runCoreTests(valuesFile string) {
 		<-checksCompleted
 	}
 
-	log.Println("**ALL RESOURCES ARE DEPLOYED**")
+	log.Println("** ALL RESOURCES ARE DEPLOYED AND READY **")
 
 	scalingTested := false
 	for _, r := range res {
@@ -85,6 +85,6 @@ func runCoreTests(valuesFile string) {
 		log.Printf("The namespace %s has been removed\n", namespaceName)
 	}
 
-	log.Println("**ALL AVAILABLE TESTS COMPLETED**")
+	log.Println("** ALL AVAILABLE TESTS COMPLETED **")
 	log.Println("See logs above for results")
 }
