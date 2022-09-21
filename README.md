@@ -32,8 +32,8 @@ A End-2-End tester that can be used to spin up a sandbox cluster in EKS,
                         Documentation is available here: https://github.com/drew-viles/k8s-e2e-tester/blob/main/README.md
 
 Usage:
-  k8s-e2e-test [flags]
-  k8s-e2e-test [command]
+  k8s-e2e-tester [flags]
+  k8s-e2e-tester [command]
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
@@ -41,13 +41,13 @@ Available Commands:
   version     Print the version number of EKS E2E-Tester
 
 Flags:
-  -h, --help                     help for k8s-e2e-test
+  -h, --help                     help for k8s-e2e-tester
   -k, --kubeconfig string        kubeconfig to use defaults to: /home/drew/.kube/config (default "/home/drew/.kube/config")
   -n, --namespace string         The Namespace to deploy the tests to (default "default")
   -a, --test-all                 Simply tests everything it can - invokes all test commands - won't test Istio
   -w, --test-standard-workload   Test that a workload can be deployed - this also tests Ingress, Cluster DNS, Storage and Scaling
   -v, --values string            The Helm values file to use - required
 
-Use "k8s-e2e-test [command] --help" for more information about a command.
+Use "k8s-e2e-tester [command] --help" for more information about a command.
 
 ```

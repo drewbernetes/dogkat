@@ -57,13 +57,13 @@ func parseValues(valuesFile string) map[string]interface{} {
 	values := map[string]interface{}{}
 	reader, err := os.ReadFile(valuesFile)
 	if err != nil {
-		log.Printf("reading values file error %s\n", err)
+		log.Printf("Reading values file error %s\n", err)
 		return nil
 	}
 
 	err = yaml.Unmarshal(reader, values)
 	if err != nil {
-		log.Printf("unmarshal values file error %s\n", err)
+		log.Printf("Unmarshal values file error %s\n", err)
 		return nil
 	}
 
@@ -105,27 +105,6 @@ func initHelm(namespace string) (*chart.Chart, *action.Configuration, error) {
 	return chart, actionConfig, nil
 }
 
-// isChartDeployed checks if the chart is deployed and if so, returns it.
-func isChartDeployed(releaseName string, actionConfig *action.Configuration) *release.Release {
-	client := action.NewList(actionConfig)
-	// Only list deployed
-	client.Deployed = true
-	client.AllNamespaces = false
-
-	results, err := client.Run()
-	if err != nil {
-		log.Printf("%s", err.Error())
-		os.Exit(1)
-	}
-
-	for _, rel := range results {
-		if rel.Name == releaseName {
-			return rel
-		}
-	}
-	return nil
-}
-
 // installChart deploys the chart to the cluster.
 func installChart(releaseName, namespace string, chart *chart.Chart, values map[string]interface{}, actionConfig *action.Configuration) (*release.Release, error) {
 	client := action.NewInstall(actionConfig)
@@ -139,7 +118,7 @@ func installChart(releaseName, namespace string, chart *chart.Chart, values map[
 	}
 
 	for i := 0; release.Info.Status.IsPending(); i++ {
-		log.Println("chart is deploying")
+		log.Println("Chart is deploying")
 		time.Sleep(time.Second * 10)
 
 		if i > 12 {
@@ -189,4 +168,25 @@ func uninstallChart(actionCfg *action.Configuration) (*release.UninstallReleaseR
 	}
 
 	return resp, nil
+}
+
+// isChartDeployed checks if the chart is deployed and if so, returns it.
+func isChartDeployed(releaseName string, actionConfig *action.Configuration) *release.Release {
+	client := action.NewList(actionConfig)
+	// Only list deployed
+	client.Deployed = true
+	client.AllNamespaces = false
+
+	results, err := client.Run()
+	if err != nil {
+		log.Printf("%s", err.Error())
+		os.Exit(1)
+	}
+
+	for _, rel := range results {
+		if rel.Name == releaseName {
+			return rel
+		}
+	}
+	return nil
 }
