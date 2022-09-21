@@ -16,7 +16,7 @@ var (
 	clientsets  *resources.ClientSets
 )
 
-func ConnectToKubernetes(kubeconfig string) {
+func connectToKubernetes(kubeconfig string) {
 	// use the current context in kubeconfig
 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {

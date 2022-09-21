@@ -16,19 +16,22 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"log"
 	"strings"
-	// _ "K8S.io/client-go/plugin/pkg/client/auth/oidc"
 )
 
+// ClientSets contians all available clientset types.
 type ClientSets struct {
 	K8S        *kubernetes.Clientset
 	Istio      *istioclient.Clientset
 	Prometheus *promclient.Clientset
 }
 
+// ResourceReady is used to determine if a resource can be marked as ready during the threaded checks.
 type ResourceReady struct {
 	Ready    bool
 	Resource ApiResource
 }
+
+// ApiResource is used to allow collation of resources into a single one to allow for similar tests to be run across the board without having to do repetitive code.
 
 type ApiResource interface {
 	GetObject() runtime.Object
@@ -52,6 +55,10 @@ func ParseResourceKind(obj runtime.Object) (r ApiResource) {
 	kind := obj.GetObjectKind().GroupVersionKind().Kind
 
 	switch kind {
+	case "Pod":
+		r = &PodResource{
+			Resource: obj.(*v1.Pod),
+		}
 	case "ConfigMap":
 		r = &ConfigMapResource{
 			Resource: obj.(*v1.ConfigMap),
@@ -59,6 +66,18 @@ func ParseResourceKind(obj runtime.Object) (r ApiResource) {
 	case "Secret":
 		r = &SecretResource{
 			Resource: obj.(*v1.Secret),
+		}
+	case "ServiceAccount":
+		r = &ServiceAccountResource{
+			Resource: obj.(*v1.ServiceAccount),
+		}
+	case "Service":
+		r = &ServiceResource{
+			Resource: obj.(*v1.Service),
+		}
+	case "PersistentVolumeClaim":
+		r = &PersistentVolumeClaimResource{
+			Resource: obj.(*v1.PersistentVolumeClaim),
 		}
 	case "Deployment":
 		r = &DeploymentResource{
@@ -72,21 +91,9 @@ func ParseResourceKind(obj runtime.Object) (r ApiResource) {
 		r = &StatefulSetResource{
 			Resource: obj.(*appsv1.StatefulSet),
 		}
-	case "ServiceAccount":
-		r = &ServiceAccountResource{
-			Resource: obj.(*v1.ServiceAccount),
-		}
-	case "Service":
-		r = &ServiceResource{
-			Resource: obj.(*v1.Service),
-		}
 	case "Job":
 		r = &JobResource{
 			Resource: obj.(*v1batch.Job),
-		}
-	case "PersistentVolumeClaim":
-		r = &PersistentVolumeClaimResource{
-			Resource: obj.(*v1.PersistentVolumeClaim),
 		}
 	case "Ingress":
 		r = &IngressResource{

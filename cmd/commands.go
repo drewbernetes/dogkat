@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/drew-viles/k8s-e2e-tester/resources"
 	"github.com/spf13/cobra"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/util/homedir"
 	"log"
@@ -25,7 +24,7 @@ var (
 			and then spin it down again.
 			Documentation is available here: https://github.com/drew-viles/k8s-e2e-tester/blob/main/README.md`,
 		Run: func(cmd *cobra.Command, args []string) {
-			ConnectToKubernetes(kubeconfig)
+			connectToKubernetes(kubeconfig)
 			determineTestCase()
 		},
 	}
@@ -79,22 +78,18 @@ func determineTestCase() {
 
 // parseResource will read through the supplied manifest file and work out what kind of API resource they are.
 func parseResource(manifest string) resources.ApiResource {
-	obj := decodeManifestToObject(manifest)
+	decode := scheme.Codecs.UniversalDeserializer().Decode
+	obj, _, err := decode([]byte(manifest), nil, nil)
+	if err != nil {
+		log.Printf("There was an error decoding: %s, %s\n", manifest, err)
+		return nil
+	}
+
 	r := resources.ParseResourceKind(obj)
 	if r == nil {
 		return nil
 	}
+
 	r.GetClient(namespaceName, clientsets)
 	return r
-}
-
-// decodeManifestToObject will read the manifest file and parse it into a runtime.Object.
-func decodeManifestToObject(manifest string) runtime.Object {
-	decode := scheme.Codecs.UniversalDeserializer().Decode
-	obj, _, err := decode([]byte(manifest), nil, nil)
-	if err != nil {
-		log.Printf("There was an error decoding: %s, %s", manifest, err)
-		return nil
-	}
-	return obj
 }

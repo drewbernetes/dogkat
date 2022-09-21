@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+// testIngress is called to validate all hosts within an Ingress resource.
 func testIngress(hosts []networkingv1.IngressTLS) error {
 	for _, v := range hosts {
 		for _, host := range v.Hosts {
@@ -24,6 +25,7 @@ func testIngress(hosts []networkingv1.IngressTLS) error {
 	return nil
 }
 
+// testHostEndpoint will check the endpoint of an individual host in an Ingress for a valid 200 response.
 func testHostEndpoints(host string, counter int) error {
 	delay := time.Second * 20
 	time.Sleep(delay)
