@@ -124,7 +124,7 @@ func ParseResourceKind(obj runtime.Object) (r ApiResource) {
 			Resource: obj.(*v1beta1.DestinationRule),
 		}
 	default:
-		log.Printf("couldn't ascertain the Kind of the resource, skipping %s\n", kind)
+		log.Printf("Couldn't ascertain the Kind of the resource, skipping %s\n", kind)
 		return nil
 	}
 
@@ -134,7 +134,7 @@ func ParseResourceKind(obj runtime.Object) (r ApiResource) {
 // getHandler simply handles error when running a client.Get function
 func getHandler(resource, name string, err error) bool {
 	if err != nil && strings.Contains(err.Error(), strings.ToLower(field.ErrorTypeNotFound.String())) {
-		log.Printf("%s - it may need creating.\n", err.Error())
+		log.Printf("%s - The Helm release may still exist with no resources deployed - please remove the Helm release and then re-run.\n", err.Error())
 		return false
 	}
 	return true

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"e2e-test/resources"
 	"fmt"
+	"github.com/drew-viles/k8s-e2e-tester/resources"
 	"github.com/spf13/cobra"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/util/homedir"
@@ -17,7 +17,7 @@ var (
 	testAllFlag       bool
 	testWorkloadsFlag bool
 	rootCmd           = &cobra.Command{
-		Use:   "k8s-e2e-test",
+		Use:   "k8s-e2e-tester",
 		Short: "K8S End-2-End tester is an end-2-end tester which can locate an available sandbox and deploy workloads to it.",
 		Long: `A End-2-End tester that can be used to spin up a sandbox cluster in EKS, 
 			test all elements of a cluster rollout,

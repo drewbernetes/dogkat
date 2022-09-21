@@ -54,14 +54,17 @@ func (r *ConfigMapResource) Get() {
 	}
 	r.Error = err
 }
+
 func (r *ConfigMapResource) Create() {
 	result, err := r.Client.Create(context.TODO(), r.Resource, metav1.CreateOptions{})
 	r.Error = err
 	r.Resource = result
 }
+
 func (r *ConfigMapResource) Update() {
 
 }
+
 func (r *ConfigMapResource) Delete() {
 }
 

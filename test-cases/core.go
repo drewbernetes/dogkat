@@ -2,9 +2,9 @@ package test_cases
 
 import (
 	"context"
-	"e2e-test/hack"
-	"e2e-test/resources"
 	"fmt"
+	"github.com/drew-viles/k8s-e2e-tester/hack"
+	"github.com/drew-viles/k8s-e2e-tester/resources"
 	"istio.io/client-go/pkg/apis/networking/v1beta1"
 	v1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
@@ -14,15 +14,10 @@ import (
 )
 
 // CoreWorkloadChecks will run the basic tests. Deployments, Ingress, Cluster scaling, Cluster DNS validation
-func CoreWorkloadChecks(obj resources.ApiResource, res chan struct {
-	Ready    bool
-	Resource resources.ApiResource
-}) {
-	r := struct {
-		Ready    bool
-		Resource resources.ApiResource
-	}{}
-	statusResults := checkIfResourceIsReady(r, 0, 60)
+func CoreWorkloadChecks(obj resources.ApiResource, res chan resources.ResourceReady) {
+	r := resources.ResourceReady{}
+	r.Resource = obj
+	statusResults := checkIfResourceIsReady(r.Resource, 0, 5)
 	if !statusResults {
 		log.Printf("%s:%s is not ready\n", obj.GetResourceKind(), obj.GetResourceName())
 		r.Ready = false
@@ -37,10 +32,11 @@ func CoreWorkloadChecks(obj resources.ApiResource, res chan struct {
 // checkIfResourceIsReady validates the readiness of the resource.
 func checkIfResourceIsReady(r resources.ApiResource, counter int, delaySeconds time.Duration) bool {
 	delay := time.Second * delaySeconds
-	if counter >= 10 {
+	if counter >= 100 {
 		return false
 	}
 	r.Get()
+	log.Printf("Waiting for resource to be ready: %s/%s\n", r.GetResourceKind(), r.GetResourceName())
 	if !r.IsReady() {
 		time.Sleep(delay)
 		return checkIfResourceIsReady(r, counter+1, delaySeconds)
@@ -64,9 +60,10 @@ func RunScalingTest(r resources.ApiResource, clientsets *resources.ClientSets) b
 
 	resource.Update()
 
+	log.Printf("Waiting for Deployment/StatefulSet to scale\n")
 	time.Sleep(time.Second * 60)
 
-	isReady := checkIfResourceIsReady(r, 0, 60)
+	isReady := checkIfResourceIsReady(r, 0, 5)
 	if !isReady {
 		log.Fatalf("there was a problem scaling up the resource - it was not considered ready - you may need to ensure your nodes can support %v of these workloads\n", replicaSize)
 		return false

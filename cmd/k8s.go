@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"e2e-test/resources"
+	"github.com/drew-viles/k8s-e2e-tester/resources"
 	promclient "github.com/prometheus-operator/prometheus-operator/pkg/client/versioned"
 	promscheme "github.com/prometheus-operator/prometheus-operator/pkg/client/versioned/scheme"
 	istioclient "istio.io/client-go/pkg/clientset/versioned"

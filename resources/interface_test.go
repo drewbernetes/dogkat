@@ -8,6 +8,7 @@ import (
 	// _ "K8S.io/client-go/plugin/pkg/client/auth/oidc"
 )
 
+// TODO: Template this to prevent repetitive code.
 var manifests = []string{
 	`---
 apiVersion: v1
@@ -15,7 +16,6 @@ kind: Pod
 metadata:
   name: test
   namespace: test
-spec:
 `,
 	`---
 apiVersion: v1
@@ -23,7 +23,6 @@ kind: ConfigMap
 metadata:
   name: test
   namespace: test
-data:
 `,
 	`---
 apiVersion: v1
