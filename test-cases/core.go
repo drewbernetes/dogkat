@@ -34,6 +34,7 @@ func CoreWorkloadChecks(obj resources.ApiResource, res chan struct {
 	res <- r
 }
 
+// checkIfResourceIsReady validates the readiness of the resource.
 func checkIfResourceIsReady(r resources.ApiResource, counter int, delaySeconds time.Duration) bool {
 	delay := time.Second * delaySeconds
 	if counter >= 10 {
@@ -47,7 +48,7 @@ func checkIfResourceIsReady(r resources.ApiResource, counter int, delaySeconds t
 	return true
 }
 
-// RunScalingTest will
+// RunScalingTest will scale the resources to test the cluster-autoscaler is functioning as it should (if available).
 func RunScalingTest(r resources.ApiResource, clientsets *resources.ClientSets) bool {
 	replicaSize := int32(20)
 	resource := r.(*resources.DeploymentResource)
@@ -91,6 +92,9 @@ func RunScalingTest(r resources.ApiResource, clientsets *resources.ClientSets) b
 	return true
 }
 
+// ScalingValidation simply returns the readiness state of the resources passed into it.
+// It confirms that a resource is ready once it has been scaled.
+// Note: After a review, this may be deprecated in future releases in favour of checkIfResourceIsReady()
 func ScalingValidation(resource resources.ApiResource) {
 	switch resource.GetResourceKind() {
 	case "Deployment":
@@ -127,6 +131,7 @@ func ScalingValidation(resource resources.ApiResource) {
 	}
 }
 
+// countNodes does what it says - it counts the current nodes in the cluster.
 func countNodes(clientsets *resources.ClientSets) (*v1.NodeList, int) {
 	allNodes, err := clientsets.K8S.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
