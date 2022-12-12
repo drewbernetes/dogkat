@@ -1,4 +1,4 @@
-package hack
+package helpers
 
 // IntPtr returns a pointer to an int that is provided.
 func IntPtr(number int32) *int32 {

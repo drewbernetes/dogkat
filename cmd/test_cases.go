@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"context"
-	"github.com/drew-viles/k8s-e2e-tester/resources"
+	"github.com/drew-viles/k8s-e2e-tester/pkg/resources"
 	test_cases "github.com/drew-viles/k8s-e2e-tester/test-cases"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"log"

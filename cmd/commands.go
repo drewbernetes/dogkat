@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/drew-viles/k8s-e2e-tester/resources"
+	"github.com/drew-viles/k8s-e2e-tester/pkg/resources"
 	"github.com/spf13/cobra"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/util/homedir"

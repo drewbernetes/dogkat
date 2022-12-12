@@ -3,8 +3,8 @@ package test_cases
 import (
 	"context"
 	"fmt"
-	"github.com/drew-viles/k8s-e2e-tester/hack"
-	"github.com/drew-viles/k8s-e2e-tester/resources"
+	"github.com/drew-viles/k8s-e2e-tester/pkg/helpers"
+	resources2 "github.com/drew-viles/k8s-e2e-tester/pkg/resources"
 	"istio.io/client-go/pkg/apis/networking/v1beta1"
 	v1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
@@ -14,8 +14,8 @@ import (
 )
 
 // CoreWorkloadChecks will run the basic tests. Deployments, Ingress, Cluster scaling, Cluster DNS validation
-func CoreWorkloadChecks(obj resources.ApiResource, res chan resources.ResourceReady) {
-	r := resources.ResourceReady{}
+func CoreWorkloadChecks(obj resources2.ApiResource, res chan resources2.ResourceReady) {
+	r := resources2.ResourceReady{}
 	r.Resource = obj
 	statusResults := checkIfResourceIsReady(r.Resource, 0, 5)
 	if !statusResults {
@@ -30,7 +30,7 @@ func CoreWorkloadChecks(obj resources.ApiResource, res chan resources.ResourceRe
 }
 
 // checkIfResourceIsReady validates the readiness of the resource.
-func checkIfResourceIsReady(r resources.ApiResource, counter int, delaySeconds time.Duration) bool {
+func checkIfResourceIsReady(r resources2.ApiResource, counter int, delaySeconds time.Duration) bool {
 	delay := time.Second * delaySeconds
 	if counter >= 100 {
 		return false
@@ -45,9 +45,9 @@ func checkIfResourceIsReady(r resources.ApiResource, counter int, delaySeconds t
 }
 
 // RunScalingTest will scale the resources to test the cluster-autoscaler is functioning as it should (if available).
-func RunScalingTest(r resources.ApiResource, clientsets *resources.ClientSets) bool {
+func RunScalingTest(r resources2.ApiResource, clientsets *resources2.ClientSets) bool {
 	replicaSize := int32(20)
-	resource := r.(*resources.DeploymentResource)
+	resource := r.(*resources2.DeploymentResource)
 	//Get number of nodes
 	_, initialNodeCount := countNodes(clientsets)
 	//Scale up the workload
@@ -56,7 +56,7 @@ func RunScalingTest(r resources.ApiResource, clientsets *resources.ClientSets) b
 	log.Printf("Replicas before Scale %v\n", initialReplicaSize)
 	log.Printf("Nodes before Scale %v\n", initialNodeCount)
 
-	resource.Resource.Spec.Replicas = hack.IntPtr(replicaSize)
+	resource.Resource.Spec.Replicas = helpers.IntPtr(replicaSize)
 
 	resource.Update()
 
@@ -75,7 +75,7 @@ func RunScalingTest(r resources.ApiResource, clientsets *resources.ClientSets) b
 		log.Printf("The node count did not increase - either the nodes were not required, cluster-autoscaler didn't kick in or you're running a single node cluster\n")
 		//Scale down the workload
 		log.Printf("Replicas after Scale %v\n", *resource.Resource.Spec.Replicas)
-		resource.Resource.Spec.Replicas = hack.IntPtr(initialReplicaSize)
+		resource.Resource.Spec.Replicas = helpers.IntPtr(initialReplicaSize)
 		resource.Update()
 		return true
 	}
@@ -83,7 +83,7 @@ func RunScalingTest(r resources.ApiResource, clientsets *resources.ClientSets) b
 	log.Printf("Nodes after Scale %v\n", newNodeAmount)
 
 	//Scale down the workload
-	resource.Resource.Spec.Replicas = hack.IntPtr(initialReplicaSize)
+	resource.Resource.Spec.Replicas = helpers.IntPtr(initialReplicaSize)
 	resource.Update()
 
 	return true
@@ -92,7 +92,7 @@ func RunScalingTest(r resources.ApiResource, clientsets *resources.ClientSets) b
 // ScalingValidation simply returns the readiness state of the resources passed into it.
 // It confirms that a resource is ready once it has been scaled.
 // Note: After a review, this may be deprecated in future releases in favour of checkIfResourceIsReady()
-func ScalingValidation(resource resources.ApiResource) {
+func ScalingValidation(resource resources2.ApiResource) {
 	switch resource.GetResourceKind() {
 	case "Deployment":
 		if !resource.IsReady() {
@@ -129,7 +129,7 @@ func ScalingValidation(resource resources.ApiResource) {
 }
 
 // countNodes does what it says - it counts the current nodes in the cluster.
-func countNodes(clientsets *resources.ClientSets) (*v1.NodeList, int) {
+func countNodes(clientsets *resources2.ClientSets) (*v1.NodeList, int) {
 	allNodes, err := clientsets.K8S.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Println(err.Error())
