@@ -12,6 +12,7 @@ import (
 	"strings"
 )
 
+// Deprecated: No longer in use
 type DeploymentResource struct {
 	Client   appsv1Typed.DeploymentInterface
 	Resource *appsv1.Deployment

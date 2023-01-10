@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// Deprecated: No longer in use
 type PodResource struct {
 	Client   v1Typed.PodInterface
 	Resource *v1.Pod

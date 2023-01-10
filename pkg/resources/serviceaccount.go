@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// Deprecated: No longer in use
 type ServiceAccountResource struct {
 	Client   v1Typed.ServiceAccountInterface
 	Resource *v1.ServiceAccount

@@ -12,6 +12,7 @@ import (
 	"strings"
 )
 
+// Deprecated: No longer in use
 type StatefulSetResource struct {
 	Client   appsv1Typed.StatefulSetInterface
 	Resource *appsv1.StatefulSet

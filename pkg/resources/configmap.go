@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// Deprecated: No longer in use
 type ConfigMapResource struct {
 	Client   v1Typed.ConfigMapInterface
 	Resource *v1.ConfigMap

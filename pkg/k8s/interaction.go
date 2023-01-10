@@ -1,4 +1,4 @@
-package cmd
+package k8s
 
 import (
 	"github.com/drew-viles/k8s-e2e-tester/pkg/resources"
@@ -9,26 +9,27 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/clientcmd"
+	"log"
 )
 
-var (
-	ClusterName string
-	clientsets  *resources.ClientSets
-)
+// ConnectToKubernetes connects to kubernetes and setups any additional clientsets.
+//
+// Deprecated: This is no longer used in the codebase
+func ConnectToKubernetes(kubeconfig *string) *resources.ClientSets {
 
-func connectToKubernetes(kubeconfig string) {
 	// use the current context in kubeconfig
-	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
+	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	clientsets = &resources.ClientSets{}
+	clientsets := &resources.ClientSets{}
 	// create the clientsets
 	clientsets.K8S, err = kubernetes.NewForConfig(config)
 	if err != nil {
 		panic(err.Error())
 	}
+
 	clientsets.Prometheus, err = promclient.NewForConfig(config)
 	if err != nil {
 		panic(err.Error())
@@ -38,10 +39,21 @@ func connectToKubernetes(kubeconfig string) {
 		panic(err.Error())
 	}
 
-	prepareClient()
+	addSchemesToClientset()
+
+	return clientsets
 }
 
-func prepareClient() {
-	promscheme.AddToScheme(scheme.Scheme)
-	istioscheme.AddToScheme(scheme.Scheme)
+// addSchemesToClientset adds any additional schemes so that the clientset can can interact with custom types.
+//
+// Deprecated: This is no longer used in the codebase
+func addSchemesToClientset() {
+	err := promscheme.AddToScheme(scheme.Scheme)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = istioscheme.AddToScheme(scheme.Scheme)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

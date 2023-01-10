@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// Deprecated: No longer in use
 type IngressResource struct {
 	Client   v1Typed.IngressInterface
 	Resource *v1.Ingress

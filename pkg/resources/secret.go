@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// Deprecated: No longer in use
 type SecretResource struct {
 	Client   v1Typed.SecretInterface
 	Resource *v1.Secret

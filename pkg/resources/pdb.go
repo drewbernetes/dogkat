@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// Deprecated: No longer in use
 type PDBResource struct {
 	Client   v1_typed.PodDisruptionBudgetInterface
 	Resource *v1.PodDisruptionBudget
