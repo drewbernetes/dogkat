@@ -6,4 +6,6 @@ type Resource interface {
 	Validate() error
 	Delete() error
 	IsReady() bool
+	GetResourceName() string
+	GetResourceKind() string
 }
