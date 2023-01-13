@@ -1,56 +1,84 @@
 package validate
 
 import (
-	"github.com/drew-viles/k8s-e2e-tester/pkg/constants"
+	"github.com/drew-viles/k8s-e2e-tester/pkg/helpers"
 	"github.com/drew-viles/k8s-e2e-tester/pkg/testsuite"
 	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/coreworkloads"
+	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/gpu"
 	"github.com/spf13/cobra"
-	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/kubectl/pkg/cmd/util"
 	"log"
-	"os"
 )
 
-func NewValidateGpuCmd(f util.Factory) *cobra.Command {
+var (
+	numberOfGPUsFlag string
+)
+
+func newValidateGpuCmd(f util.Factory) *cobra.Command {
 	o := &validateOptions{}
 
 	cmd := &cobra.Command{
 		Use:   "gpu",
-		Short: "Validate and test the GPU workload",
-		Long:  "Runs the validation and test suite against the GPU workload to ensure it is working as expected.",
+		Short: "Create and test a GPU workload",
+		Long: `Creates the resources for GPU testing and then 
+runs the validation and test suite against the GPU workload to ensure it is working as expected.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			var err error
+
 			// Connect to cluster
 			if o.client, err = f.KubernetesClientSet(); err != nil {
 				log.Fatalln(err)
 			}
 
 			// Configure namespace
+			log.Println("checking for namespace, will create if doesn't exist")
 			namespace := "default"
 			if cmd.Flag("namespace").Value.String() != "" {
 				namespace = cmd.Flag("namespace").Value.String()
 			}
 
+			createNamespaceIfNotExists(o.client, namespace)
+
+			// Generate and create workloads
+			pod := gpu.GenerateGPUPod(namespace, numberOfGPUsFlag)
+			pod.Client = o.client
+			helpers.HandleCreateError(pod.Create())
+
 			//Check the pod exists
-			pod := &coreworkloads.Pod{
-				Client: o.client,
-				Resource: &v1.Pod{
-					ObjectMeta: metav1.ObjectMeta{Name: constants.GPUName, Namespace: namespace},
-				},
-			}
 			err = pod.Validate()
 			if err != nil {
 				log.Fatalln(err)
 			}
 
+			log.Println("all resources are deployed, running tests...")
+
+			coreResource := []coreworkloads.Resource{
+				pod,
+			}
+
+			err = testsuite.CheckReadyForTesting(coreResource)
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			log.Println("** ALL RESOURCES ARE DEPLOYED AND READY **")
+
 			err = testsuite.TestGPU(pod)
 			if err != nil {
 				log.Fatalln(err)
-				os.Exit(1)
 			}
+
+			//err = testsuite.ScaleUpGPUNodes(pod)
+			//if err != nil {
+			//	log.Fatalln(err)
+			//}
+			//err = testsuite.TestGPU(pod)
+			//if err != nil {
+			//	log.Fatalln(err)
+			//}
 		},
 	}
+	cmd.Flags().StringVar(&numberOfGPUsFlag, "number-of-gpus", "1", "Sets the number of GPUS in resources.limits")
 
 	return cmd
 }

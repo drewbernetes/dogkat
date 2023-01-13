@@ -26,11 +26,12 @@ func (s *ServiceAccount) Generate(data map[string]string) {
 func (s *ServiceAccount) Create() error {
 	log.Printf("creating ServiceAccount:%s...\n", s.Resource.Name)
 	r := s.Client.CoreV1().ServiceAccounts(s.Resource.Namespace)
-	_, err := r.Create(context.Background(), s.Resource, metav1.CreateOptions{})
+	res, err := r.Create(context.Background(), s.Resource, metav1.CreateOptions{})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
+	s.Resource = res
 	log.Printf("ServiceAccount:%s created.\n", s.Resource.Name)
 	return nil
 }
@@ -38,15 +39,17 @@ func (s *ServiceAccount) Create() error {
 // Validate validates a ServiceAccount on the Kubernetes cluster.
 func (s *ServiceAccount) Validate() error {
 	var err error
-	log.Printf("confirming ServiceAccount:%s...\n", s.Resource.Name)
 	r := s.Client.CoreV1().ServiceAccounts(s.Resource.Namespace)
 	s.Resource, err = r.Get(context.Background(), s.Resource.Name, metav1.GetOptions{})
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
+	return nil
+}
 
-	log.Printf("ServiceAccount: %s exists\n", s.Resource.Name)
+// Update modifies a ServiceAccount in the Kubernetes cluster.
+func (s *ServiceAccount) Update() error {
 	return nil
 }
 
@@ -76,6 +79,10 @@ func (s *ServiceAccount) GetResourceKind() string {
 }
 
 func (s *ServiceAccount) IsReady() bool {
+	if err := s.Validate(); err != nil {
+		log.Println(err)
+		return false
+	}
 	if s.Resource.CreationTimestamp.IsZero() {
 		return false
 	}

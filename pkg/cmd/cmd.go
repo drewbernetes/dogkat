@@ -1,17 +1,11 @@
 package cmd
 
 import (
-	"github.com/drew-viles/k8s-e2e-tester/pkg/cmd/create"
 	"github.com/drew-viles/k8s-e2e-tester/pkg/cmd/delete"
 	"github.com/drew-viles/k8s-e2e-tester/pkg/cmd/validate"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/kubectl/pkg/cmd/util"
-)
-
-var (
-	valuesFile    string
-	namespaceName = "e2e-testing"
 )
 
 // init is auto run by cobra - all commands should be added here.
@@ -20,14 +14,13 @@ func newRootCommand() *cobra.Command {
 	f := util.NewFactory(configFlags)
 
 	cmd := &cobra.Command{
-		Use:   "k8s-e2e-tester",
-		Short: "K8S End-2-End tester is an end-2-end tester which can deploy workloads to a provided cluster.",
-		Long: `An End-2-End tester that can be used to test all elements of a cluster rollout.
+		Use: "k8s-e2e-tester",
+		Long: `Deploys resources to allow End-2-End testing to be conducted. 
+It can be used to test most elements of a cluster to ensure consistent stability and functionality.
 Documentation is available here: https://github.com/drew-viles/k8s-e2e-tester/blob/main/README.md`,
 	}
 
 	commands := []*cobra.Command{
-		create.NewCreateCommand(f),
 		validate.NewValidateCommand(f),
 		delete.NewDeleteCommand(f),
 		NewVersionCmd(),
@@ -36,13 +29,6 @@ Documentation is available here: https://github.com/drew-viles/k8s-e2e-tester/bl
 	configFlags.AddFlags(cmd.PersistentFlags())
 
 	cmd.AddCommand(commands...)
-	//TODO: Move this where it's required.
-	//cmd.Flags().StringVarP(&valuesFile, "values", "v", "", "The Helm values file to use - required")
-	//
-	//err := cmd.MarkFlagRequired("values")
-	//if err != nil {
-	//	fmt.Printf("there was an error with a required flag: %s\n", err.Error())
-	//}
 	return cmd
 }
 

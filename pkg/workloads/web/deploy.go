@@ -3,7 +3,8 @@ package web
 import (
 	"github.com/drew-viles/k8s-e2e-tester/pkg/constants"
 	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/coreworkloads"
-	apiv1 "k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
@@ -11,7 +12,7 @@ import (
 func GenerateNginxDeploy(namespace string) *coreworkloads.Deployment {
 	d := &coreworkloads.Deployment{}
 	d.Generate(map[string]string{"namespace": namespace, "name": constants.NginxName, "labels": constants.NginxName, "saName": constants.NginxSAName, "affinityWith": constants.PGSqlName})
-	d.Resource.Spec.Template.Spec.Volumes = []apiv1.Volume{
+	d.Resource.Spec.Template.Spec.Volumes = []v1.Volume{
 		coreworkloads.GenerateVolumeFromConfigMap("index-html", constants.NginxPagesName, 0644, map[string]string{
 			"index":   "index.php",
 			"healthz": "healthz.php",
@@ -27,31 +28,36 @@ func GenerateNginxDeploy(namespace string) *coreworkloads.Deployment {
 	return d
 }
 
-func generateNginxContainers() []apiv1.Container {
+func generateNginxContainers() []v1.Container {
 	// Nginx container
 	n := coreworkloads.GenerateContainer("nginx", "nginx", "1.23.2-alpine")
-	n.Env = []apiv1.EnvVar{
+	n.Env = []v1.EnvVar{
 		{
 			Name: "POSTGRES_PASSWORD",
-			ValueFrom: &apiv1.EnvVarSource{
-				SecretKeyRef: &apiv1.SecretKeySelector{
-					LocalObjectReference: apiv1.LocalObjectReference{Name: constants.PGSqlPasswdName},
+			ValueFrom: &v1.EnvVarSource{
+				SecretKeyRef: &v1.SecretKeySelector{
+					LocalObjectReference: v1.LocalObjectReference{Name: constants.PGSqlPasswdName},
 					Key:                  "passwd",
 				},
 			},
 		},
 	}
-	n.Resources = apiv1.ResourceRequirements{}
-	n.Ports = []apiv1.ContainerPort{
+	n.Resources = v1.ResourceRequirements{
+		Requests: map[v1.ResourceName]resource.Quantity{
+			v1.ResourceCPU:    resource.MustParse("1"),
+			v1.ResourceMemory: resource.MustParse("2Gi"),
+		},
+	}
+	n.Ports = []v1.ContainerPort{
 		{
 			ContainerPort: 80,
 			Name:          "http",
-			Protocol:      apiv1.ProtocolTCP,
+			Protocol:      v1.ProtocolTCP,
 		},
 	}
-	n.ReadinessProbe = &apiv1.Probe{
-		ProbeHandler: apiv1.ProbeHandler{
-			HTTPGet: &apiv1.HTTPGetAction{
+	n.ReadinessProbe = &v1.Probe{
+		ProbeHandler: v1.ProbeHandler{
+			HTTPGet: &v1.HTTPGetAction{
 				Path: "/healthz.php",
 				Port: intstr.IntOrString{
 					Type:   0,
@@ -62,7 +68,7 @@ func generateNginxContainers() []apiv1.Container {
 		InitialDelaySeconds: 30,
 		PeriodSeconds:       5,
 	}
-	n.VolumeMounts = []apiv1.VolumeMount{
+	n.VolumeMounts = []v1.VolumeMount{
 		{
 			Name:      "index-html",
 			MountPath: "/usr/share/nginx/html",
@@ -75,25 +81,25 @@ func generateNginxContainers() []apiv1.Container {
 
 	// PHP container
 	p := coreworkloads.GenerateContainer("php", "drewviles/php-pdo", "8.0.18-fpm")
-	p.Env = []apiv1.EnvVar{
+	p.Env = []v1.EnvVar{
 		{
 			Name: "POSTGRES_PASSWORD",
-			ValueFrom: &apiv1.EnvVarSource{
-				SecretKeyRef: &apiv1.SecretKeySelector{
-					LocalObjectReference: apiv1.LocalObjectReference{Name: constants.PGSqlPasswdName},
+			ValueFrom: &v1.EnvVarSource{
+				SecretKeyRef: &v1.SecretKeySelector{
+					LocalObjectReference: v1.LocalObjectReference{Name: constants.PGSqlPasswdName},
 					Key:                  "passwd",
 				},
 			},
 		},
 	}
-	p.Ports = []apiv1.ContainerPort{
+	p.Ports = []v1.ContainerPort{
 		{
 			ContainerPort: 9000,
-			Protocol:      apiv1.ProtocolTCP,
+			Protocol:      v1.ProtocolTCP,
 			Name:          "php",
 		},
 	}
-	p.VolumeMounts = []apiv1.VolumeMount{
+	p.VolumeMounts = []v1.VolumeMount{
 		{
 			Name:      "index-html",
 			MountPath: "/usr/share/nginx/html",
@@ -102,12 +108,12 @@ func generateNginxContainers() []apiv1.Container {
 
 	// Nginx-Prometheus container
 	e := coreworkloads.GenerateContainer("nginx-prometheus", "nginx/nginx-prometheus-exporter", "latest")
-	e.Ports = []apiv1.ContainerPort{
+	e.Ports = []v1.ContainerPort{
 		{
 			ContainerPort: 9113,
 			Name:          "http-metrics",
 		},
 	}
 
-	return []apiv1.Container{n, p, e}
+	return []v1.Container{n, p, e}
 }

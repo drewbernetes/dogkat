@@ -7,6 +7,24 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// Resource is a wrapper around all Kubernetes resources.
+type Resource interface {
+	Generate(data map[string]string)
+	Create() error
+	Validate() error
+	Update() error
+	Delete() error
+	IsReady() bool
+	GetResourceName() string
+	GetResourceKind() string
+}
+
+// ResourceReady is used to determine if a resource can be marked as ready for testing to be deployed against it.
+type ResourceReady struct {
+	Ready    bool
+	Resource Resource
+}
+
 // GenerateContainer returns a base container definition.
 func GenerateContainer(name, image, tag string) apiv1.Container {
 	return apiv1.Container{

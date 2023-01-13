@@ -12,8 +12,8 @@ func NewDeleteCoreCmd(f util.Factory) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "core",
-		Short: "Delete a core workload.",
-		Long:  "removes all elements of the core testing suite.",
+		Short: "Delete a core workload",
+		Long:  "Deletes all elements of the core testing suite.",
 		Run: func(cmd *cobra.Command, args []string) {
 			var err error
 

@@ -12,8 +12,8 @@ func NewDeleteIngressCmd(f util.Factory) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "ingress",
-		Short: "Deletes the workloads and resources for testing an ingress controller works.",
-		Long:  `Removes all elements of the ingress testing suite.`,
+		Short: "Deletes the Ingress testing resources.",
+		Long:  `Deletes all elements of the ingress testing suite.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			var err error
 

@@ -26,11 +26,12 @@ func (s *Secret) Generate(data map[string]string) {
 func (s *Secret) Create() error {
 	log.Printf("creating Secret:%s...\n", s.Resource.Name)
 	r := s.Client.CoreV1().Secrets(s.Resource.Namespace)
-	_, err := r.Create(context.Background(), s.Resource, metav1.CreateOptions{})
+	res, err := r.Create(context.Background(), s.Resource, metav1.CreateOptions{})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
+	s.Resource = res
 	log.Printf("Secret:%s created.\n", s.Resource.Name)
 	return nil
 }
@@ -38,15 +39,17 @@ func (s *Secret) Create() error {
 // Validate validates a Secret on the Kubernetes cluster.
 func (s *Secret) Validate() error {
 	var err error
-	log.Printf("confirming Secret:%s...\n", s.Resource.Name)
 	r := s.Client.CoreV1().Secrets(s.Resource.Namespace)
 	s.Resource, err = r.Get(context.Background(), s.Resource.Name, metav1.GetOptions{})
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
+	return nil
+}
 
-	log.Printf("Secret: %s exists\n", s.Resource.Name)
+// Update modifies a Secret in the Kubernetes cluster.
+func (s *Secret) Update() error {
 	return nil
 }
 
@@ -76,6 +79,10 @@ func (s *Secret) GetResourceKind() string {
 }
 
 func (s *Secret) IsReady() bool {
+	if err := s.Validate(); err != nil {
+		log.Println(err)
+		return false
+	}
 	if s.Resource.CreationTimestamp.IsZero() {
 		return false
 	}

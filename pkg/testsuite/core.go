@@ -1,40 +1,50 @@
 package testsuite
 
 import (
-	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads"
+	"errors"
+	"fmt"
+	"github.com/drew-viles/k8s-e2e-tester/pkg/helpers"
 	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/coreworkloads"
+	"golang.org/x/net/context"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 	"log"
 	"time"
 )
 
-func TestReady(nginx *workloads.NginxWorkloads, psql *workloads.PostgresWorkloads) error {
-	if !nginx.ServiceAccount.IsReady() {
+func CheckReadyForTesting(resource []coreworkloads.Resource) error {
+	//Thread the tests to run in parallel
+	checksCompleted := make(chan coreworkloads.ResourceReady, len(resource))
 
+	readyCheck := func(obj coreworkloads.Resource) {
+		r := coreworkloads.ResourceReady{}
+		r.Resource = obj
+		statusResults := checkIfResourceIsReady(obj, 0, 5)
+		if !statusResults {
+			log.Printf("%s:%s is not ready\n", obj.GetResourceKind(), obj.GetResourceName())
+			r.Ready = false
+			checksCompleted <- r
+			return
+		}
+		log.Printf("%s:%s is ready\n", obj.GetResourceKind(), obj.GetResourceName())
+		r.Ready = true
+		checksCompleted <- r
+	}
+
+	defer close(checksCompleted)
+	for _, r := range resource {
+		if r == nil {
+			continue
+		}
+		go readyCheck(r)
+	}
+
+	for _, _ = range resource {
+		<-checksCompleted
 	}
 
 	return nil
 }
-
-func TestCore(nginx *workloads.NginxWorkloads, psql *workloads.PostgresWorkloads) error {
-	log.Println("Running tests")
-	return nil
-}
-
-//// CoreWorkloadChecks will run the basic tests. Deployments, Ingress, Cluster scaling, Cluster DNS validation
-//func CoreWorkloadChecks(obj resources2.ApiResource, res chan resources2.ResourceReady) {
-//	r := resources2.ResourceReady{}
-//	r.Resource = obj
-//	statusResults := checkIfResourceIsReady(r.Resource, 0, 5)
-//	if !statusResults {
-//		log.Printf("%s:%s is not ready\n", obj.GetResourceKind(), obj.GetResourceName())
-//		r.Ready = false
-//		res <- r
-//		return
-//	}
-//	log.Printf("%s:%s is ready\n", obj.GetResourceKind(), obj.GetResourceName())
-//	r.Ready = true
-//	res <- r
-//}
 
 // checkIfResourceIsReady validates the readiness of the resource.
 func checkIfResourceIsReady(r coreworkloads.Resource, counter int, delaySeconds time.Duration) bool {
@@ -50,97 +60,107 @@ func checkIfResourceIsReady(r coreworkloads.Resource, counter int, delaySeconds 
 	return true
 }
 
-//
-//// RunScalingTest will scale the resources to test the cluster-autoscaler is functioning as it should (if available).
-//func RunScalingTest(r resources2.ApiResource, clientsets *resources2.ClientSets) bool {
-//	replicaSize := int32(20)
-//	resource := r.(*resources2.DeploymentResource)
+//// ScaleUpGPUNodes scales up the GPU nodes that generic workloads will sit on.
+//func ScaleUpGPUNodes(resource *coreworkloads.Pod) error {
+//	replicaSize := int32(2)
 //	//Get number of nodes
-//	_, initialNodeCount := countNodes(clientsets)
+//	initialNodeCount := countNodes(resource.Client)
 //	//Scale up the workload
 //	initialReplicaSize := *resource.Resource.Spec.Replicas
 //	log.Println("Testing cluster scaling")
-//	log.Printf("Replicas before Scale %v\n", initialReplicaSize)
-//	log.Printf("Nodes before Scale %v\n", initialNodeCount)
+//	log.Printf("Node count before Scale %v\n", initialNodeCount)
 //
 //	resource.Resource.Spec.Replicas = helpers.IntPtr(replicaSize)
 //
-//	resource.Update()
+//	if err := resource.Update(); err != nil {
+//		return errors.New(fmt.Sprintf("Failed to increase replicas for %s:%s: %v\n", resource.Resource.Kind, resource.Resource.Name, err))
+//	}
 //
-//	log.Printf("Waiting for Deployment/StatefulSet to scale\n")
+//	log.Printf("Waiting for Deployment to scale\n")
 //	time.Sleep(time.Second * 60)
 //
-//	isReady := checkIfResourceIsReady(r, 0, 5)
+//	isReady := checkIfResourceIsReady(resource, 0, 5)
 //	if !isReady {
-//		log.Fatalf("there was a problem scaling up the resource - it was not considered ready - you may need to ensure your nodes can support %v of these workloads\n", replicaSize)
-//		return false
+//		return errors.New(fmt.Sprintf("There was a problem scaling up the resource - it was not considered ready - you may need to ensure your nodes can support %v of these workloads\n", replicaSize))
 //	}
 //
 //	//Get number of nodes
-//	_, newNodeAmount := countNodes(clientsets)
+//	newNodeAmount := countNodes(resource.Client)
 //	if newNodeAmount <= initialNodeCount {
 //		log.Printf("The node count did not increase - either the nodes were not required, cluster-autoscaler didn't kick in or you're running a single node cluster\n")
 //		//Scale down the workload
 //		log.Printf("Replicas after Scale %v\n", *resource.Resource.Spec.Replicas)
 //		resource.Resource.Spec.Replicas = helpers.IntPtr(initialReplicaSize)
-//		resource.Update()
-//		return true
+//		if err := resource.Update(); err != nil {
+//			log.Printf("Failed to restore replias for %s:%s: %v\n", resource.Resource.Kind, resource.Resource.Name, err)
+//		}
+//		return nil
 //	}
 //	log.Printf("Replicas after Scale %v\n", *resource.Resource.Spec.Replicas)
 //	log.Printf("Nodes after Scale %v\n", newNodeAmount)
 //
 //	//Scale down the workload
 //	resource.Resource.Spec.Replicas = helpers.IntPtr(initialReplicaSize)
-//	resource.Update()
-//
-//	return true
-//}
-//
-//// ScalingValidation simply returns the readiness state of the resources passed into it.
-//// It confirms that a resource is ready once it has been scaled.
-//// Note: After a review, this may be deprecated in future releases in favour of checkIfResourceIsReady()
-//func ScalingValidation(resource resources2.ApiResource) {
-//	switch resource.GetResourceKind() {
-//	case "Deployment":
-//		if !resource.IsReady() {
-//			log.Printf("%s:%s - all replicas up and running\n", resource.GetResourceKind(), resource.GetResourceName())
-//		}
-//	case "DaemonSet":
-//		if !resource.IsReady() {
-//			log.Printf("%s:%s - all pods up and running\n", resource.GetResourceKind(), resource.GetResourceName())
-//		}
-//	case "StatefulSet":
-//		if !resource.IsReady() {
-//			log.Printf("%s:%s - all replicas up and running\n", resource.GetResourceKind(), resource.GetResourceName())
-//		}
-//	case "Ingress":
-//		ing := resource.GetObject().(*networkingv1.Ingress)
-//		//Check ingress hostnames are responding
-//		err := testIngress(ing.Spec.TLS)
-//		if err != nil {
-//			log.Fatalf(fmt.Sprintf("ingress request error: %s\n", err.Error()))
-//		}
-//		log.Printf("%s:%s - responding as expected\n", resource.GetResourceKind(), resource.GetResourceName())
-//	//case "Gateway":
-//	case "VirtualService":
-//		vs := resource.GetObject().(*v1beta1.VirtualService)
-//		//Check VirtualService hostnames are responding
-//		for _, host := range vs.Spec.Hosts {
-//			err := testHostEndpoints(host, 0)
-//			if err != nil {
-//				log.Fatalf(fmt.Sprintf("ingress request error: %s\n", err.Error()))
-//			}
-//			log.Printf("%s:%s - responding as expected\n", resource.GetResourceKind(), resource.GetResourceName())
-//		}
+//	if err := resource.Update(); err != nil {
+//		log.Printf("Failed to restore replias for %s:%s: %v\n", resource.Resource.Kind, resource.Resource.Name, err)
 //	}
-//}
 //
-//// countNodes does what it says - it counts the current nodes in the cluster.
-//func countNodes(client *kubernetes.Clientset) (*v1.NodeList, int) {
-//	allNodes, err := client.CoreV1().Nodes().List(context.Background(), metav1.ListOptions{})
-//	if err != nil {
-//		log.Println(err.Error())
-//		return nil, 0
-//	}
-//	return allNodes, len(allNodes.Items)
+//	return nil
 //}
+
+// ScaleUpStandardNodes scales up the standard nodes that generic workloads will sit on.
+func ScaleUpStandardNodes(resource *coreworkloads.Deployment) error {
+	replicaSize := int32(5)
+	//Get number of nodes
+	initialNodeCount := countNodes(resource.Client)
+	//Scale up the workload
+	initialReplicaSize := *resource.Resource.Spec.Replicas
+	log.Println("Testing cluster scaling")
+	log.Printf("Node count before Scale %v\n", initialNodeCount)
+
+	resource.Resource.Spec.Replicas = helpers.IntPtr(replicaSize)
+
+	if err := resource.Update(); err != nil {
+		return errors.New(fmt.Sprintf("Failed to increase replicas for %s:%s: %v\n", resource.Resource.Kind, resource.Resource.Name, err))
+	}
+
+	log.Printf("Waiting for Deployment to scale\n")
+	time.Sleep(time.Second * 60)
+
+	isReady := checkIfResourceIsReady(resource, 0, 5)
+	if !isReady {
+		return errors.New(fmt.Sprintf("There was a problem scaling up the resource - it was not considered ready - you may need to ensure your nodes can support %v of these workloads\n", replicaSize))
+	}
+
+	//Get number of nodes
+	newNodeAmount := countNodes(resource.Client)
+	if newNodeAmount <= initialNodeCount {
+		log.Printf("The node count did not increase - either the nodes were not required, cluster-autoscaler didn't kick in or you're running a single node cluster\n")
+		//Scale down the workload
+		resource.Resource.Spec.Replicas = helpers.IntPtr(initialReplicaSize)
+		if err := resource.Update(); err != nil {
+			log.Printf("Failed to restore replias for %s:%s: %v\n", resource.Resource.Kind, resource.Resource.Name, err)
+		}
+		return nil
+	}
+	log.Printf("Replicas after Scale %v\n", *resource.Resource.Spec.Replicas)
+	log.Printf("Nodes after Scale %v\n", newNodeAmount)
+
+	//Scale down the workload
+	resource.Resource.Spec.Replicas = helpers.IntPtr(initialReplicaSize)
+	if err := resource.Update(); err != nil {
+		log.Printf("Failed to restore replias for %s:%s: %v\n", resource.Resource.Kind, resource.Resource.Name, err)
+	}
+
+	return nil
+}
+
+// countNodes returns the current number of nodes in the cluster.
+func countNodes(client *kubernetes.Clientset) int {
+	allNodes, err := client.CoreV1().Nodes().List(context.Background(), metav1.ListOptions{})
+	if err != nil {
+		log.Println(err.Error())
+		return 0
+	}
+	return len(allNodes.Items)
+}

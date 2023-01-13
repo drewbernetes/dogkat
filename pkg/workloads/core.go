@@ -24,96 +24,69 @@ type NginxWorkloads struct {
 }
 
 // CreateNginxWorkloadItems creates the Nginx workloads required for the core tests to run.
-func CreateNginxWorkloadItems(client *kubernetes.Clientset, namespace string) {
-	nginxCM := web.GenerateNginxConfigMap(namespace)
-	nginxCM.Client = client
+func CreateNginxWorkloadItems(client *kubernetes.Clientset, namespace string) *NginxWorkloads {
+	w := &NginxWorkloads{}
 
-	nginxWebPages := web.GenerateWebpageConfigMap(namespace)
-	nginxWebPages.Client = client
+	w.Configuration = web.GenerateNginxConfigMap(namespace)
+	w.Configuration.Client = client
 
-	nginxSa := &coreworkloads.ServiceAccount{}
-	nginxSa.Generate(map[string]string{"namespace": namespace, "name": constants.NginxSAName, "label": constants.NginxName})
-	nginxSa.Client = client
+	w.WebPages = web.GenerateWebpageConfigMap(namespace)
+	w.WebPages.Client = client
 
-	nginxDeploy := web.GenerateNginxDeploy(namespace)
-	nginxDeploy.Client = client
+	w.ServiceAccount = &coreworkloads.ServiceAccount{}
+	w.ServiceAccount.Generate(map[string]string{"namespace": namespace, "name": constants.NginxSAName, "label": constants.NginxName})
+	w.ServiceAccount.Client = client
 
-	nginxSvc := web.GenerateNginxServiceResource(namespace)
-	nginxSvc.Client = client
+	w.Workload = web.GenerateNginxDeploy(namespace)
+	w.Workload.Client = client
 
-	nginxPdb := &coreworkloads.PodDisruptionBudget{}
-	nginxPdb.Generate(map[string]string{"namespace": namespace, "name": constants.NginxName, "label": constants.NginxName})
-	nginxPdb.Client = client
+	w.Service = web.GenerateNginxServiceResource(namespace)
+	w.Service.Client = client
 
-	helpers.HandleCreateError(nginxCM.Create())
-	helpers.HandleCreateError(nginxWebPages.Create())
-	helpers.HandleCreateError(nginxSa.Create())
-	helpers.HandleCreateError(nginxDeploy.Create())
-	helpers.HandleCreateError(nginxSvc.Create())
-	helpers.HandleCreateError(nginxPdb.Create())
+	w.PodDisruptionBudget = &coreworkloads.PodDisruptionBudget{}
+	w.PodDisruptionBudget.Generate(map[string]string{"namespace": namespace, "name": constants.NginxName, "label": constants.NginxName})
+	w.PodDisruptionBudget.Client = client
+
+	helpers.HandleCreateError(w.Configuration.Create())
+	helpers.HandleCreateError(w.WebPages.Create())
+	helpers.HandleCreateError(w.ServiceAccount.Create())
+	helpers.HandleCreateError(w.Workload.Create())
+	helpers.HandleCreateError(w.Service.Create())
+	helpers.HandleCreateError(w.PodDisruptionBudget.Create())
+
+	return w
 }
 
 // ValidateNginxWorkloadItems validates the Nginx workloads required for the core tests to run.
-func ValidateNginxWorkloadItems(client *kubernetes.Clientset, namespace string) (*NginxWorkloads, error) {
+func (w *NginxWorkloads) ValidateNginxWorkloadItems() error {
 	var err error
-	workload := &NginxWorkloads{}
 
-	workload.Configuration = &coreworkloads.ConfigMap{
-		Client:   client,
-		Resource: &v1.ConfigMap{ObjectMeta: metav1.ObjectMeta{Name: constants.NginxConfName, Namespace: namespace}},
-	}
-
-	workload.WebPages = &coreworkloads.ConfigMap{
-		Client:   client,
-		Resource: &v1.ConfigMap{ObjectMeta: metav1.ObjectMeta{Name: constants.NginxPagesName, Namespace: namespace}},
-	}
-
-	workload.ServiceAccount = &coreworkloads.ServiceAccount{
-		Client:   client,
-		Resource: &v1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: constants.NginxSAName, Namespace: namespace}},
-	}
-
-	workload.Workload = &coreworkloads.Deployment{
-		Client:   client,
-		Resource: &appsv1.Deployment{ObjectMeta: metav1.ObjectMeta{Name: constants.NginxName, Namespace: namespace}},
-	}
-
-	workload.Service = &coreworkloads.Service{
-		Client:   client,
-		Resource: &v1.Service{ObjectMeta: metav1.ObjectMeta{Name: constants.NginxName, Namespace: namespace}},
-	}
-
-	workload.PodDisruptionBudget = &coreworkloads.PodDisruptionBudget{
-		Client:   client,
-		Resource: &policyv1.PodDisruptionBudget{ObjectMeta: metav1.ObjectMeta{Name: constants.NginxName, Namespace: namespace}},
-	}
-
-	err = workload.Configuration.Validate()
+	err = w.Configuration.Validate()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	err = workload.WebPages.Validate()
+	err = w.WebPages.Validate()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	err = workload.ServiceAccount.Validate()
+	err = w.ServiceAccount.Validate()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	err = workload.Workload.Validate()
+	err = w.Workload.Validate()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	err = workload.Service.Validate()
+	err = w.Service.Validate()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	err = workload.PodDisruptionBudget.Validate()
+	err = w.PodDisruptionBudget.Validate()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return workload, nil
+	return nil
 }
 
 // DeleteNginxWorkloadItems deletes the Nginx workloads required for the core tests to run.
@@ -184,96 +157,68 @@ type PostgresWorkloads struct {
 }
 
 // CreateSQLWorkloadItems creates the Postgres workloads required for the core tests to run.
-func CreateSQLWorkloadItems(client *kubernetes.Clientset, namespace, storageClass string) {
-	sqlCM := sql.GeneratePostgresqlConfigMap(namespace)
-	sqlCM.Client = client
+func CreateSQLWorkloadItems(client *kubernetes.Clientset, namespace, storageClass string) *PostgresWorkloads {
+	w := &PostgresWorkloads{}
+	w.InitConf = sql.GeneratePostgresqlConfigMap(namespace)
+	w.InitConf.Client = client
 
-	sqlSecret := sql.GeneratePostgresqlSecret(namespace)
-	sqlSecret.Client = client
+	w.Secret = sql.GeneratePostgresqlSecret(namespace)
+	w.Secret.Client = client
 
-	sqlSa := &coreworkloads.ServiceAccount{}
-	sqlSa.Generate(map[string]string{"namespace": namespace, "name": constants.PGSqlSAName, "label": constants.PGSqlName})
-	sqlSa.Client = client
+	w.ServiceAccount = &coreworkloads.ServiceAccount{}
+	w.ServiceAccount.Generate(map[string]string{"namespace": namespace, "name": constants.PGSqlSAName, "label": constants.PGSqlName})
+	w.ServiceAccount.Client = client
 
-	sqlSts := sql.GeneratePostgresStatefulSet(namespace, storageClass)
-	sqlSts.Client = client
+	w.Workload = sql.GeneratePostgresStatefulSet(namespace, storageClass)
+	w.Workload.Client = client
 
-	sqlSvc := sql.GeneratePostgresServiceResource(namespace)
-	sqlSvc.Client = client
+	w.Service = sql.GeneratePostgresServiceResource(namespace)
+	w.Service.Client = client
 
-	sqlPdb := &coreworkloads.PodDisruptionBudget{}
-	sqlPdb.Generate(map[string]string{"namespace": namespace, "name": constants.PGSqlName, "label": constants.PGSqlName})
-	sqlPdb.Client = client
+	w.PodDisruptionBudget = &coreworkloads.PodDisruptionBudget{}
+	w.PodDisruptionBudget.Generate(map[string]string{"namespace": namespace, "name": constants.PGSqlName, "label": constants.PGSqlName})
+	w.PodDisruptionBudget.Client = client
 
-	helpers.HandleCreateError(sqlCM.Create())
-	helpers.HandleCreateError(sqlSecret.Create())
-	helpers.HandleCreateError(sqlSa.Create())
-	helpers.HandleCreateError(sqlSts.Create())
-	helpers.HandleCreateError(sqlSvc.Create())
-	helpers.HandleCreateError(sqlPdb.Create())
+	helpers.HandleCreateError(w.InitConf.Create())
+	helpers.HandleCreateError(w.Secret.Create())
+	helpers.HandleCreateError(w.ServiceAccount.Create())
+	helpers.HandleCreateError(w.Workload.Create())
+	helpers.HandleCreateError(w.Service.Create())
+	helpers.HandleCreateError(w.PodDisruptionBudget.Create())
+
+	return w
 }
 
 // ValidateSQLWorkloadItems validates the Postgres workloads required for the core tests to run.
-func ValidateSQLWorkloadItems(client *kubernetes.Clientset, namespace string) (*PostgresWorkloads, error) {
+func (w *PostgresWorkloads) ValidateSQLWorkloadItems() error {
 	var err error
-	workload := &PostgresWorkloads{}
 
-	workload.InitConf = &coreworkloads.ConfigMap{
-		Client:   client,
-		Resource: &v1.ConfigMap{ObjectMeta: metav1.ObjectMeta{Name: constants.PGSqlConfName, Namespace: namespace}},
-	}
-
-	workload.Secret = &coreworkloads.Secret{
-		Client:   client,
-		Resource: &v1.Secret{ObjectMeta: metav1.ObjectMeta{Name: constants.PGSqlPasswdName, Namespace: namespace}},
-	}
-
-	workload.ServiceAccount = &coreworkloads.ServiceAccount{
-		Client:   client,
-		Resource: &v1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: constants.PGSqlSAName, Namespace: namespace}},
-	}
-
-	workload.Workload = &coreworkloads.StatefulSet{
-		Client:   client,
-		Resource: &appsv1.StatefulSet{ObjectMeta: metav1.ObjectMeta{Name: constants.PGSqlName, Namespace: namespace}},
-	}
-
-	workload.Service = &coreworkloads.Service{
-		Client:   client,
-		Resource: &v1.Service{ObjectMeta: metav1.ObjectMeta{Name: constants.PGSqlName, Namespace: namespace}},
-	}
-
-	workload.PodDisruptionBudget = &coreworkloads.PodDisruptionBudget{
-		Client:   client,
-		Resource: &policyv1.PodDisruptionBudget{ObjectMeta: metav1.ObjectMeta{Name: constants.PGSqlName, Namespace: namespace}},
-	}
-
-	err = workload.InitConf.Validate()
+	err = w.InitConf.Validate()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	err = workload.Secret.Validate()
+	err = w.Secret.Validate()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	err = workload.ServiceAccount.Validate()
+	err = w.ServiceAccount.Validate()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	err = workload.Workload.Validate()
+	err = w.Workload.Validate()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	err = workload.Service.Validate()
+	err = w.Service.Validate()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	err = workload.PodDisruptionBudget.Validate()
+	err = w.PodDisruptionBudget.Validate()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return workload, nil
+	return nil
 }
 
 // DeleteSQLWorkloadItems deletes the Postgres workloads required for the core tests to run.

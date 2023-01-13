@@ -102,12 +102,12 @@ func (s *StatefulSet) Generate(data map[string]string) {
 func (s *StatefulSet) Create() error {
 	log.Printf("creating StatefulSet:%s...\n", s.Resource.Name)
 	r := s.Client.AppsV1().StatefulSets(s.Resource.Namespace)
-	_, err := r.Create(context.Background(), s.Resource, metav1.CreateOptions{})
+	res, err := r.Create(context.Background(), s.Resource, metav1.CreateOptions{})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
-
+	s.Resource = res
 	log.Printf("StatefulSet:%s created.\n", s.Resource.Name)
 	return nil
 }
@@ -115,15 +115,17 @@ func (s *StatefulSet) Create() error {
 // Validate validates a StatefulSet on the Kubernetes cluster.
 func (s *StatefulSet) Validate() error {
 	var err error
-	log.Printf("confirming StatefulSet:%s...\n", s.Resource.Name)
 	r := s.Client.AppsV1().StatefulSets(s.Resource.Namespace)
 	s.Resource, err = r.Get(context.Background(), s.Resource.Name, metav1.GetOptions{})
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
+	return nil
+}
 
-	log.Printf("StatefulSet: %s exists\n", s.Resource.Name)
+// Update modifies a StatefulSet in the Kubernetes cluster.
+func (s *StatefulSet) Update() error {
 	return nil
 }
 
@@ -153,6 +155,10 @@ func (s *StatefulSet) GetResourceKind() string {
 }
 
 func (s *StatefulSet) IsReady() bool {
+	if err := s.Validate(); err != nil {
+		log.Println(err)
+		return false
+	}
 	if s.Resource.Status.AvailableReplicas != s.Resource.Status.Replicas {
 		return false
 	}

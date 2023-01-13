@@ -14,6 +14,7 @@ import (
 )
 
 // CoreWorkloadChecks will run the basic tests. Deployments, Ingress, Cluster scaling, Cluster DNS validation
+// Deprecated: no longer in use
 func CoreWorkloadChecks(obj resources2.ApiResource, res chan resources2.ResourceReady) {
 	r := resources2.ResourceReady{}
 	r.Resource = obj
@@ -30,6 +31,7 @@ func CoreWorkloadChecks(obj resources2.ApiResource, res chan resources2.Resource
 }
 
 // checkIfResourceIsReady validates the readiness of the resource.
+// Deprecated: no longer in use
 func checkIfResourceIsReady(r resources2.ApiResource, counter int, delaySeconds time.Duration) bool {
 	delay := time.Second * delaySeconds
 	if counter >= 100 {
@@ -45,6 +47,7 @@ func checkIfResourceIsReady(r resources2.ApiResource, counter int, delaySeconds 
 }
 
 // RunScalingTest will scale the resources to test the cluster-autoscaler is functioning as it should (if available).
+// Deprecated: no longer in use
 func RunScalingTest(r resources2.ApiResource, clientsets *resources2.ClientSets) bool {
 	replicaSize := int32(20)
 	resource := r.(*resources2.DeploymentResource)
@@ -92,6 +95,7 @@ func RunScalingTest(r resources2.ApiResource, clientsets *resources2.ClientSets)
 // ScalingValidation simply returns the readiness state of the resources passed into it.
 // It confirms that a resource is ready once it has been scaled.
 // Note: After a review, this may be deprecated in future releases in favour of checkIfResourceIsReady()
+// Deprecated: no longer in use
 func ScalingValidation(resource resources2.ApiResource) {
 	switch resource.GetResourceKind() {
 	case "Deployment":
@@ -129,6 +133,7 @@ func ScalingValidation(resource resources2.ApiResource) {
 }
 
 // countNodes does what it says - it counts the current nodes in the cluster.
+// Deprecated: no longer in use
 func countNodes(clientsets *resources2.ClientSets) (*v1.NodeList, int) {
 	allNodes, err := clientsets.K8S.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {

@@ -9,6 +9,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/util/retry"
 	"log"
 	"strings"
 )
@@ -98,11 +99,12 @@ func (d *Deployment) Generate(data map[string]string) {
 func (d *Deployment) Create() error {
 	log.Printf("creating Deployment:%s...\n", d.Resource.Name)
 	r := d.Client.AppsV1().Deployments(d.Resource.Namespace)
-	_, err := r.Create(context.Background(), d.Resource, metav1.CreateOptions{})
+	res, err := r.Create(context.Background(), d.Resource, metav1.CreateOptions{})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
+	d.Resource = res
 	log.Printf("Deployment:%s created.\n", d.Resource.Name)
 	return nil
 }
@@ -110,15 +112,26 @@ func (d *Deployment) Create() error {
 // Validate validates a Deployment on the Kubernetes cluster.
 func (d *Deployment) Validate() error {
 	var err error
-	log.Printf("confirming Deployment:%s...\n", d.Resource.Name)
 	r := d.Client.AppsV1().Deployments(d.Resource.Namespace)
 	d.Resource, err = r.Get(context.Background(), d.Resource.Name, metav1.GetOptions{})
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
+	return nil
+}
 
-	log.Printf("Deployment: %s exists\n", d.Resource.Name)
+// Update modifies a Deployment in the Kubernetes cluster.
+func (d *Deployment) Update() error {
+	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+		var err error
+		r := d.Client.AppsV1().Deployments(d.Resource.Namespace)
+		d.Resource, err = r.Update(context.TODO(), d.Resource, metav1.UpdateOptions{})
+		return err
+	})
+	if retryErr != nil {
+		return retryErr
+	}
 	return nil
 }
 
@@ -148,6 +161,10 @@ func (d *Deployment) GetResourceKind() string {
 }
 
 func (d *Deployment) IsReady() bool {
+	if err := d.Validate(); err != nil {
+		log.Println(err)
+		return false
+	}
 	if d.Resource.Status.UnavailableReplicas != 0 {
 		return false
 	}

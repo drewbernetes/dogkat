@@ -26,11 +26,12 @@ func (c *ConfigMap) Generate(data map[string]string) {
 func (c *ConfigMap) Create() error {
 	log.Printf("creating ConfigMap:%s...\n", c.Resource.Name)
 	r := c.Client.CoreV1().ConfigMaps(c.Resource.Namespace)
-	_, err := r.Create(context.Background(), c.Resource, metav1.CreateOptions{})
+	res, err := r.Create(context.Background(), c.Resource, metav1.CreateOptions{})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
+	c.Resource = res
 	log.Printf("ConfigMap:%s created.\n", c.Resource.Name)
 	return nil
 }
@@ -38,15 +39,17 @@ func (c *ConfigMap) Create() error {
 // Validate validates a ConfigMap exists on the Kubernetes cluster.
 func (c *ConfigMap) Validate() error {
 	var err error
-	log.Printf("confirming ConfigMap:%s...\n", c.Resource.Name)
 	r := c.Client.CoreV1().ConfigMaps(c.Resource.Namespace)
 	c.Resource, err = r.Get(context.Background(), c.Resource.Name, metav1.GetOptions{})
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
+	return nil
+}
 
-	log.Printf("ConfigMap: %s exists\n", c.Resource.Name)
+// Update modifies a ConfigMap in the Kubernetes cluster.
+func (c *ConfigMap) Update() error {
 	return nil
 }
 
@@ -77,6 +80,10 @@ func (c *ConfigMap) GetResourceKind() string {
 }
 
 func (c *ConfigMap) IsReady() bool {
+	if err := c.Validate(); err != nil {
+		log.Println(err)
+		return false
+	}
 	if c.Resource.CreationTimestamp.IsZero() {
 		return false
 	}

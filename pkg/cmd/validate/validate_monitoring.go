@@ -1,4 +1,4 @@
-package create
+package validate
 
 import (
 	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads"
@@ -8,14 +8,15 @@ import (
 	"log"
 )
 
-func newCreateMonitoringCmd(f util.Factory) *cobra.Command {
-	o := &createOptions{}
+func newValidateMonitoringCmd(f util.Factory) *cobra.Command {
+	o := &validateOptions{}
 
 	cmd := &cobra.Command{
 		Use:   "monitoring",
-		Short: "Creates the core resources with additional monitoring.",
+		Short: "Creates and validates the core resources with additional monitoring",
 		Long: `Creates an application with additional grafana dashboards and service monitors. 
-This requires Prometheus to be installed.`,
+This requires Prometheus to be installed. Once deployed the monitoring test suite will run to confirm 
+resources are deployed and working as expected.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			var err error
 
@@ -35,13 +36,13 @@ This requires Prometheus to be installed.`,
 
 			// Generate and create workloads
 			workloads.CreateNginxWorkloadItems(o.client, namespace)
-			workloads.CreateSQLWorkloadItems(o.client, namespace, storageClass)
+			workloads.CreateSQLWorkloadItems(o.client, namespace, storageClassFlag)
 
 			sm := prometheus.GenerateServiceMonitorResource(namespace)
 			prometheus.CreateServiceMonitor(o.prometheus, sm)
 		},
 	}
-	cmd.Flags().StringVar(&storageClass, "storage-class", "longhorn", "Used to define the name of the storage class to use for Persistent Volumes.")
+	cmd.Flags().StringVar(&storageClassFlag, "storage-class", "longhorn", "Used to define the name of the storage class to use for Persistent Volumes.")
 
 	return cmd
 }

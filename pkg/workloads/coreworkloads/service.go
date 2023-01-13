@@ -26,11 +26,12 @@ func (s *Service) Generate(data map[string]string) {
 func (s *Service) Create() error {
 	log.Printf("creating Service:%s...\n", s.Resource.Name)
 	r := s.Client.CoreV1().Services(s.Resource.Namespace)
-	_, err := r.Create(context.Background(), s.Resource, metav1.CreateOptions{})
+	res, err := r.Create(context.Background(), s.Resource, metav1.CreateOptions{})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
+	s.Resource = res
 	log.Printf("Service:%s created.\n", s.Resource.Name)
 	return nil
 }
@@ -38,15 +39,17 @@ func (s *Service) Create() error {
 // Validate validates a Service on the Kubernetes cluster.
 func (s *Service) Validate() error {
 	var err error
-	log.Printf("confirming Service:%s...\n", s.Resource.Name)
 	r := s.Client.CoreV1().Services(s.Resource.Namespace)
 	s.Resource, err = r.Get(context.Background(), s.Resource.Name, metav1.GetOptions{})
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
+	return nil
+}
 
-	log.Printf("Service: %s exists\n", s.Resource.Name)
+// Update modifies a Service in the Kubernetes cluster.
+func (s *Service) Update() error {
 	return nil
 }
 
@@ -76,6 +79,10 @@ func (s *Service) GetResourceKind() string {
 }
 
 func (s *Service) IsReady() bool {
+	if err := s.Validate(); err != nil {
+		log.Println(err)
+		return false
+	}
 	if s.Resource.CreationTimestamp.IsZero() {
 		return false
 	}

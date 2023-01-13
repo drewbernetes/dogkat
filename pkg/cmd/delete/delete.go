@@ -20,8 +20,8 @@ type deleteOptions struct {
 func NewDeleteCommand(f util.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
-		Short: "",
-		Long:  "",
+		Short: "Deletes test resources",
+		Long:  `Deletes the resources deployed for testing and any associated namespaces as per the subcommand provided.`,
 	}
 
 	commands := []*cobra.Command{

@@ -56,11 +56,12 @@ func (i *Ingress) Generate(data map[string]string) {
 func (i *Ingress) Create() error {
 	log.Printf("creating Ingress:%s...\n", i.Resource.Name)
 	r := i.Client.NetworkingV1().Ingresses(i.Resource.Namespace)
-	_, err := r.Create(context.Background(), i.Resource, metav1.CreateOptions{})
+	res, err := r.Create(context.Background(), i.Resource, metav1.CreateOptions{})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
+	i.Resource = res
 	log.Printf("Ingress:%s created.\n", i.Resource.Name)
 	return nil
 }
@@ -68,15 +69,17 @@ func (i *Ingress) Create() error {
 // Validate validates an Ingress on the Kubernetes cluster.
 func (i *Ingress) Validate() error {
 	var err error
-	log.Printf("confirming Ingress:%s...\n", i.Resource.Name)
 	r := i.Client.NetworkingV1().Ingresses(i.Resource.Namespace)
 	i.Resource, err = r.Get(context.Background(), i.Resource.Name, metav1.GetOptions{})
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
+	return nil
+}
 
-	log.Printf("Ingress: %s exists\n", i.Resource.Name)
+// Update modifies an Ingress in the Kubernetes cluster.
+func (i *Ingress) Update() error {
 	return nil
 }
 
@@ -107,6 +110,10 @@ func (i *Ingress) GetResourceKind() string {
 }
 
 func (i *Ingress) IsReady() bool {
+	if err := i.Validate(); err != nil {
+		log.Println(err)
+		return false
+	}
 	for _, v := range i.Resource.Status.LoadBalancer.Ingress {
 		if v.Hostname == "" && v.IP == "" {
 			return false

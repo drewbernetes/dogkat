@@ -16,25 +16,25 @@ type Pod struct {
 }
 
 // Generate a base Pod definition.
-func (p *Pod) Generate(data map[string]string) *v1.Pod {
+func (p *Pod) Generate(data map[string]string) {
 	p.Resource = &v1.Pod{
 		ObjectMeta: GenerateMetadata(data["namespace"], data["name"], data["name"]),
 		Spec: v1.PodSpec{
 			RestartPolicy: "OnFailure",
 		},
 	}
-	return nil
 }
 
 // Create creates a Pod on the Kubernetes cluster.
 func (p *Pod) Create() error {
 	log.Printf("creating Pod:%s...\n", p.Resource.Name)
 	r := p.Client.CoreV1().Pods(p.Resource.Namespace)
-	_, err := r.Create(context.Background(), p.Resource, metav1.CreateOptions{})
+	res, err := r.Create(context.Background(), p.Resource, metav1.CreateOptions{})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
+	p.Resource = res
 	log.Printf("Pod:%s created.\n", p.Resource.Name)
 	return nil
 }
@@ -42,15 +42,17 @@ func (p *Pod) Create() error {
 // Validate validates a Pod on the Kubernetes cluster.
 func (p *Pod) Validate() error {
 	var err error
-	log.Printf("confirming Pod:%s...\n", p.Resource.Name)
 	r := p.Client.CoreV1().Pods(p.Resource.Namespace)
 	p.Resource, err = r.Get(context.Background(), p.Resource.Name, metav1.GetOptions{})
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
+	return nil
+}
 
-	log.Printf("Pod: %s exists\n", p.Resource.Name)
+// Update modifies a Pod in the Kubernetes cluster.
+func (p *Pod) Update() error {
 	return nil
 }
 
@@ -80,10 +82,18 @@ func (p *Pod) GetResourceKind() string {
 }
 
 func (p *Pod) IsReady() bool {
+	if err := p.Validate(); err != nil {
+		log.Println(err)
+		return false
+	}
+	ready := false
 	for _, pod := range p.Resource.Status.ContainerStatuses {
 		if pod.Ready != true {
-			return false
+			ready = false
 		}
 	}
-	return true
+	if p.Resource.Status.Phase == v1.PodSucceeded {
+		ready = true
+	}
+	return ready
 }

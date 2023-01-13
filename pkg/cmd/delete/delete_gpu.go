@@ -15,8 +15,8 @@ func NewDeleteGpuCmd(f util.Factory) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "gpu",
-		Short: "Delete a GPU workload.",
-		Long:  "Deletes the GPU workload that has been deployed for e2e-testing",
+		Short: "Delete a GPU workload",
+		Long:  "Deletes the GPU application testing suite.",
 		Run: func(cmd *cobra.Command, args []string) {
 			var err error
 

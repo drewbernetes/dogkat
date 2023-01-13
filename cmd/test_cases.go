@@ -1,5 +1,6 @@
-package cmd
+package main
 
+// Deprecated: no longer in use
 func runCoreTests(valuesFile string) {
 	////Parse the values file for Helm
 	//values := parseValues(valuesFile)

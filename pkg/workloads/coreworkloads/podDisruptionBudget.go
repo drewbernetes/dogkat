@@ -36,11 +36,12 @@ func (p *PodDisruptionBudget) Generate(data map[string]string) {
 func (p *PodDisruptionBudget) Create() error {
 	log.Printf("creating PodDisruptionBudget:%s...\n", p.Resource.Name)
 	r := p.Client.PolicyV1().PodDisruptionBudgets(p.Resource.Namespace)
-	_, err := r.Create(context.Background(), p.Resource, metav1.CreateOptions{})
+	res, err := r.Create(context.Background(), p.Resource, metav1.CreateOptions{})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
+	p.Resource = res
 	log.Printf("PodDisruptionBudget:%s created.\n", p.Resource.Name)
 	return nil
 }
@@ -48,15 +49,17 @@ func (p *PodDisruptionBudget) Create() error {
 // Validate validates a PodDisruptionBudget on the Kubernetes cluster.
 func (p *PodDisruptionBudget) Validate() error {
 	var err error
-	log.Printf("confirming PodDisruptionBudget:%s...\n", p.Resource.Name)
 	r := p.Client.PolicyV1().PodDisruptionBudgets(p.Resource.Namespace)
 	p.Resource, err = r.Get(context.Background(), p.Resource.Name, metav1.GetOptions{})
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
+	return nil
+}
 
-	log.Printf("PodDisruptionBudget: %s exists\n", p.Resource.Name)
+// Update modifies a PodDisruptionBudget in the Kubernetes cluster.
+func (p *PodDisruptionBudget) Update() error {
 	return nil
 }
 
@@ -87,6 +90,10 @@ func (p *PodDisruptionBudget) GetResourceKind() string {
 }
 
 func (p *PodDisruptionBudget) IsReady() bool {
+	if err := p.Validate(); err != nil {
+		log.Println(err)
+		return false
+	}
 	if p.Resource.Status.CurrentHealthy < p.Resource.Status.DesiredHealthy || p.Resource.Status.DisruptionsAllowed == 0 {
 		return false
 	}
