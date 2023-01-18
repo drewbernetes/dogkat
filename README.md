@@ -1,19 +1,22 @@
 # Kubernetes End-2-End Workload Tester
-This project was started as a way of testing as many components of a cluster as possible.
 
-It will use my [e2e Helm Chart](https://github.com/drew-viles/helm-charts/tree/main/charts/e2e-basic) and as a result will require a values.yaml to be provided to it via the --values -v flag
+An End-2-End tester that will test a variety of elements of a Kubernetes cluster.
 
-It will test the following:
-* Certificate generation using CertManager
+*The resources are baked into the binary (instead of using an external Helm Chart as previous versions did).*
+
+The tests are separated out into logical workloads so that core workloads can be tested with additional tests able to be run on top.
+
+It is capable of testing the following:
 * Workload deployments
-    * With anti-affinity ensuring workloads can be split across nodes.
-    * Nginx
-      * With Configmap mounts
-    * Postgres database 
-      * With Volume mounts using PVC
+  * With anti-affinity ensuring workloads can be split across nodes.
+  * Nginx with Configmap mounts
+  * Postgres database with Volume mounts using PVC
+  * Cluster DNS connectivity tested by connecting the Database to the Nginx workload
 * Ingress deploys, resolves and responds
+    * LoadBalancer creation via Ingress resources
+    * Certificate generation using CertManager (Optional)
 * Scaling workloads to test cluster-autoscaler (if deployed)
-* Cluster DNS connectivity tested by connecting the Database to the Nginx workload
+* Deploying Service Monitors and Grafana Dashboards (Requires Prometheus)
 
 See the [Helm Chart README](https://github.com/drew-viles/helm-charts/blob/main/charts/e2e-basic/README.md) for more info
 
