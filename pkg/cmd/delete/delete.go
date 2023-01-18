@@ -30,6 +30,7 @@ func NewDeleteCommand(f util.Factory) *cobra.Command {
 		NewDeleteGpuCmd(f),
 		NewDeleteIngressCmd(f),
 		NewDeleteIstioCmd(f),
+		NewDeleteMonitoringCmd(f),
 	}
 
 	cmd.AddCommand(commands...)

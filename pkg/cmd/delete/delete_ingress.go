@@ -1,7 +1,8 @@
 package delete
 
 import (
-	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads"
+	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/sql"
+	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/web"
 	"github.com/spf13/cobra"
 	"k8s.io/kubectl/pkg/cmd/util"
 	"log"
@@ -28,8 +29,10 @@ func NewDeleteIngressCmd(f util.Factory) *cobra.Command {
 				namespace = cmd.Flag("namespace").Value.String()
 			}
 
-			workloads.DeleteNginxWorkloadItems(o.client, namespace)
-			workloads.DeleteSQLWorkloadItems(o.client, namespace)
+			web.DeleteNginxWorkloadItems(o.client, namespace)
+			web.DeleteIngressWorkloadItems(o.client, namespace)
+			sql.DeleteSQLWorkloadItems(o.client, namespace)
+
 		},
 	}
 

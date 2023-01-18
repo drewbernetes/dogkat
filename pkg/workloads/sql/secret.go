@@ -1,7 +1,6 @@
 package sql
 
 import (
-	"encoding/base64"
 	"github.com/drew-viles/k8s-e2e-tester/pkg/constants"
 	workloads "github.com/drew-viles/k8s-e2e-tester/pkg/workloads/coreworkloads"
 )
@@ -11,7 +10,7 @@ func GeneratePostgresqlSecret(namespace string) *workloads.Secret {
 	s := &workloads.Secret{}
 	s.Generate(map[string]string{"namespace": namespace, "name": constants.PGSqlPasswdName, "label": constants.PGSqlName})
 	s.Resource.Data = map[string][]byte{
-		"passwd": []byte(base64.StdEncoding.EncodeToString([]byte(constants.DBPassword))),
+		"passwd": []byte(constants.DBPassword),
 	}
 
 	return s

@@ -63,30 +63,32 @@ func GenerateWebpageConfigMap(namespace string) *workloads.ConfigMap {
     $retries = 5;
 
     function connectToDB($attempt){
-        $servername = "database-e2e.%s";
+        $servername = "%s.%s";
         $username = "%s";
-        $password = %s;
+        $password = "%s";
         $pgconn = '';
 
         try {
             $pgconn = new PDO("pgsql:host=$servername;port=5432;dbname=%s", $username, $password);
         } catch(PDOException $e) {
             if ($attempt > 5){
-                return false;
-        }
+                error_log("couldn't connect to the database!", 0);
+        	}
         sleep(5);
         connectToDB($attempt+1);
-    }
-    return $pgconn;
-}
+		}
+		return $pgconn;
+	}
 ?>`
 
 	index := `<?php
     include 'common.php';
     $conn = connectToDB(0);
+    header('Content-type: application/json');
     if(!$conn){
-        $arr['success'] = false;
-        $arr['data'] = "Couldn't connect to Postgres backend: " . $e->getMessage();
+        $err = "couldn't connect to Postgres backend: " . $e->getMessage();
+        error_log("$err", 0);
+        return;
     }else{
         try {
             // set the PDO error mode to exception
@@ -95,30 +97,34 @@ func GenerateWebpageConfigMap(namespace string) *workloads.ConfigMap {
             $result = $stmt->fetch();
 
             if (!$result) {
-                $arr['success'] = false;
-                $arr['data'] = "not ok";
+                $err = json_encode($arr);
+                error_log("no results in database: $err", 0);
                 header("HTTP/1.0 500 Internal Server Error");
+                return;
             }else{
                 $arr['success'] = true;
                 $arr['data'] = $result["value"];
                 header("HTTP/1.0 200 OK");
             }
-        } catch(PDOException $e) {
-            $arr['success'] = false;
-            $arr['data'] = "Failed to get data: " . $e->getMessage();
-            header("HTTP/1.0 200 Internal Server Error");
+        } catch(PDOException $e) { 
+            $err = "Failed to get data: " . $e->getMessage();
+            error_log("$err", 0);
+            header("HTTP/1.0 500 Internal Server Error");
+            return;
         }
     }
     $conn = null;
-    header('Content-type: application/json');
     echo json_encode($arr);
 ?>`
 	healthz := `<?php
     include 'common.php';
     $conn = connectToDB(0);
+    header('Content-type: application/json');
     if(!$conn){
         $arr['success'] = false;
         $arr['data'] = "Couldn't connect to Postgres backend: " . $e->getMessage();
+    	echo json_encode($arr);
+		return;
     }else{
         try {
             // set the PDO error mode to exception
@@ -127,22 +133,24 @@ func GenerateWebpageConfigMap(namespace string) *workloads.ConfigMap {
             $result = $stmt->fetch();
 
             if (!$result) {
+                error_log("no results in database: $err", 0);
                 header("HTTP/1.0 500 Internal Server Error");
                 return;
             }
             $conn = null;
         } catch(PDOException $e) {
+            $err = "Failed to get data: " . $e->getMessage();
+            error_log("$err", 0);
             header("HTTP/1.0 500 Internal Server Error");
             return;
         }
     }
 
     header("HTTP/1.0 200 OK");
-    header('Content-type: application/json');
     echo json_encode(array("success" => true, "data" => "ok"));
 ?>`
 	cm.Resource.Data = map[string]string{
-		"common":  fmt.Sprintf(cmCommon, namespace, constants.DBUser, constants.DBPassword, constants.DBName),
+		"common":  fmt.Sprintf(cmCommon, constants.PGSqlName, namespace, constants.DBUser, constants.DBPassword, constants.DBName),
 		"index":   index,
 		"healthz": healthz,
 	}

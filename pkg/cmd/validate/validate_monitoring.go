@@ -26,23 +26,15 @@ resources are deployed and working as expected.`,
 			}
 
 			// Configure namespace
-			log.Println("checking for namespace, will create if doesn't exist")
-			namespace := "default"
-			if cmd.Flag("namespace").Value.String() != "" {
-				namespace = cmd.Flag("namespace").Value.String()
-			}
+			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String())
 
-			createNamespaceIfNotExists(o.client, namespace)
+			_, _ = workloads.DeployBaseWorkloads(o.client, namespace.Name, storageClassFlag, requestCPUFlag, requestMemoryFlag)
 
-			// Generate and create workloads
-			workloads.CreateNginxWorkloadItems(o.client, namespace)
-			workloads.CreateSQLWorkloadItems(o.client, namespace, storageClassFlag)
-
-			sm := prometheus.GenerateServiceMonitorResource(namespace)
+			//TODO Check for service monitor resource
+			sm := prometheus.GenerateServiceMonitorResource(namespace.Name)
 			prometheus.CreateServiceMonitor(o.prometheus, sm)
 		},
 	}
-	cmd.Flags().StringVar(&storageClassFlag, "storage-class", "longhorn", "Used to define the name of the storage class to use for Persistent Volumes.")
-
+	addCoreFlags(cmd)
 	return cmd
 }

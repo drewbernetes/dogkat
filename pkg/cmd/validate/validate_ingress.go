@@ -2,11 +2,18 @@ package validate
 
 import (
 	"github.com/drew-viles/k8s-e2e-tester/pkg/testsuite"
-	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/coreworkloads"
+	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads"
 	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/web"
 	"github.com/spf13/cobra"
 	"k8s.io/kubectl/pkg/cmd/util"
 	"log"
+)
+
+var (
+	hostFlag         string
+	ingressClassFlag string
+	enableTLSFlag    bool
+	annotationsFlag  string
 )
 
 func newValidateIngressCmd(f util.Factory) *cobra.Command {
@@ -26,54 +33,22 @@ testing of the ingress setup will occur. This will ensure that cert-manager, ext
 			}
 
 			// Configure namespace
-			log.Println("checking for namespace, will create if doesn't exist")
-			namespace := "default"
-			if cmd.Flag("namespace").Value.String() != "" {
-				namespace = cmd.Flag("namespace").Value.String()
-			}
+			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String())
 
-			createNamespaceIfNotExists(o.client, namespace)
+			_, _ = workloads.DeployBaseWorkloads(o.client, namespace.Name, storageClassFlag, requestCPUFlag, requestMemoryFlag)
 
-			// Generate and create workloads
-			nginxWorkload, sqlWorkload := createAndConfirmResources(o.client, namespace)
+			ing := web.CreateIngressResource(o.client, namespace.Name, annotationsFlag, hostFlag, ingressClassFlag, enableTLSFlag)
+			web.ValidateIngressResource(ing)
 
-			log.Println("all resources are deployed, running tests...")
-
-			coreResource := []coreworkloads.Resource{
-				nginxWorkload.Configuration,
-				nginxWorkload.WebPages,
-				nginxWorkload.Workload,
-				nginxWorkload.ServiceAccount,
-				nginxWorkload.Service,
-				nginxWorkload.PodDisruptionBudget,
-				sqlWorkload.Workload,
-				sqlWorkload.ServiceAccount,
-				sqlWorkload.InitConf,
-				sqlWorkload.Secret,
-				sqlWorkload.Service,
-				sqlWorkload.PodDisruptionBudget,
-			}
-
-			err = testsuite.CheckReadyForTesting(coreResource)
-			if err != nil {
-				log.Fatalln(err)
-			}
-
-			//Check volumes after STS confirmation to ensure volumes have been created.
-			volumeResource := parseVolumesFromStatefulSet(o.client, sqlWorkload, namespace)
-			err = testsuite.CheckReadyForTesting(volumeResource)
-			if err != nil {
-				log.Fatalln(err)
-			}
-			log.Println("** ALL RESOURCES ARE DEPLOYED AND READY **")
-
-			ing := web.GenerateWebIngressResource(namespace, map[string]string{})
-			err = ing.Create()
+			err = testsuite.TestIngress(hostFlag)
 			if err != nil {
 				log.Fatalln(err)
 			}
 		},
 	}
+
+	addCoreFlags(cmd)
+	addIngressFlags(cmd)
 
 	return cmd
 }

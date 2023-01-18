@@ -3,6 +3,7 @@ package validate
 import (
 	"github.com/drew-viles/k8s-e2e-tester/pkg/helpers"
 	"github.com/drew-viles/k8s-e2e-tester/pkg/testsuite"
+	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads"
 	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/coreworkloads"
 	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/gpu"
 	"github.com/spf13/cobra"
@@ -31,16 +32,10 @@ runs the validation and test suite against the GPU workload to ensure it is work
 			}
 
 			// Configure namespace
-			log.Println("checking for namespace, will create if doesn't exist")
-			namespace := "default"
-			if cmd.Flag("namespace").Value.String() != "" {
-				namespace = cmd.Flag("namespace").Value.String()
-			}
-
-			createNamespaceIfNotExists(o.client, namespace)
+			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String())
 
 			// Generate and create workloads
-			pod := gpu.GenerateGPUPod(namespace, numberOfGPUsFlag)
+			pod := gpu.GenerateGPUPod(namespace.Name, numberOfGPUsFlag)
 			pod.Client = o.client
 			helpers.HandleCreateError(pod.Create())
 

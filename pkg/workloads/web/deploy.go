@@ -9,26 +9,26 @@ import (
 )
 
 // GenerateNginxDeploy returns a Deployment that will be consumed by the nginx service
-func GenerateNginxDeploy(namespace string) *coreworkloads.Deployment {
+func GenerateNginxDeploy(namespace, cpuRequest, memoryRequest string) *coreworkloads.Deployment {
 	d := &coreworkloads.Deployment{}
 	d.Generate(map[string]string{"namespace": namespace, "name": constants.NginxName, "labels": constants.NginxName, "saName": constants.NginxSAName, "affinityWith": constants.PGSqlName})
 	d.Resource.Spec.Template.Spec.Volumes = []v1.Volume{
-		coreworkloads.GenerateVolumeFromConfigMap("index-html", constants.NginxPagesName, 0644, map[string]string{
+		coreworkloads.GenerateVolumeFromConfigMap("index-html", constants.NginxPagesName, 0777, map[string]string{
 			"index":   "index.php",
 			"healthz": "healthz.php",
 			"common":  "common.php",
 		}),
-		coreworkloads.GenerateVolumeFromConfigMap("conf", constants.NginxConfName, 0644, map[string]string{
+		coreworkloads.GenerateVolumeFromConfigMap("conf", constants.NginxConfName, 0777, map[string]string{
 			"default": "default.conf",
 			"metrics": "metrics.conf",
 		}),
 	}
-	d.Resource.Spec.Template.Spec.Containers = generateNginxContainers()
+	d.Resource.Spec.Template.Spec.Containers = generateNginxContainers(cpuRequest, memoryRequest)
 
 	return d
 }
 
-func generateNginxContainers() []v1.Container {
+func generateNginxContainers(cpuRequest, memoryRequest string) []v1.Container {
 	// Nginx container
 	n := coreworkloads.GenerateContainer("nginx", "nginx", "1.23.2-alpine")
 	n.Env = []v1.EnvVar{
@@ -44,8 +44,8 @@ func generateNginxContainers() []v1.Container {
 	}
 	n.Resources = v1.ResourceRequirements{
 		Requests: map[v1.ResourceName]resource.Quantity{
-			v1.ResourceCPU:    resource.MustParse("1"),
-			v1.ResourceMemory: resource.MustParse("2Gi"),
+			v1.ResourceCPU:    resource.MustParse(cpuRequest),
+			v1.ResourceMemory: resource.MustParse(memoryRequest),
 		},
 	}
 	n.Ports = []v1.ContainerPort{

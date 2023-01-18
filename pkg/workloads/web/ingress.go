@@ -7,22 +7,23 @@ import (
 )
 
 // GenerateWebIngressResource returns an Ingress resource that will be used for Ingress testing.
-func GenerateWebIngressResource(namespace string, annotations map[string]string) *coreworkloads.Ingress {
+func GenerateWebIngressResource(namespace, host, ingressClass string, annotations map[string]string, enableTLS bool) *coreworkloads.Ingress {
 	secret := "e2e-test-secret"
-	host := "e2e-test.nl1.eschercloud.dev"
 
-	tls := []v1.IngressTLS{
-		{
+	tls := []v1.IngressTLS{}
+	if enableTLS {
+		tls = append(tls, v1.IngressTLS{
 			Hosts: []string{
 				host,
 			},
 			SecretName: secret,
-		},
+		})
 	}
 
 	ing := &coreworkloads.Ingress{}
-	ing.Generate(map[string]string{"namespace": namespace, "name": constants.NginxName, "className": "nginx", "host": host})
+	ing.Generate(map[string]string{"namespace": namespace, "name": constants.NginxName, "className": ingressClass, "host": host})
 	ing.Resource.Spec.TLS = tls
+	ing.Resource.Annotations = map[string]string{}
 
 	for k, v := range annotations {
 		ing.Resource.Annotations[k] = v

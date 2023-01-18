@@ -3,14 +3,9 @@ package validate
 import (
 	"github.com/drew-viles/k8s-e2e-tester/pkg/testsuite"
 	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads"
-	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/coreworkloads"
 	"github.com/spf13/cobra"
-	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
 	"k8s.io/kubectl/pkg/cmd/util"
 	"log"
-	"strings"
 )
 
 func newValidateCoreCmd(f util.Factory) *cobra.Command {
@@ -29,6 +24,7 @@ The following is tested:
 * PV creation & Mounting via PVC in StatefulSet
 `,
 		Run: func(cmd *cobra.Command, args []string) {
+
 			var err error
 
 			// Connect to cluster
@@ -37,46 +33,9 @@ The following is tested:
 			}
 
 			// Configure namespace
-			log.Println("checking for namespace, will create if doesn't exist")
-			namespace := "default"
-			if cmd.Flag("namespace").Value.String() != "" {
-				namespace = cmd.Flag("namespace").Value.String()
-			}
+			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String())
 
-			createNamespaceIfNotExists(o.client, namespace)
-
-			// Generate and create workloads
-			nginxWorkload, sqlWorkload := createAndConfirmResources(o.client, namespace)
-
-			log.Println("all resources are deployed, running tests...")
-
-			coreResource := []coreworkloads.Resource{
-				nginxWorkload.Configuration,
-				nginxWorkload.WebPages,
-				nginxWorkload.Workload,
-				nginxWorkload.ServiceAccount,
-				nginxWorkload.Service,
-				nginxWorkload.PodDisruptionBudget,
-				sqlWorkload.Workload,
-				sqlWorkload.ServiceAccount,
-				sqlWorkload.InitConf,
-				sqlWorkload.Secret,
-				sqlWorkload.Service,
-				sqlWorkload.PodDisruptionBudget,
-			}
-
-			err = testsuite.CheckReadyForTesting(coreResource)
-			if err != nil {
-				log.Fatalln(err)
-			}
-
-			//Check volumes after STS confirmation to ensure volumes have been created.
-			volumeResource := parseVolumesFromStatefulSet(o.client, sqlWorkload, namespace)
-			err = testsuite.CheckReadyForTesting(volumeResource)
-			if err != nil {
-				log.Fatalln(err)
-			}
-			log.Println("** ALL RESOURCES ARE DEPLOYED AND READY **")
+			nginxWorkload, _ := workloads.DeployBaseWorkloads(o.client, namespace.Name, storageClassFlag, requestCPUFlag, requestMemoryFlag)
 
 			err = testsuite.ScaleUpStandardNodes(nginxWorkload.Workload)
 			if err != nil {
@@ -84,53 +43,6 @@ The following is tested:
 			}
 		},
 	}
+	addCoreFlags(cmd)
 	return cmd
-}
-
-func createAndConfirmResources(client *kubernetes.Clientset, namespace string) (*workloads.NginxWorkloads, *workloads.PostgresWorkloads) {
-	nginxWorkload := workloads.CreateNginxWorkloadItems(client, namespace)
-	sqlWorkload := workloads.CreateSQLWorkloadItems(client, namespace, storageClassFlag)
-
-	err := nginxWorkload.ValidateNginxWorkloadItems()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = sqlWorkload.ValidateSQLWorkloadItems()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return nginxWorkload, sqlWorkload
-}
-
-func parseVolumesFromStatefulSet(client *kubernetes.Clientset, sqlWorkload *workloads.PostgresWorkloads, namespace string) []coreworkloads.Resource {
-	volumeResource := []coreworkloads.Resource{}
-	volNames := []string{strings.Join([]string{"data", sqlWorkload.Workload.GetResourceName(), "0"}, "-"),
-		strings.Join([]string{"data", sqlWorkload.Workload.GetResourceName(), "1"}, "-"),
-		strings.Join([]string{"data", sqlWorkload.Workload.GetResourceName(), "2"}, "-"),
-	}
-
-	for _, name := range volNames {
-		pvc := &coreworkloads.PersistentVolumeClaim{
-			Client:   client,
-			Resource: &v1.PersistentVolumeClaim{ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: namespace}},
-		}
-		err := pvc.Validate()
-		if err != nil {
-			log.Println(err)
-		}
-		volumeResource = append(volumeResource, pvc)
-
-		pvName := pvc.Resource.Spec.VolumeName
-		pv := &coreworkloads.PersistentVolume{
-			Client:   client,
-			Resource: &v1.PersistentVolume{ObjectMeta: metav1.ObjectMeta{Name: pvName}},
-		}
-		err = pv.Validate()
-		if err != nil {
-			log.Println(err)
-		}
-		volumeResource = append(volumeResource, pv)
-	}
-
-	return volumeResource
 }

@@ -37,8 +37,7 @@ func (i *Ingress) Generate(data map[string]string) {
 										Service: &v1.IngressServiceBackend{
 											Name: data["name"],
 											Port: v1.ServiceBackendPort{
-												Name:   "http",
-												Number: 80,
+												Name: "http",
 											},
 										},
 									},
