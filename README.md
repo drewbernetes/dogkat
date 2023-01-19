@@ -1,53 +1,46 @@
 # Kubernetes End-2-End Workload Tester
-This project was started as a way of testing as many components of a cluster as possible.
 
-It will use my [e2e Helm Chart](https://github.com/drew-viles/helm-charts/tree/main/charts/e2e-basic) and as a result will require a values.yaml to be provided to it via the --values -v flag
+An End-2-End tester that will test a variety of elements of a Kubernetes cluster.
 
-It will test the following:
-* Certificate generation using CertManager
-* Workload deployments
-    * With anti-affinity ensuring workloads can be split across nodes.
-    * Nginx
-      * With Configmap mounts
-    * Postgres database 
-      * With Volume mounts using PVC
-* Ingress deploys, resolves and responds
-* Scaling workloads to test cluster-autoscaler (if deployed)
-* Cluster DNS connectivity tested by connecting the Database to the Nginx workload
+*The resources are baked into the binary (instead of using an external Helm Chart as previous versions did).*
 
-See the [Helm Chart README](https://github.com/drew-viles/helm-charts/blob/main/charts/e2e-basic/README.md) for more info
+The tests are separated out into logical workloads so that core workloads can be tested with additional tests able to be run on top.
+
+| Run              | Description                                                                                                                                                                                                                                                                                                                                                                                         |
+|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Core             | Deploys an Nginx deployment and SQL StatefulSet. Nginx Pod is a collection of Nginx, PHP and Nginx Prometheus Exporter. It has ConfigMap mounts and SQL password mounts and has Affinity with SQL and anti-affinity with itself. SQL contains Postgres with CM and Secret Mounting along with PersistentVolumeClaims for testing the CSI. It has affinity with Nginx and anti-affinity with itself. |
+| Ingress          | Contains the Core workload and also deploys an Ingress resource. The Ingress can be configured to support TLS too allowing testing of things like Cert-Manager.                                                                                                                                                                                                                                     |
+| GPU              | Deploys an Nvidia sample application for adding Vectors. This test will be targeted at a GPU node and will confirm the function of a GPU in a cluster.                                                                                                                                                                                                                                              |
+| **Coming Soon ** |                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Monitoring       | Will deploy the core workload and also deploy a ServiceMonitor and a Grafana Dashboard for the Nginx service to display Grafana Functionality. The Service Monitor will need to be manually checked until a decision on vaildation that this is working can be achieved.                                                                                                                            |
+| Istio            | This will deploy the core workload and then add a Virtual Service and Gateway on. It will then be validated in the same was as the Ingress test. This will confirm basic functionality of Istio.                                                                                                                                                                                                    |
+
 
 # TODO
-* Implement Go Testing to validate the code.
-* Test cloud connectivity.
+* Detect availability of things like an Ingress Controller and StorageClass before running tests.
+* Introduce metrics and telemetry to feedback the speed of a test and all parts of it.
+* Implement Go Testing.
+* Monitoring detection and testing.
 * Istio detection and testing.
 
 See below for a comprehensive list of tests and what can be confirmed using this tool.
 
 # Usage
+For details on how to use the tool, run `e2e-test --help`
+
+# Examples
+
+Test core workloads with a defined storage class:
+```shell
+e2e-test validate core --storage-class longhorn
 ```
-A End-2-End tester that can be used to spin up a sandbox cluster in EKS, 
-                        test all elements of a cluster rollout,
-                        and then spin it down again.
-                        Documentation is available here: https://github.com/drew-viles/k8s-e2e-tester/blob/main/README.md
 
-Usage:
-  k8s-e2e-tester [flags]
-  k8s-e2e-tester [command]
+Test Ingress with tls:
+```shell
+e2e-test validate ingress --storage-class longhorn --ingress-class nginx --enable-tls --annotations cert-manager.io/cluster-issuer=letsencrypt
+```
 
-Available Commands:
-  completion  Generate the autocompletion script for the specified shell
-  help        Help about any command
-  version     Print the version number of EKS E2E-Tester
-
-Flags:
-  -h, --help                     help for k8s-e2e-tester
-  -k, --kubeconfig string        kubeconfig to use defaults to: /home/drew/.kube/config (default "/home/drew/.kube/config")
-  -n, --namespace string         The Namespace to deploy the tests to (default "default")
-  -a, --test-all                 Simply tests everything it can - invokes all test commands - won't test Istio
-  -w, --test-standard-workload   Test that a workload can be deployed - this also tests Ingress, Cluster DNS, Storage and Scaling
-  -v, --values string            The Helm values file to use - required
-
-Use "k8s-e2e-tester [command] --help" for more information about a command.
-
+Test GPU
+```shell
+e2e-test validate gpu --number-of-gpus 1
 ```

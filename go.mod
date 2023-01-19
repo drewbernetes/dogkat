@@ -3,6 +3,7 @@ module github.com/drew-viles/k8s-e2e-tester
 go 1.19
 
 require (
+	github.com/kubernetes-client/go v0.0.0-20211217162629-92040c8d5731
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.59.1
 	github.com/prometheus-operator/prometheus-operator/pkg/client v0.59.1
 	github.com/spf13/cobra v1.5.0
@@ -11,7 +12,9 @@ require (
 	istio.io/client-go v1.15.0
 	k8s.io/api v0.25.0
 	k8s.io/apimachinery v0.25.0
+	k8s.io/cli-runtime v0.24.2
 	k8s.io/client-go v0.25.0
+	k8s.io/kubectl v0.24.2
 )
 
 require (
@@ -131,11 +134,9 @@ require (
 	istio.io/api v0.0.0-20220826132550-04f2b20dc284 // indirect
 	k8s.io/apiextensions-apiserver v0.25.0 // indirect
 	k8s.io/apiserver v0.25.0 // indirect
-	k8s.io/cli-runtime v0.24.2 // indirect
 	k8s.io/component-base v0.25.0 // indirect
 	k8s.io/klog/v2 v2.80.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20220803164354-a70c9af30aea // indirect
-	k8s.io/kubectl v0.24.2 // indirect
 	k8s.io/utils v0.0.0-20220823124924-e9cbc92d1a73 // indirect
 	oras.land/oras-go v1.2.0 // indirect
 	sigs.k8s.io/controller-runtime v0.12.3 // indirect
