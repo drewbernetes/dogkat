@@ -18,6 +18,7 @@ The tests are separated out into logical workloads so that core workloads can be
 
 # TODO
 * Detect availability of things like an Ingress Controller and StorageClass before running tests.
+* Introduce metrics and telemetry to feedback the speed of a test and all parts of it.
 * Implement Go Testing.
 * Monitoring detection and testing.
 * Istio detection and testing.
