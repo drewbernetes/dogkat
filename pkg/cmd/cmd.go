@@ -1,8 +1,23 @@
+/*
+Copyright 2022 EscherCloud.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package cmd
 
 import (
-	"github.com/drew-viles/k8s-e2e-tester/pkg/cmd/delete"
-	"github.com/drew-viles/k8s-e2e-tester/pkg/cmd/validate"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/cmd/delete"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/cmd/validate"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/kubectl/pkg/cmd/util"
@@ -17,7 +32,7 @@ func newRootCommand() *cobra.Command {
 		Use: "k8s-e2e-tester",
 		Long: `Deploys resources to allow End-2-End testing to be conducted. 
 It can be used to test most elements of a cluster to ensure consistent stability and functionality.
-Documentation is available here: https://github.com/drew-viles/k8s-e2e-tester/blob/main/README.md`,
+Documentation is available here: https://github.com/eschercloudai/k8s-e2e-tester/blob/main/README.md`,
 	}
 
 	commands := []*cobra.Command{

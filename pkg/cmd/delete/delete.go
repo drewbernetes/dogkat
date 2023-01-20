@@ -1,10 +1,23 @@
+/*
+Copyright 2022 EscherCloud.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package delete
 
 import (
 	"context"
-	promclient "github.com/prometheus-operator/prometheus-operator/pkg/client/versioned"
 	"github.com/spf13/cobra"
-	istioclient "istio.io/client-go/pkg/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/kubectl/pkg/cmd/util"
@@ -12,9 +25,10 @@ import (
 )
 
 type deleteOptions struct {
-	client     *kubernetes.Clientset
-	istio      *istioclient.Clientset
-	prometheus *promclient.Clientset
+	client *kubernetes.Clientset
+	//TODO: Enable these once They are implemented
+	//istio      *istioclient.Clientset
+	//prometheus *promclient.Clientset
 }
 
 func NewDeleteCommand(f util.Factory) *cobra.Command {

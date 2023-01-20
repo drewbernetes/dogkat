@@ -1,10 +1,24 @@
+/*
+Copyright 2022 EscherCloud.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package testsuite
 
 import (
-	"errors"
 	"fmt"
-	"github.com/drew-viles/k8s-e2e-tester/pkg/helpers"
-	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/coreworkloads"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/helpers"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/coreworkloads"
 	"golang.org/x/net/context"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -39,7 +53,7 @@ func CheckReadyForTesting(resource []coreworkloads.Resource) error {
 		go readyCheck(r)
 	}
 
-	for _, _ = range resource {
+	for range resource {
 		<-checksCompleted
 	}
 
@@ -60,54 +74,6 @@ func checkIfResourceIsReady(r coreworkloads.Resource, counter int, delaySeconds 
 	return true
 }
 
-//// ScaleUpGPUNodes scales up the GPU nodes that generic workloads will sit on.
-//func ScaleUpGPUNodes(resource *coreworkloads.Pod) error {
-//	replicaSize := int32(2)
-//	//Get number of nodes
-//	initialNodeCount := countNodes(resource.Client)
-//	//Scale up the workload
-//	initialReplicaSize := *resource.Resource.Spec.Replicas
-//	log.Println("Testing cluster scaling")
-//	log.Printf("Node count before Scale %v\n", initialNodeCount)
-//
-//	resource.Resource.Spec.Replicas = helpers.IntPtr(replicaSize)
-//
-//	if err := resource.Update(); err != nil {
-//		return errors.New(fmt.Sprintf("Failed to increase replicas for %s:%s: %v\n", resource.Resource.Kind, resource.Resource.Name, err))
-//	}
-//
-//	log.Printf("Waiting for Deployment to scale\n")
-//	time.Sleep(time.Second * 60)
-//
-//	isReady := checkIfResourceIsReady(resource, 0, 5)
-//	if !isReady {
-//		return errors.New(fmt.Sprintf("There was a problem scaling up the resource - it was not considered ready - you may need to ensure your nodes can support %v of these workloads\n", replicaSize))
-//	}
-//
-//	//Get number of nodes
-//	newNodeAmount := countNodes(resource.Client)
-//	if newNodeAmount <= initialNodeCount {
-//		log.Printf("The node count did not increase - either the nodes were not required, cluster-autoscaler didn't kick in or you're running a single node cluster\n")
-//		//Scale down the workload
-//		log.Printf("Replicas after Scale %v\n", *resource.Resource.Spec.Replicas)
-//		resource.Resource.Spec.Replicas = helpers.IntPtr(initialReplicaSize)
-//		if err := resource.Update(); err != nil {
-//			log.Printf("Failed to restore replias for %s:%s: %v\n", resource.Resource.Kind, resource.Resource.Name, err)
-//		}
-//		return nil
-//	}
-//	log.Printf("Replicas after Scale %v\n", *resource.Resource.Spec.Replicas)
-//	log.Printf("Nodes after Scale %v\n", newNodeAmount)
-//
-//	//Scale down the workload
-//	resource.Resource.Spec.Replicas = helpers.IntPtr(initialReplicaSize)
-//	if err := resource.Update(); err != nil {
-//		log.Printf("Failed to restore replias for %s:%s: %v\n", resource.Resource.Kind, resource.Resource.Name, err)
-//	}
-//
-//	return nil
-//}
-
 // ScaleUpStandardNodes scales up the standard nodes that generic workloads will sit on.
 func ScaleUpStandardNodes(resource *coreworkloads.Deployment) error {
 	replicaSize := int32(5)
@@ -121,7 +87,7 @@ func ScaleUpStandardNodes(resource *coreworkloads.Deployment) error {
 	resource.Resource.Spec.Replicas = helpers.IntPtr(replicaSize)
 
 	if err := resource.Update(); err != nil {
-		return errors.New(fmt.Sprintf("Failed to increase replicas for %s:%s: %v\n", resource.Resource.Kind, resource.Resource.Name, err))
+		return fmt.Errorf("Failed to increase replicas for %s:%s: %v\n", resource.Resource.Kind, resource.Resource.Name, err)
 	}
 
 	log.Printf("Waiting for Deployment to scale\n")
@@ -129,7 +95,7 @@ func ScaleUpStandardNodes(resource *coreworkloads.Deployment) error {
 
 	isReady := checkIfResourceIsReady(resource, 0, 5)
 	if !isReady {
-		return errors.New(fmt.Sprintf("There was a problem scaling up the resource - it was not considered ready - you may need to ensure your nodes can support %v of these workloads\n", replicaSize))
+		return fmt.Errorf("There was a problem scaling up the resource - it was not considered ready - you may need to ensure your nodes can support %v of these workloads\n", replicaSize)
 	}
 
 	//Get number of nodes

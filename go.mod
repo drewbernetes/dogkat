@@ -1,4 +1,4 @@
-module github.com/drew-viles/k8s-e2e-tester
+module github.com/eschercloudai/k8s-e2e-tester
 
 go 1.19
 

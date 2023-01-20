@@ -1,13 +1,23 @@
+/*
+Copyright 2022 EscherCloud.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package validate
 
 import (
-	promclient "github.com/prometheus-operator/prometheus-operator/pkg/client/versioned"
-	promscheme "github.com/prometheus-operator/prometheus-operator/pkg/client/versioned/scheme"
 	"github.com/spf13/cobra"
-	istioclient "istio.io/client-go/pkg/clientset/versioned"
-	istioscheme "istio.io/client-go/pkg/clientset/versioned/scheme"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/kubectl/pkg/cmd/util"
 	"log"
 )
@@ -19,9 +29,10 @@ var (
 )
 
 type validateOptions struct {
-	client     *kubernetes.Clientset
-	istio      *istioclient.Clientset
-	prometheus *promclient.Clientset
+	client *kubernetes.Clientset
+	//TODO: Enable these once They are implemented
+	//istio      *istioclient.Clientset
+	//prometheus *promclient.Clientset
 }
 
 func NewValidateCommand(f util.Factory) *cobra.Command {
@@ -65,18 +76,20 @@ func addIngressFlags(cmd *cobra.Command) {
 	}
 }
 
+//TODO: Enable these once They are implemented
+
 // addPrometheusToScheme adds the Prometheus scheme to the scheme so that the clientset can use it.
-func addPrometheusToScheme() {
-	err := promscheme.AddToScheme(scheme.Scheme)
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
+//func addPrometheusToScheme() {
+//	err := promscheme.AddToScheme(scheme.Scheme)
+//	if err != nil {
+//		log.Fatalln(err)
+//	}
+//}
 
 // addIstioScheme adds the Istio scheme to the scheme so that the clientset can use it.
-func addIstioToScheme() {
-	err := istioscheme.AddToScheme(scheme.Scheme)
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
+//func addIstioToScheme() {
+//	err := istioscheme.AddToScheme(scheme.Scheme)
+//	if err != nil {
+//		log.Fatalln(err)
+//	}
+//}

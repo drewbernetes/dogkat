@@ -1,14 +1,28 @@
+/*
+Copyright 2022 EscherCloud.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package validate
 
 import (
-	"github.com/drew-viles/k8s-e2e-tester/pkg/helpers"
-	"github.com/drew-viles/k8s-e2e-tester/pkg/testsuite"
-	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads"
-	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/coreworkloads"
-	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/gpu"
-	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/prometheus"
-	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/sql"
-	"github.com/drew-viles/k8s-e2e-tester/pkg/workloads/web"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/helpers"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/testsuite"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/coreworkloads"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/gpu"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/sql"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/web"
 	"github.com/spf13/cobra"
 	"k8s.io/kubectl/pkg/cmd/util"
 	"log"
@@ -47,9 +61,9 @@ Istio test suites will not be affected by this.`,
 				log.Fatalln(err)
 			}
 
-			//TODO Check for service monitor resource
-			sm := prometheus.GenerateServiceMonitorResource(namespace.Name)
-			prometheus.CreateServiceMonitor(o.prometheus, sm)
+			//TODO Check for service monitor resource and implement creation
+			//sm := prometheus.GenerateServiceMonitorResource(namespace.Name)
+			//prometheus.CreateServiceMonitor(o.prometheus, sm)
 
 			web.DeleteNginxWorkloadItems(o.client, namespace.Name)
 			web.DeleteIngressWorkloadItems(o.client, namespace.Name)
