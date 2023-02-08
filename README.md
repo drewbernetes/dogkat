@@ -1,6 +1,10 @@
-# Kubernetes End-2-End Workload Tester
+# DogKat
 
-An End-2-End tester that will test a variety of elements of a Kubernetes cluster.
+<div align="center">
+<img src="logo.png" width="500px" />
+</div>
+
+DogKat is an End-2-End tester that will test a variety of elements of a Kubernetes cluster. 
 
 *The resources are baked into the binary (instead of using an external Helm Chart as previous versions did).*
 
