@@ -21,8 +21,8 @@ RUN apk add bash build-base jq curl git python3 py3-pip openssh-client
 RUN echo "ServerAliveInterval 120" >> /etc/ssh/ssh_config
 
 RUN echo "dogkat:x:1000:1000:Dogkat Non Root,,,:/home/dogkat:" >> /etc/passwd
-RUN mkdir -p /home/baski/.config/openstack/
-RUN chown baski: -R /home/dogkat
+RUN mkdir -p /home/dogkat/.config/openstack/
+RUN chown dogkat: -R /home/dogkat
 
 COPY --from=go-builder /tmp/dogkat /usr/bin/
 
