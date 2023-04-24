@@ -1,4 +1,4 @@
-name: Main
+name: Build on Tag
 
 on:
   push:
@@ -20,7 +20,8 @@ jobs:
         with:
           version: latest
           skip-cache: true
-          args: --timeout=5m
+          args: --timeout=3m
+
   test:
     name: Run tests
     runs-on: 'ubuntu-22.04'
@@ -31,10 +32,37 @@ jobs:
         with:
           go-version: '1.19.2'
       - run: go test -v -cover ./...
+
+  security-checks:
+    runs-on: ubuntu-22.04
+    needs: test
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Build Local Container
+        uses: eschercloudai/container-security-action@v0.0.1-beta.2
+        if: github.event_name != 'pull_request'
+        id: build-and-scan
+        with:
+          image-repo: ghcr.io
+          repo-username: ${{ github.repository_owner }}
+          repo-password: ${{ secrets.GITHUB_TOKEN }}
+          image-name: dogkat
+          image-tag: ${{ github.ref_name }}
+          min-severity: critical
+          add-latest-tag: true
+          publish-image: true
+          cosign-private-key: ${{secrets.COSIGN_KEY}}
+          cosign-password: ${{secrets.COSIGN_PASSWORD}}
+          cosign-tlog: true
+          dockerfile-path: docker
+
   release:
     name: Create Release
     runs-on: 'ubuntu-22.04'
-    needs: test
+    needs: security-checks
     steps:
       - uses: actions/checkout@v3
         with:
@@ -52,7 +80,7 @@ jobs:
           echo "GOARCH=$GOARCH" >> $GITHUB_ENV
       - name: Build
         run: |
-          go build -o "$BINARY_NAME" -v cmd/main.go
+          CGO_ENABLED=0 go build -o "$BINARY_NAME" cmd/dogkat/main.go
       - name: Release Notes
         run: |
           git log $(git describe HEAD~ --tags --abbrev=0)..HEAD --pretty='format:* %h %s%n  * %an <%ae>' --no-merges >> ".github/RELEASE-TEMPLATE.md"
