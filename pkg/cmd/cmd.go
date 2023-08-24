@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/cmd/delete"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/cmd/metrics"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/cmd/validate"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -36,6 +37,7 @@ Documentation is available here: https://github.com/eschercloudai/k8s-e2e-tester
 	}
 
 	commands := []*cobra.Command{
+		metrics.NewMetricsCommand(f),
 		validate.NewValidateCommand(f),
 		delete.NewDeleteCommand(f),
 		NewVersionCmd(),

@@ -18,6 +18,7 @@ package testsuite
 import (
 	"context"
 	"errors"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/tracing"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/coreworkloads"
 	v1 "k8s.io/api/core/v1"
 	"log"
@@ -25,6 +26,11 @@ import (
 )
 
 func TestGPU(pod *coreworkloads.Pod) error {
+	tracer := tracing.Tracer{JobName: "e2e_workloads", PushURL: "http://prometheus-push-gateway.prometheus:9091"}
+	tracer.NewTimer("test_gpu", "Times the testing of the GPU resource")
+	timer := tracer.Start()
+	defer timer.ObserveDuration()
+
 	log.Printf("checking pod logs in %s for PASSED status\n", pod.Resource.Name)
 	logs := pod.Client.CoreV1().Pods(pod.Resource.Namespace).GetLogs(pod.Resource.Name, &v1.PodLogOptions{})
 

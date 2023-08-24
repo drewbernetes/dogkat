@@ -45,7 +45,7 @@ func GenerateNginxDeploy(namespace, cpuRequest, memoryRequest string) *coreworkl
 
 func generateNginxContainers(cpuRequest, memoryRequest string) []v1.Container {
 	// Nginx container
-	n := coreworkloads.GenerateContainer("nginx", "nginx", "1.23.2-alpine")
+	n := coreworkloads.GenerateContainer("nginx", "nginx", "1.25-alpine")
 	n.Env = []v1.EnvVar{
 		{
 			Name: "POSTGRES_PASSWORD",
@@ -95,7 +95,7 @@ func generateNginxContainers(cpuRequest, memoryRequest string) []v1.Container {
 	}
 
 	// PHP container
-	p := coreworkloads.GenerateContainer("php", "drewviles/php-pdo", "8.0.18-fpm")
+	p := coreworkloads.GenerateContainer("php", "drewviles/php-pdo", "latest")
 	p.Env = []v1.EnvVar{
 		{
 			Name: "POSTGRES_PASSWORD",

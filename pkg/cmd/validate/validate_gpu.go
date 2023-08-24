@@ -18,6 +18,7 @@ package validate
 import (
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/helpers"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/testsuite"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/tracing"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/coreworkloads"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/gpu"
@@ -45,9 +46,13 @@ runs the validation and test suite against the GPU workload to ensure it is work
 			if o.client, err = f.KubernetesClientSet(); err != nil {
 				log.Fatalln(err)
 			}
-
+			//TODO: This repeats - let's clean it up!
 			// Configure namespace
 			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String())
+
+			tracer := tracing.Tracer{JobName: "e2e_workloads", PushURL: "http://prometheus-push-gateway.prometheus:9091"}
+			tracer.NewTimer("deploy_gpu", "Times the deployment of a gpu resource")
+			timer := tracer.Start()
 
 			// Generate and create workloads
 			pod := gpu.GenerateGPUPod(namespace.Name, numberOfGPUsFlag)
@@ -73,16 +78,13 @@ runs the validation and test suite against the GPU workload to ensure it is work
 
 			log.Println("** ALL RESOURCES ARE DEPLOYED AND READY **")
 
+			timer.ObserveDuration()
 			err = testsuite.TestGPU(pod)
 			if err != nil {
 				log.Fatalln(err)
 			}
 
 			//err = testsuite.ScaleUpGPUNodes(pod)
-			//if err != nil {
-			//	log.Fatalln(err)
-			//}
-			//err = testsuite.TestGPU(pod)
 			//if err != nil {
 			//	log.Fatalln(err)
 			//}

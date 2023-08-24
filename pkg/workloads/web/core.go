@@ -18,6 +18,7 @@ package web
 import (
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/constants"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/helpers"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/tracing"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/coreworkloads"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
@@ -29,7 +30,7 @@ import (
 	"strings"
 )
 
-type NginxWorkloads struct {
+type NginxResources struct {
 	Workload            *coreworkloads.Deployment
 	Configuration       *coreworkloads.ConfigMap
 	WebPages            *coreworkloads.ConfigMap
@@ -39,8 +40,8 @@ type NginxWorkloads struct {
 }
 
 // CreateNginxWorkloadItems creates the Nginx workloads required for the core tests to run.
-func CreateNginxWorkloadItems(client *kubernetes.Clientset, namespace, cpuRequest, memoryRequest string) *NginxWorkloads {
-	w := &NginxWorkloads{}
+func CreateNginxWorkloadItems(client *kubernetes.Clientset, namespace, cpuRequest, memoryRequest string) *NginxResources {
+	w := &NginxResources{}
 
 	w.Configuration = GenerateNginxConfigMap(namespace)
 	w.Configuration.Client = client
@@ -73,7 +74,7 @@ func CreateNginxWorkloadItems(client *kubernetes.Clientset, namespace, cpuReques
 }
 
 // ValidateNginxWorkloadItems validates the Nginx workloads required for the core tests to run.
-func (w *NginxWorkloads) ValidateNginxWorkloadItems() error {
+func (w *NginxResources) ValidateNginxWorkloadItems() error {
 	var err error
 
 	err = w.Configuration.Validate()
@@ -163,7 +164,13 @@ func DeleteNginxWorkloadItems(client *kubernetes.Clientset, namespace string) {
 }
 
 // CreateIngressResource creates the ingress resource for testing.
-func CreateIngressResource(client *kubernetes.Clientset, namespace, annotations, host, ingressClass string, enableTLS bool) *coreworkloads.Ingress {
+func CreateIngressResource(client *kubernetes.Clientset, namespace, annotations, host, ingressClass string, enableTLS bool) {
+
+	tracer := tracing.Tracer{JobName: "e2e_workloads", PushURL: "http://prometheus-push-gateway.prometheus:9091"}
+	tracer.NewTimer("deploy_ingress", "Times the deployment of an ingress resource")
+	timer := tracer.Start()
+	defer timer.ObserveDuration()
+
 	a := map[string]string{}
 	if len(annotations) != 0 {
 		p := strings.Split(annotations, ",")
@@ -179,11 +186,7 @@ func CreateIngressResource(client *kubernetes.Clientset, namespace, annotations,
 	ing.Client = client
 
 	helpers.HandleCreateError(ing.Create())
-	return ing
-}
 
-// ValidateIngressResource validates the ingress resource for testing.
-func ValidateIngressResource(ing *coreworkloads.Ingress) {
 	err := ing.Validate()
 	if err != nil {
 		log.Fatalln(err)

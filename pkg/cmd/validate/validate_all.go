@@ -18,6 +18,7 @@ package validate
 import (
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/helpers"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/testsuite"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/tracing"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/coreworkloads"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/gpu"
@@ -43,7 +44,7 @@ Istio test suites will not be affected by this.`,
 			if o.client, err = f.KubernetesClientSet(); err != nil {
 				log.Fatalln(err)
 			}
-
+			//TODO: This repeats - let's clean it up!
 			// Configure namespace
 			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String())
 
@@ -54,8 +55,7 @@ Istio test suites will not be affected by this.`,
 				log.Fatalln(err)
 			}
 
-			ing := web.CreateIngressResource(o.client, namespace.Name, annotationsFlag, hostFlag, ingressClassFlag, enableTLSFlag)
-			web.ValidateIngressResource(ing)
+			web.CreateIngressResource(o.client, namespace.Name, annotationsFlag, hostFlag, ingressClassFlag, enableTLSFlag)
 			err = testsuite.TestIngress(hostFlag)
 			if err != nil {
 				log.Fatalln(err)
@@ -69,7 +69,12 @@ Istio test suites will not be affected by this.`,
 			web.DeleteIngressWorkloadItems(o.client, namespace.Name)
 			sql.DeleteSQLWorkloadItems(o.client, namespace.Name)
 
-			// Generate and create workloads
+			// Generate and create GPU workloads
+
+			tracer := tracing.Tracer{JobName: "e2e_workloads", PushURL: "http://prometheus-push-gateway.prometheus:9091"}
+			tracer.NewTimer("deploy_gpu", "Times the deployment of a gpu resource")
+			timer := tracer.Start()
+
 			pod := gpu.GenerateGPUPod(namespace.Name, numberOfGPUsFlag)
 			pod.Client = o.client
 			helpers.HandleCreateError(pod.Create())
@@ -90,6 +95,7 @@ Istio test suites will not be affected by this.`,
 			if err != nil {
 				log.Fatalln(err)
 			}
+			timer.ObserveDuration()
 
 			log.Println("** ALL RESOURCES ARE DEPLOYED AND READY **")
 

@@ -18,6 +18,7 @@ package workloads
 import (
 	"github.com/docker/distribution/context"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/testsuite"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/tracing"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/coreworkloads"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/sql"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/web"
@@ -31,6 +32,11 @@ import (
 // CreateNamespaceIfNotExists create the provided namespace if it doesn't exist.
 // It will return the namespace once created or if it is located.
 func CreateNamespaceIfNotExists(client *kubernetes.Clientset, ns string) *v1.Namespace {
+	tracer := tracing.Tracer{JobName: "e2e_workloads", PushURL: "http://prometheus-push-gateway.prometheus:9091"}
+	tracer.NewTimer("deploy_namespace", "Times the deployment of the namespace")
+	timer := tracer.Start()
+	defer timer.ObserveDuration()
+
 	log.Println("checking for namespace, will create if doesn't exist")
 	namespace := "default"
 	if len(ns) != 0 {
@@ -58,12 +64,17 @@ func CreateNamespaceIfNotExists(client *kubernetes.Clientset, ns string) *v1.Nam
 }
 
 // DeployBaseWorkloads deploys the basic applications required for the majority of testing.
-func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, cpuRequest, memoryRequest string) (*web.NginxWorkloads, *sql.PostgresWorkloads) {
+func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, cpuRequest, memoryRequest string) (*web.NginxResources, *sql.PostgresWorkloads) {
 	var err error
+
+	tracer := tracing.Tracer{JobName: "e2e_workloads", PushURL: "http://prometheus-push-gateway.prometheus:9091"}
+	tracer.NewTimer("deploy_base_workloads", "Times the deployment of the base workloads")
 
 	//TODO: Check storage class is available or that a CNI is available
 	//TODO: Check that cluster-autoscaler is available
 
+	timer := tracer.Start()
+	defer timer.ObserveDuration()
 	// Generate and create workloads
 	nginxWorkload := web.CreateNginxWorkloadItems(client, namespace, cpuRequest, memoryRequest)
 	sqlWorkload := sql.CreateSQLWorkloadItems(client, namespace, storageClass)

@@ -47,6 +47,7 @@ The following is tested:
 				log.Fatalln(err)
 			}
 
+			//TODO: This repeats - let's clean it up!
 			// Configure namespace
 			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String())
 

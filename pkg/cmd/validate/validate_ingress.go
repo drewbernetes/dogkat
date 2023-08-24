@@ -46,14 +46,13 @@ testing of the ingress setup will occur. This will ensure that cert-manager, ext
 			if o.client, err = f.KubernetesClientSet(); err != nil {
 				log.Fatalln(err)
 			}
-
+			//TODO: This repeats - let's clean it up!
 			// Configure namespace
 			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String())
 
 			_, _ = workloads.DeployBaseWorkloads(o.client, namespace.Name, storageClassFlag, requestCPUFlag, requestMemoryFlag)
 
-			ing := web.CreateIngressResource(o.client, namespace.Name, annotationsFlag, hostFlag, ingressClassFlag, enableTLSFlag)
-			web.ValidateIngressResource(ing)
+			web.CreateIngressResource(o.client, namespace.Name, annotationsFlag, hostFlag, ingressClassFlag, enableTLSFlag)
 
 			err = testsuite.TestIngress(hostFlag)
 			if err != nil {
