@@ -46,13 +46,17 @@ runs the validation and test suite against the GPU workload to ensure it is work
 			if o.client, err = f.KubernetesClientSet(); err != nil {
 				log.Fatalln(err)
 			}
+
+			fullTracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGatewayURLFlag}
+			fullTracer.SetupMetricsGatherer("full_e2e_test_gpu_duration_seconds", "Times the entire e2e workload testing for a GPU run")
+			fullTracer.Start()
 			//TODO: This repeats - let's clean it up!
 			// Configure namespace
-			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String())
+			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String(), pushGatewayURLFlag)
 
-			tracer := tracing.Tracer{JobName: "e2e_workloads", PushURL: "http://prometheus-push-gateway.prometheus:9091"}
-			tracer.NewTimer("deploy_gpu", "Times the deployment of a gpu resource")
-			timer := tracer.Start()
+			tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGatewayURLFlag}
+			tracer.SetupMetricsGatherer("deploy_gpu_duration_seconds", "Times the deployment of a gpu resource")
+			tracer.Start()
 
 			// Generate and create workloads
 			pod := gpu.GenerateGPUPod(namespace.Name, numberOfGPUsFlag)
@@ -78,8 +82,9 @@ runs the validation and test suite against the GPU workload to ensure it is work
 
 			log.Println("** ALL RESOURCES ARE DEPLOYED AND READY **")
 
-			timer.ObserveDuration()
-			err = testsuite.TestGPU(pod)
+			tracer.CompleteGathering()
+
+			err = testsuite.TestGPU(pod, pushGatewayURLFlag)
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -88,6 +93,8 @@ runs the validation and test suite against the GPU workload to ensure it is work
 			//if err != nil {
 			//	log.Fatalln(err)
 			//}
+
+			fullTracer.CompleteGathering()
 		},
 	}
 	cmd.Flags().StringVar(&numberOfGPUsFlag, "number-of-gpus", "1", "Sets the number of GPUS in resources.limits")

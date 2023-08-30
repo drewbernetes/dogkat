@@ -76,11 +76,11 @@ func checkIfResourceIsReady(r coreworkloads.Resource, counter int, delaySeconds 
 }
 
 // ScaleUpStandardNodes scales up the standard nodes that generic workloads will sit on.
-func ScaleUpStandardNodes(resource *coreworkloads.Deployment) error {
+func ScaleUpStandardNodes(resource *coreworkloads.Deployment, pushGateway string) error {
 
-	tracer := tracing.Tracer{JobName: "e2e_workloads", PushURL: "http://prometheus-push-gateway.prometheus:9091"}
-	tracer.NewTimer("scale_workload", "Times the scaling of workloads to determine how long the autoscaler takes")
-	timer := tracer.Start()
+	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
+	tracer.SetupMetricsGatherer("scale_workload_duration_seconds", "Times the scaling of workloads to determine how long the autoscaler takes")
+	tracer.Start()
 
 	replicaSize := int32(5)
 	//Get number of nodes
@@ -119,7 +119,7 @@ func ScaleUpStandardNodes(resource *coreworkloads.Deployment) error {
 	log.Printf("Nodes after Scale %v\n", newNodeAmount)
 
 	//End timer here as we only care about the scale in time as we need to know how quick the autoscaling is.
-	timer.ObserveDuration()
+	tracer.CompleteGathering()
 
 	//Scale down the workload
 	resource.Resource.Spec.Replicas = helpers.IntPtr(initialReplicaSize)

@@ -164,12 +164,10 @@ func DeleteNginxWorkloadItems(client *kubernetes.Clientset, namespace string) {
 }
 
 // CreateIngressResource creates the ingress resource for testing.
-func CreateIngressResource(client *kubernetes.Clientset, namespace, annotations, host, ingressClass string, enableTLS bool) {
-
-	tracer := tracing.Tracer{JobName: "e2e_workloads", PushURL: "http://prometheus-push-gateway.prometheus:9091"}
-	tracer.NewTimer("deploy_ingress", "Times the deployment of an ingress resource")
-	timer := tracer.Start()
-	defer timer.ObserveDuration()
+func CreateIngressResource(client *kubernetes.Clientset, namespace, annotations, host, ingressClass string, enableTLS bool, pushGateway string) {
+	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
+	tracer.SetupMetricsGatherer("deploy_ingress_duration_seconds", "Times the deployment of an ingress resource")
+	tracer.Start()
 
 	a := map[string]string{}
 	if len(annotations) != 0 {
@@ -191,6 +189,7 @@ func CreateIngressResource(client *kubernetes.Clientset, namespace, annotations,
 	if err != nil {
 		log.Fatalln(err)
 	}
+	tracer.CompleteGathering()
 }
 
 // DeleteIngressWorkloadItems deletes the Ingress resource.

@@ -23,9 +23,10 @@ import (
 )
 
 var (
-	storageClassFlag  string
-	requestCPUFlag    string
-	requestMemoryFlag string
+	storageClassFlag   string
+	requestCPUFlag     string
+	requestMemoryFlag  string
+	pushGatewayURLFlag string
 )
 
 type validateOptions struct {
@@ -62,6 +63,7 @@ func addCoreFlags(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&storageClassFlag, "storage-class", "", "The name of the storage class to use for Persistent Volumes")
 	cmd.Flags().StringVar(&requestCPUFlag, "cpu", "1", "The request CPU value to ensure scaling happens")
 	cmd.Flags().StringVar(&requestMemoryFlag, "memory", "1Gi", "The request memory value to ensure scaling happens")
+	cmd.Flags().StringVar(&pushGatewayURLFlag, "push-gateway", "http://prometheus-push-gateway.prometheus:9091", "The url to which the metrics should be pushed.")
 }
 
 // addIngressFlags adds the flags required for the ingress workload. It can't be persistent as some just won't be required for all tests.

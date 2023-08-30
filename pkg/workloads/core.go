@@ -31,11 +31,10 @@ import (
 
 // CreateNamespaceIfNotExists create the provided namespace if it doesn't exist.
 // It will return the namespace once created or if it is located.
-func CreateNamespaceIfNotExists(client *kubernetes.Clientset, ns string) *v1.Namespace {
-	tracer := tracing.Tracer{JobName: "e2e_workloads", PushURL: "http://prometheus-push-gateway.prometheus:9091"}
-	tracer.NewTimer("deploy_namespace", "Times the deployment of the namespace")
-	timer := tracer.Start()
-	defer timer.ObserveDuration()
+func CreateNamespaceIfNotExists(client *kubernetes.Clientset, ns, pushGateway string) *v1.Namespace {
+	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
+	tracer.SetupMetricsGatherer("deploy_namespace_duration_seconds", "Times the deployment of the namespace")
+	tracer.Start()
 
 	log.Println("checking for namespace, will create if doesn't exist")
 	namespace := "default"
@@ -60,21 +59,21 @@ func CreateNamespaceIfNotExists(client *kubernetes.Clientset, ns string) *v1.Nam
 	if err != nil {
 		log.Fatalln(err)
 	}
+	tracer.CompleteGathering()
 	return n
 }
 
 // DeployBaseWorkloads deploys the basic applications required for the majority of testing.
-func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, cpuRequest, memoryRequest string) (*web.NginxResources, *sql.PostgresWorkloads) {
+func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, cpuRequest, memoryRequest, pushGateway string) (*web.NginxResources, *sql.PostgresWorkloads) {
 	var err error
 
-	tracer := tracing.Tracer{JobName: "e2e_workloads", PushURL: "http://prometheus-push-gateway.prometheus:9091"}
-	tracer.NewTimer("deploy_base_workloads", "Times the deployment of the base workloads")
+	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
+	tracer.SetupMetricsGatherer("deploy_base_workloads_duration_seconds", "Times the deployment of the base workloads")
+	tracer.Start()
 
 	//TODO: Check storage class is available or that a CNI is available
 	//TODO: Check that cluster-autoscaler is available
 
-	timer := tracer.Start()
-	defer timer.ObserveDuration()
 	// Generate and create workloads
 	nginxWorkload := web.CreateNginxWorkloadItems(client, namespace, cpuRequest, memoryRequest)
 	sqlWorkload := sql.CreateSQLWorkloadItems(client, namespace, storageClass)
@@ -118,6 +117,8 @@ func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, 
 		log.Fatalln(err)
 	}
 	log.Println("** ALL RESOURCES ARE DEPLOYED AND READY **")
+
+	tracer.CompleteGathering()
 
 	return nginxWorkload, sqlWorkload
 }

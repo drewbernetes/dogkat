@@ -44,19 +44,24 @@ Istio test suites will not be affected by this.`,
 			if o.client, err = f.KubernetesClientSet(); err != nil {
 				log.Fatalln(err)
 			}
+
+			fullTracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGatewayURLFlag}
+			fullTracer.SetupMetricsGatherer("full_e2e_test_all_duration_seconds", "Times the entire e2e workload testing for a full run")
+			fullTracer.Start()
+
 			//TODO: This repeats - let's clean it up!
 			// Configure namespace
-			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String())
+			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String(), pushGatewayURLFlag)
 
 			// Generate and create workloads
-			nginxWorkload, _ := workloads.DeployBaseWorkloads(o.client, namespace.Name, storageClassFlag, requestCPUFlag, requestMemoryFlag)
-			err = testsuite.ScaleUpStandardNodes(nginxWorkload.Workload)
+			nginxWorkload, _ := workloads.DeployBaseWorkloads(o.client, namespace.Name, storageClassFlag, requestCPUFlag, requestMemoryFlag, pushGatewayURLFlag)
+			err = testsuite.ScaleUpStandardNodes(nginxWorkload.Workload, pushGatewayURLFlag)
 			if err != nil {
 				log.Fatalln(err)
 			}
 
-			web.CreateIngressResource(o.client, namespace.Name, annotationsFlag, hostFlag, ingressClassFlag, enableTLSFlag)
-			err = testsuite.TestIngress(hostFlag)
+			web.CreateIngressResource(o.client, namespace.Name, annotationsFlag, hostFlag, ingressClassFlag, enableTLSFlag, pushGatewayURLFlag)
+			err = testsuite.TestIngress(hostFlag, pushGatewayURLFlag)
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -71,9 +76,9 @@ Istio test suites will not be affected by this.`,
 
 			// Generate and create GPU workloads
 
-			tracer := tracing.Tracer{JobName: "e2e_workloads", PushURL: "http://prometheus-push-gateway.prometheus:9091"}
-			tracer.NewTimer("deploy_gpu", "Times the deployment of a gpu resource")
-			timer := tracer.Start()
+			tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGatewayURLFlag}
+			tracer.SetupMetricsGatherer("deploy_gpu_duration_seconds", "Times the deployment of a gpu resource")
+			tracer.Start()
 
 			pod := gpu.GenerateGPUPod(namespace.Name, numberOfGPUsFlag)
 			pod.Client = o.client
@@ -95,14 +100,16 @@ Istio test suites will not be affected by this.`,
 			if err != nil {
 				log.Fatalln(err)
 			}
-			timer.ObserveDuration()
+			tracer.CompleteGathering()
 
 			log.Println("** ALL RESOURCES ARE DEPLOYED AND READY **")
 
-			err = testsuite.TestGPU(pod)
+			err = testsuite.TestGPU(pod, pushGatewayURLFlag)
 			if err != nil {
 				log.Fatalln(err)
 			}
+
+			fullTracer.CompleteGathering()
 		},
 	}
 	addCoreFlags(cmd)
