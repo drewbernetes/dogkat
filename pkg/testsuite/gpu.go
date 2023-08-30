@@ -27,7 +27,7 @@ import (
 
 func TestGPU(pod *coreworkloads.Pod, pushGateway string) error {
 	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
-	tracer.SetupMetricsGatherer("test_gpu_duration_seconds", "Times the testing of the GPU resource")
+	tracer.SetupMetricsGatherer("dogkat_test_gpu_duration_seconds", "Times the testing of the GPU resource")
 	tracer.Start()
 
 	log.Printf("checking pod logs in %s for PASSED status\n", pod.Resource.Name)

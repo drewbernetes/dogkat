@@ -16,7 +16,7 @@ limitations under the License.
 package constants
 
 const (
-	Version    = "v0.0.1-alpha2"
+	Version    = "v0.0.1-beta.4"
 	DBUser     = "e2e-user"
 	DBPassword = "e2e-password"
 	DBName     = "e2e-user"

@@ -30,7 +30,7 @@ import (
 // TestIngress is called to validate all hosts within an Ingress resource.
 func TestIngress(host, pushGateway string) error {
 	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
-	tracer.SetupMetricsGatherer("ingress_time_to_live_duration_seconds", "The time it takes for an ingress resource to become accessible")
+	tracer.SetupMetricsGatherer("dogkat_test_ingress_time_to_live_duration_seconds", "The time it takes for an ingress resource to become accessible")
 	tracer.Start()
 
 	err := testHostEndpoint(host, 30)

@@ -166,7 +166,7 @@ func DeleteNginxWorkloadItems(client *kubernetes.Clientset, namespace string) {
 // CreateIngressResource creates the ingress resource for testing.
 func CreateIngressResource(client *kubernetes.Clientset, namespace, annotations, host, ingressClass string, enableTLS bool, pushGateway string) {
 	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
-	tracer.SetupMetricsGatherer("deploy_ingress_duration_seconds", "Times the deployment of an ingress resource")
+	tracer.SetupMetricsGatherer("dogkat_deploy_ingress_duration_seconds", "Times the deployment of an ingress resource")
 	tracer.Start()
 
 	a := map[string]string{}
