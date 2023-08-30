@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/tracing"
 	"io"
 	"log"
 	"net/http"
@@ -27,11 +28,16 @@ import (
 )
 
 // TestIngress is called to validate all hosts within an Ingress resource.
-func TestIngress(host string) error {
+func TestIngress(host, pushGateway string) error {
+	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
+	tracer.SetupMetricsGatherer("ingress_time_to_live_duration_seconds", "The time it takes for an ingress resource to become accessible")
+	tracer.Start()
+
 	err := testHostEndpoint(host, 30)
 	if err != nil {
 		return fmt.Errorf("cannot continue, %s", err.Error())
 	}
+	tracer.CompleteGathering()
 
 	return nil
 }

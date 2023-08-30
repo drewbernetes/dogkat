@@ -18,13 +18,18 @@ package testsuite
 import (
 	"context"
 	"errors"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/tracing"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/coreworkloads"
 	v1 "k8s.io/api/core/v1"
 	"log"
 	"strings"
 )
 
-func TestGPU(pod *coreworkloads.Pod) error {
+func TestGPU(pod *coreworkloads.Pod, pushGateway string) error {
+	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
+	tracer.SetupMetricsGatherer("test_gpu_duration_seconds", "Times the testing of the GPU resource")
+	tracer.Start()
+
 	log.Printf("checking pod logs in %s for PASSED status\n", pod.Resource.Name)
 	logs := pod.Client.CoreV1().Pods(pod.Resource.Namespace).GetLogs(pod.Resource.Name, &v1.PodLogOptions{})
 
@@ -38,5 +43,6 @@ func TestGPU(pod *coreworkloads.Pod) error {
 		return errors.New("the test failed to complete - check the logs for more information")
 	}
 	log.Println("Test passed")
+	tracer.CompleteGathering()
 	return nil
 }

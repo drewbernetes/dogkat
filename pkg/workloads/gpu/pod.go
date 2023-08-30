@@ -24,6 +24,7 @@ import (
 
 // GenerateGPUPod Generates the GPU workload that will be deployed into the cluster for testing.
 func GenerateGPUPod(namespace string, amount string) *coreworkloads.Pod {
+
 	container := coreworkloads.GenerateContainer("cuda-vectoradd", "nvidia/samples", "vectoradd-cuda11.2.1")
 	container.Resources = apiv1.ResourceRequirements{
 		Limits: apiv1.ResourceList{

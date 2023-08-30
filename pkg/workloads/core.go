@@ -18,6 +18,7 @@ package workloads
 import (
 	"github.com/docker/distribution/context"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/testsuite"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/tracing"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/coreworkloads"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/sql"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/web"
@@ -30,7 +31,11 @@ import (
 
 // CreateNamespaceIfNotExists create the provided namespace if it doesn't exist.
 // It will return the namespace once created or if it is located.
-func CreateNamespaceIfNotExists(client *kubernetes.Clientset, ns string) *v1.Namespace {
+func CreateNamespaceIfNotExists(client *kubernetes.Clientset, ns, pushGateway string) *v1.Namespace {
+	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
+	tracer.SetupMetricsGatherer("deploy_namespace_duration_seconds", "Times the deployment of the namespace")
+	tracer.Start()
+
 	log.Println("checking for namespace, will create if doesn't exist")
 	namespace := "default"
 	if len(ns) != 0 {
@@ -54,12 +59,17 @@ func CreateNamespaceIfNotExists(client *kubernetes.Clientset, ns string) *v1.Nam
 	if err != nil {
 		log.Fatalln(err)
 	}
+	tracer.CompleteGathering()
 	return n
 }
 
 // DeployBaseWorkloads deploys the basic applications required for the majority of testing.
-func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, cpuRequest, memoryRequest string) (*web.NginxWorkloads, *sql.PostgresWorkloads) {
+func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, cpuRequest, memoryRequest, pushGateway string) (*web.NginxResources, *sql.PostgresWorkloads) {
 	var err error
+
+	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
+	tracer.SetupMetricsGatherer("deploy_base_workloads_duration_seconds", "Times the deployment of the base workloads")
+	tracer.Start()
 
 	//TODO: Check storage class is available or that a CNI is available
 	//TODO: Check that cluster-autoscaler is available
@@ -107,6 +117,8 @@ func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, 
 		log.Fatalln(err)
 	}
 	log.Println("** ALL RESOURCES ARE DEPLOYED AND READY **")
+
+	tracer.CompleteGathering()
 
 	return nginxWorkload, sqlWorkload
 }

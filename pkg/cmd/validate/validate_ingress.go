@@ -17,6 +17,7 @@ package validate
 
 import (
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/testsuite"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/tracing"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/web"
 	"github.com/spf13/cobra"
@@ -47,18 +48,23 @@ testing of the ingress setup will occur. This will ensure that cert-manager, ext
 				log.Fatalln(err)
 			}
 
+			fullTracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGatewayURLFlag}
+			fullTracer.SetupMetricsGatherer("full_e2e_test_ingress_duration_seconds", "Times the entire e2e workload testing for a ingress run")
+			fullTracer.Start()
+
+			//TODO: This repeats - let's clean it up!
 			// Configure namespace
-			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String())
+			namespace := workloads.CreateNamespaceIfNotExists(o.client, cmd.Flag("namespace").Value.String(), pushGatewayURLFlag)
 
-			_, _ = workloads.DeployBaseWorkloads(o.client, namespace.Name, storageClassFlag, requestCPUFlag, requestMemoryFlag)
+			_, _ = workloads.DeployBaseWorkloads(o.client, namespace.Name, storageClassFlag, requestCPUFlag, requestMemoryFlag, pushGatewayURLFlag)
 
-			ing := web.CreateIngressResource(o.client, namespace.Name, annotationsFlag, hostFlag, ingressClassFlag, enableTLSFlag)
-			web.ValidateIngressResource(ing)
+			web.CreateIngressResource(o.client, namespace.Name, annotationsFlag, hostFlag, ingressClassFlag, enableTLSFlag, pushGatewayURLFlag)
 
-			err = testsuite.TestIngress(hostFlag)
+			err = testsuite.TestIngress(hostFlag, pushGatewayURLFlag)
 			if err != nil {
 				log.Fatalln(err)
 			}
+			fullTracer.CompleteGathering()
 		},
 	}
 

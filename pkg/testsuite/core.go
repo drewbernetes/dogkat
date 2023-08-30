@@ -18,6 +18,7 @@ package testsuite
 import (
 	"fmt"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/helpers"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/tracing"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/coreworkloads"
 	"golang.org/x/net/context"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -75,7 +76,12 @@ func checkIfResourceIsReady(r coreworkloads.Resource, counter int, delaySeconds 
 }
 
 // ScaleUpStandardNodes scales up the standard nodes that generic workloads will sit on.
-func ScaleUpStandardNodes(resource *coreworkloads.Deployment) error {
+func ScaleUpStandardNodes(resource *coreworkloads.Deployment, pushGateway string) error {
+
+	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
+	tracer.SetupMetricsGatherer("scale_workload_duration_seconds", "Times the scaling of workloads to determine how long the autoscaler takes")
+	tracer.Start()
+
 	replicaSize := int32(5)
 	//Get number of nodes
 	initialNodeCount := countNodes(resource.Client)
@@ -111,6 +117,9 @@ func ScaleUpStandardNodes(resource *coreworkloads.Deployment) error {
 	}
 	log.Printf("Replicas after Scale %v\n", *resource.Resource.Spec.Replicas)
 	log.Printf("Nodes after Scale %v\n", newNodeAmount)
+
+	//End timer here as we only care about the scale in time as we need to know how quick the autoscaling is.
+	tracer.CompleteGathering()
 
 	//Scale down the workload
 	resource.Resource.Spec.Replicas = helpers.IntPtr(initialReplicaSize)
