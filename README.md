@@ -4,11 +4,12 @@
 <img src="logo.png" width="500px" />
 </div>
 
-DogKat is an End-2-End tester that will test a variety of elements of a Kubernetes cluster. 
+DogKat is an End-2-End tester that will test a variety of elements of a Kubernetes cluster.
 
 *The resources are baked into the binary (instead of using an external Helm Chart as previous versions did).*
 
-The tests are separated out into logical workloads so that core workloads can be tested with additional tests able to be run on top.
+The tests are separated out into logical workloads so that core workloads can be tested with additional tests able to be
+run on top.
 
 | Run              | Description                                                                                                                                                                                                                                                                                                                                                                                         |
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -19,32 +20,44 @@ The tests are separated out into logical workloads so that core workloads can be
 | Monitoring       | Will deploy the core workload and also deploy a ServiceMonitor and a Grafana Dashboard for the Nginx service to display Grafana Functionality. The Service Monitor will need to be manually checked until a decision on vaildation that this is working can be achieved.                                                                                                                            |
 | Istio            | This will deploy the core workload and then add a Virtual Service and Gateway on. It will then be validated in the same was as the Ingress test. This will confirm basic functionality of Istio.                                                                                                                                                                                                    |
 
+## Metrics
 
-# TODO
+Metrics are collected to log the time it takes for each test to run. As this is a short-lived application, the usual
+process of serving up metrics at `/metrics` cannot be achieved. As such, DogKat requires a prometheus push-gateway to be
+configured so that it can send metrics there instead of having them scraped.
+
+If a push gateway isn't detected then metrics are still collected, but you won't be able to access them. An error will
+be reported to notify you that the push didn't succeed, and it'll just move on.
+
+## TODO
+
 * Detect availability of things like an Ingress Controller and StorageClass before running tests.
-* Introduce metrics and telemetry to feedback the speed of a test and all parts of it.
 * Implement Go Testing.
 * Monitoring detection and testing.
 * Istio detection and testing.
 
 See below for a comprehensive list of tests and what can be confirmed using this tool.
 
-# Usage
+## Usage
+
 For details on how to use the tool, run `e2e-test --help`
 
-# Examples
+## Examples
 
 Test core workloads with a defined storage class:
+
 ```shell
 e2e-test validate core --storage-class longhorn
 ```
 
 Test Ingress with tls:
+
 ```shell
 e2e-test validate ingress --storage-class longhorn --ingress-class nginx --enable-tls --annotations cert-manager.io/cluster-issuer=letsencrypt
 ```
 
 Test GPU
+
 ```shell
 e2e-test validate gpu --number-of-gpus 1
 ```
