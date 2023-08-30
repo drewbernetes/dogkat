@@ -38,7 +38,7 @@ func (p *PodDisruptionBudget) Generate(data map[string]string) {
 		Spec: policyv1.PodDisruptionBudgetSpec{
 			MinAvailable: &intstr.IntOrString{
 				Type:   0,
-				IntVal: 2,
+				IntVal: 1,
 			},
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{"app": data["label"]},
@@ -109,7 +109,10 @@ func (p *PodDisruptionBudget) IsReady() bool {
 		log.Println(err)
 		return false
 	}
-	if p.Resource.Status.CurrentHealthy < p.Resource.Status.DesiredHealthy || p.Resource.Status.DisruptionsAllowed == 0 {
+	if p.Resource.Status.CurrentHealthy < p.Resource.Status.DesiredHealthy {
+		return false
+	}
+	if p.Resource.Status.DisruptionsAllowed == 0 && p.Resource.Status.CurrentHealthy > 1 {
 		return false
 	}
 	return true

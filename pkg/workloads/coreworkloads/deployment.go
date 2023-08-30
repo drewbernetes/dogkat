@@ -39,7 +39,7 @@ func (d *Deployment) Generate(data map[string]string) {
 	d.Resource = &v1.Deployment{
 		ObjectMeta: GenerateMetadata(data["namespace"], data["name"], data["label"]),
 		Spec: v1.DeploymentSpec{
-			Replicas: helpers.IntPtr(3),
+			Replicas: helpers.IntPtr(1),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
 					"app": data["name"],

@@ -79,7 +79,7 @@ func checkIfResourceIsReady(r coreworkloads.Resource, counter int, delaySeconds 
 func ScaleUpStandardNodes(resource *coreworkloads.Deployment, pushGateway string) error {
 
 	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
-	tracer.SetupMetricsGatherer("scale_workload_duration_seconds", "Times the scaling of workloads to determine how long the autoscaler takes")
+	tracer.SetupMetricsGatherer("dogkat_test_autoscaler_duration_seconds", "The time it takes from adding more resources to the autoscaler bringing in a new node and the resources being deployed")
 	tracer.Start()
 
 	replicaSize := int32(5)

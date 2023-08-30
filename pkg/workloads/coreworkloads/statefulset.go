@@ -40,7 +40,7 @@ func (s *StatefulSet) Generate(data map[string]string) {
 	s.Resource = &v1.StatefulSet{
 		ObjectMeta: GenerateMetadata(data["namespace"], data["name"], data["label"]),
 		Spec: v1.StatefulSetSpec{
-			Replicas: helpers.IntPtr(3),
+			Replicas: helpers.IntPtr(1),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
 					"app": data["name"],

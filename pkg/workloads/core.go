@@ -17,9 +17,11 @@ package workloads
 
 import (
 	"github.com/docker/distribution/context"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/helpers"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/testsuite"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/tracing"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/coreworkloads"
+	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/gpu"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/sql"
 	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/web"
 	v1 "k8s.io/api/core/v1"
@@ -33,7 +35,7 @@ import (
 // It will return the namespace once created or if it is located.
 func CreateNamespaceIfNotExists(client *kubernetes.Clientset, ns, pushGateway string) *v1.Namespace {
 	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
-	tracer.SetupMetricsGatherer("deploy_namespace_duration_seconds", "Times the deployment of the namespace")
+	tracer.SetupMetricsGatherer("dogkat_deploy_namespace_duration_seconds", "The time it takes from the application of the namespace to the cluster, to the namespace showing as ready")
 	tracer.Start()
 
 	log.Println("checking for namespace, will create if doesn't exist")
@@ -68,7 +70,7 @@ func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, 
 	var err error
 
 	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
-	tracer.SetupMetricsGatherer("deploy_base_workloads_duration_seconds", "Times the deployment of the base workloads")
+	tracer.SetupMetricsGatherer("dogkat_deploy_core_workloads_duration_seconds", "The time it takes from the application of the core workloads to the cluster, to the workloads showing as ready")
 	tracer.Start()
 
 	//TODO: Check storage class is available or that a CNI is available
@@ -109,7 +111,6 @@ func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, 
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	//Check volumes after STS confirmation to ensure volumes have been created.
 	volumeResource := parseVolumesFromStatefulSet(client, sqlWorkload, namespace)
 	err = testsuite.CheckReadyForTesting(volumeResource)
@@ -126,10 +127,8 @@ func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, 
 // parseVolumesFromStatefulSet
 func parseVolumesFromStatefulSet(client *kubernetes.Clientset, sqlWorkload *sql.PostgresWorkloads, namespace string) []coreworkloads.Resource {
 	volumeResource := []coreworkloads.Resource{}
-	volNames := []string{strings.Join([]string{"data", sqlWorkload.Workload.GetResourceName(), "0"}, "-"),
-		strings.Join([]string{"data", sqlWorkload.Workload.GetResourceName(), "1"}, "-"),
-		strings.Join([]string{"data", sqlWorkload.Workload.GetResourceName(), "2"}, "-"),
-	}
+	//TODO: This needs ot count the statefulset pods and add a new entry for each - manual is GOING to fail.
+	volNames := []string{strings.Join([]string{"data", sqlWorkload.Workload.GetResourceName(), "0"}, "-")}
 
 	for _, name := range volNames {
 		pvc := &coreworkloads.PersistentVolumeClaim{
@@ -155,4 +154,39 @@ func parseVolumesFromStatefulSet(client *kubernetes.Clientset, sqlWorkload *sql.
 	}
 
 	return volumeResource
+}
+
+// DeployGPUWorkloads deploys the GPU applications required for GPU testing.
+func DeployGPUWorkloads(client *kubernetes.Clientset, namespace, numberOfGPUs, pushGateway string) (*coreworkloads.Pod, error) {
+	var err error
+	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
+	tracer.SetupMetricsGatherer("dogkat_deploy_gpu_duration_seconds", "The time it takes from the application of the GPU workload to the cluster, to the workload showing as ready")
+	tracer.Start()
+
+	// Generate and create workloads
+	pod := gpu.GenerateGPUPod(namespace, numberOfGPUs)
+	pod.Client = client
+	helpers.HandleCreateError(pod.Create())
+
+	//Check the pod exists
+	err = pod.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println("all resources are deployed, running tests...")
+
+	coreResource := []coreworkloads.Resource{
+		pod,
+	}
+
+	err = testsuite.CheckReadyForTesting(coreResource)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println("** ALL RESOURCES ARE DEPLOYED AND READY **")
+
+	tracer.CompleteGathering()
+	return pod, nil
 }
