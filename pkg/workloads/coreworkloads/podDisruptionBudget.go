@@ -38,7 +38,7 @@ func (p *PodDisruptionBudget) Generate(data map[string]string) {
 		Spec: policyv1.PodDisruptionBudgetSpec{
 			MinAvailable: &intstr.IntOrString{
 				Type:   0,
-				IntVal: 2,
+				IntVal: 1,
 			},
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{"app": data["label"]},
