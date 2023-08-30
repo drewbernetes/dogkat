@@ -111,7 +111,6 @@ func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, 
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	//Check volumes after STS confirmation to ensure volumes have been created.
 	volumeResource := parseVolumesFromStatefulSet(client, sqlWorkload, namespace)
 	err = testsuite.CheckReadyForTesting(volumeResource)
@@ -128,10 +127,8 @@ func DeployBaseWorkloads(client *kubernetes.Clientset, namespace, storageClass, 
 // parseVolumesFromStatefulSet
 func parseVolumesFromStatefulSet(client *kubernetes.Clientset, sqlWorkload *sql.PostgresWorkloads, namespace string) []coreworkloads.Resource {
 	volumeResource := []coreworkloads.Resource{}
-	volNames := []string{strings.Join([]string{"data", sqlWorkload.Workload.GetResourceName(), "0"}, "-"),
-		strings.Join([]string{"data", sqlWorkload.Workload.GetResourceName(), "1"}, "-"),
-		strings.Join([]string{"data", sqlWorkload.Workload.GetResourceName(), "2"}, "-"),
-	}
+	//TODO: This needs ot count the statefulset pods and add a new entry for each - manual is GOING to fail.
+	volNames := []string{strings.Join([]string{"data", sqlWorkload.Workload.GetResourceName(), "0"}, "-")}
 
 	for _, name := range volNames {
 		pvc := &coreworkloads.PersistentVolumeClaim{
