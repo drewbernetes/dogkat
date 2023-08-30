@@ -16,9 +16,9 @@ limitations under the License.
 package tracing
 
 import (
-	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/push"
+	"log"
 	"time"
 )
 
@@ -49,6 +49,6 @@ func (t *Duration) Start() {
 func (t *Duration) CompleteGathering() {
 	t.Timer.Set(time.Since(t.Begin).Seconds())
 	if err := t.Pusher.Add(); err != nil {
-		fmt.Println("Could not push metrics to PushGateway:", err)
+		log.Println("Could not push metrics to PushGateway:", err)
 	}
 }
