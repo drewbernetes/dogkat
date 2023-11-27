@@ -1,6 +1,6 @@
 # Changelog
 
-## [ Upcoming Release - v0.1.0 ]
+## [ Upcoming Release - vx.x.x ]
 
 ### Changed/Added
 
