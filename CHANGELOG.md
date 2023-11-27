@@ -8,11 +8,17 @@
 
 ### Deprecated
 
-## [ Upcoming Release - v0.1.0-beta.5 ]
+## [ 2023/11/28 - v0.1.0-beta.5 ]
 
 ### Changed/Added
+* Updated container scanner
+* Updated go modules
+* Switched to chainguard Golang image
+* Switched from alpine to WolfiOS.
 
-* improved metric naming and start/stop data points
+### Fixed
+
+### Deprecated
 
 ## [ 2023/08/30 - v0.1.0-beta.4 ]
 
