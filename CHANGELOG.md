@@ -8,7 +8,7 @@
 
 ### Deprecated
 
-## [ 2023/11/28 - v0.1.0-beta.5 ]
+## [ 2023/11/27 - v0.1.0-beta.5 ]
 
 ### Changed/Added
 * Updated container scanner
