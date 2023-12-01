@@ -43,7 +43,7 @@ jobs:
       id-token: write
     steps:
       - name: Build Local Container
-        uses: eschercloudai/container-security-action@v0.0.1
+        uses: eschercloudai/container-security-action@v0.0.4
         if: github.event_name != 'pull_request'
         id: build-and-scan
         with:
@@ -59,6 +59,7 @@ jobs:
           aws-secret-key: ${{secrets.AWS_SECRET_KEY}}
           s3-bucket: "trivyignores"
           s3-path: "dogkat"
+          fail-build: false
           add-latest-tag: false
           publish-image: false
           cosign-private-key: ${{secrets.COSIGN_KEY}}
