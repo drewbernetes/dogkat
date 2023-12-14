@@ -9,7 +9,6 @@ on:
 jobs:
   security-checks:
     runs-on: ubuntu-22.04
-    needs: test
     permissions:
       contents: read
       packages: write
