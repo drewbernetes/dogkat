@@ -1,0 +1,66 @@
+---
+
+# Default values for HA e2e-testing basic.
+
+core:
+  nginx:
+    image:
+      # -- The repo to be used
+      repo: nginx
+      # -- The tag to be used
+      tag: 1.25-alpine
+    serviceAccountName: "nginx"
+    resources: {}
+    # requests:
+    #   memory: "500Mi"
+    #   cpu: "500m"
+    # limits:
+    #   memory: "1Gi"
+    #   cpu: "1000m"
+  php:
+    image:
+      # -- The repo to be used
+      repo: drewviles
+      # -- The tag to be used
+      tag: v1.1.0
+
+  postgres:
+    image:
+      # -- The repo to be used
+      repo: postgres
+      # -- The tag to be used
+      tag: 16-alpine
+    statefulset:
+      persistentData:
+        enabled: true
+        storageClassName: "cinder"
+
+gpu:
+  enabled: true
+  numberOfGPUs: 1
+  image:
+    # -- The repo to be used
+    repo: nvidia/samples
+    # -- The tag to be used
+    tag: vectoradd-cuda11.2.1
+  resources: {}
+
+ingress:
+  enabled: true
+  annotations: {}
+  # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  # external-dns.alpha.kubernetes.io/target: "example.uk"
+  # external-dns.alpha.kubernetes.io/hostname: "example.uk"
+  # external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+  className: nginx
+  host: test.example.uk
+  tls:
+    - hosts:
+        - test.example.uk
+      secretName: test-secret
+
+monitoring:
+  grafana:
+    dashboards: true
+  serviceMonitor:
+    enabled: true

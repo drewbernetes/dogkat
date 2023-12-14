@@ -1,0 +1,18 @@
+---
+
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: nginx-e2e
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- include "e2e-testing.annotations" . | nindent 4 }}
+    {{- include "e2e-testing.nginx.annotations" . | nindent 4 }}
+  labels:
+    {{- include "e2e-testing.labels" . | nindent 4 }}
+    {{- include "e2e-testing.nginx.labels" . | nindent 4 }}
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: web-frontend

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-e2e
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- include "e2e-testing.annotations" . | nindent 4 }}
+    {{- include "e2e-testing.psql.annotations" . | nindent 4 }}
+  labels:
+    {{- include "e2e-testing.labels" . | nindent 4 }}
+    {{- include "e2e-testing.psql.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  ports:
+    - port: 5432
+      protocol: TCP
+      targetPort: 5432
+      name: sql
+  selector:
+    app: database-backend

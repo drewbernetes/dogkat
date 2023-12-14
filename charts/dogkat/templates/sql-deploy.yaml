@@ -1,0 +1,105 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: web-database
+  annotations:
+    {{- include "e2e-testing.annotations" . | nindent 4 }}
+    {{- include "e2e-testing.psql.annotations" . | nindent 4 }}
+  labels:
+    {{- include "e2e-testing.labels" . | nindent 4 }}
+    {{- include "e2e-testing.psql.labels" . | nindent 4 }}
+spec:
+  replicas: 3
+  serviceName: database-e2e
+  selector:
+    matchLabels:
+      app: database-backend
+  template:
+    metadata:
+      labels:
+        app: database-backend
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: database-backend
+                topologyKey: topology.kubernetes.io/zone
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - web-frontend
+                topologyKey: topology.kubernetes.io/zone
+      serviceAccountName: postgresql
+      initContainers:
+        - name: postgres-clean
+          image: busybox:latest
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - rm -rf /var/lib/postgresql/data/*
+            - rm -rf /var/lib/postgresql/data/.*
+          {{- if (eq true .Values.core.postgres.statefulset.persistentData.enabled)}}
+          volumeMounts:
+            - name: data
+              mountPath: "/var/lib/postgresql/data"
+          {{- end}}
+      containers:
+        - name: postgres
+          image: {{.Values.core.postgres.image.repo}}:{{.Values.core.postgres.image.tag}}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: passwd
+                  name: pg-password
+            - name: POSTGRES_USER
+              value: "e2e-user"
+            - name: POSTGRES_DB
+              value: "e2e-user"
+          ports:
+            - containerPort: 5432
+              name: sql
+          readinessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            tcpSocket:
+              port: 5432
+          volumeMounts:
+            - name: data
+              mountPath: "/var/lib/postgresql/data"
+            - name: init-data
+              mountPath: "/docker-entrypoint-initdb.d"
+      volumes:
+        - name: init-data
+          configMap:
+            name: sql-init
+            defaultMode: 0755
+      {{- if (eq false .Values.core.postgres.statefulset.persistentData.enabled)}}
+        - name: data
+          emptyDir: { }
+      {{- else }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: {{.Values.core.postgres.statefulset.persistentData.storageClassName}}
+        volumeMode: Filesystem
+        resources:
+          requests:
+            storage: 10Gi
+{{- end }}
