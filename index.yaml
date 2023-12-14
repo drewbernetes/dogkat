@@ -1,7 +1,7 @@
 apiVersion: v1
 entries:
   dogkat:
-  - apiVersion: v2
+  - apiVersion: v1
     appVersion: 0.0.1
     created: "2023-12-14T12:35:25.279761121Z"
     description: '# DogKat End-2-End testing  This setup will deploy a multi-replica
