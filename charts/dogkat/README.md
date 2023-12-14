@@ -82,10 +82,6 @@ The following table lists the configurable parameters of the chart and the defau
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| core.gpu.image.repo | string | `"postgres"` | The repo to be used |
-| core.gpu.image.tag | string | `"16-alpine"` | The tag to be used |
-| core.gpu.statefulset.persistentData.enabled | bool | `true` |  |
-| core.gpu.statefulset.persistentData.storageClassName | string | `"cinder"` |  |
 | core.nginx.image.repo | string | `"nginx"` | The repo to be used |
 | core.nginx.image.tag | string | `"1.25-alpine"` | The tag to be used |
 | core.nginx.resources | object | `{}` |  |
