@@ -1,0 +1,107 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-index
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- include "e2e-testing.annotations" . | nindent 4 }}
+    {{- include "e2e-testing.nginx.annotations" . | nindent 4 }}
+  labels:
+    {{- include "e2e-testing.labels" . | nindent 4 }}
+    {{- include "e2e-testing.nginx.labels" . | nindent 4 }}
+data:
+  index: |
+    <?php
+      include 'common.php';
+      $conn = connectToDB(0);
+      header('Content-type: application/json');
+      if(!$conn){
+        $err = "couldn't connect to Postgres backend: " . $e->getMessage();
+        error_log("$err", 0);
+        return;
+      }else{
+        try {
+          // set the PDO error mode to exception
+          $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+          $stmt = $conn->query("SELECT value FROM web");
+          $result = $stmt->fetch();
+
+          if (!$result) {
+              $err = json_encode($arr);
+              error_log("no results in database: $err", 0);
+              header("HTTP/1.0 500 Internal Server Error");
+              return;
+          }else{
+              $arr['success'] = true;
+              $arr['data'] = $result["value"];
+              header("HTTP/1.0 200 OK");
+          }
+        } catch(PDOException $e) {
+          $err = "Failed to get data: " . $e->getMessage();
+          error_log("$err", 0);
+          header("HTTP/1.0 500 Internal Server Error");
+          return;
+        }
+      }
+      $conn = null;
+      echo json_encode($arr);
+    ?>
+  common: |
+    <?php
+      $arr = array("success" => false, "data" => "");
+      $retries = 5;
+
+      function connectToDB($attempt){
+        $servername = "database-e2e.{{ .Release.Namespace }}";
+        $username = getenv('POSTGRES_USER');
+        $password = getenv('POSTGRES_PASSWORD');
+        $db = getenv('POSTGRES_DB');
+        $pgconn = '';
+
+        try {
+          $pgconn = new PDO("pgsql:host=$servername;port=5432;dbname=$db", $username, $password);
+        } catch(PDOException $e) {
+          if ($attempt > 5){
+              error_log("couldn't connect to the database!", 0);
+          }
+          sleep(5);
+          connectToDB($attempt+1);
+        }
+        return $pgconn;
+      }
+    ?>
+  healthz: |
+    <?php
+      include 'common.php';
+      $conn = connectToDB(0);
+      header('Content-type: application/json');
+      if(!$conn){
+        $arr['success'] = false;
+        $arr['data'] = "Couldn't connect to Postgres backend: " . $e->getMessage();
+        echo json_encode($arr);
+        return;
+      }else{
+        try {
+          // set the PDO error mode to exception
+          $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+          $stmt = $conn->query("SELECT value FROM web");
+          $result = $stmt->fetch();
+
+          if (!$result) {
+            error_log("no results in database: $err", 0);
+            header("HTTP/1.0 500 Internal Server Error");
+            return;
+          }
+          $conn = null;
+        } catch(PDOException $e) {
+          $err = "Failed to get data: " . $e->getMessage();
+          error_log("$err", 0);
+          header("HTTP/1.0 500 Internal Server Error");
+          return;
+        }
+      }
+
+      header("HTTP/1.0 200 OK");
+      echo json_encode(array("success" => true, "data" => "ok"));
+    ?>

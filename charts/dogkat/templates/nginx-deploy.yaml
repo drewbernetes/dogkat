@@ -1,0 +1,126 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-e2e
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- include "e2e-testing.annotations" . | nindent 4 }}
+    {{- include "e2e-testing.nginx.annotations" . | nindent 4 }}
+  labels:
+    {{- include "e2e-testing.labels" . | nindent 4 }}
+    {{- include "e2e-testing.nginx.labels" . | nindent 4 }}
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: web-frontend
+    spec:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: database-backend
+                topologyKey: topology.kubernetes.io/zone
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - web-frontend
+                topologyKey: topology.kubernetes.io/zone
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      serviceAccountName: nginx
+      containers:
+        - name: nginx
+          image: {{.Values.core.nginx.image.repo}}:{{.Values.core.nginx.image.tag}}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: passwd
+                  name: pg-password
+          # Resources put in place for cluster-autoscaling testing. Simply scale to 10 pods to ensure new nodes come in.
+          {{- if .Values.core.nginx.resources }}
+          resources:
+            {{- toYaml .Values.core.nginx.resources | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 80
+          readinessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            httpGet:
+              port: 80
+              path: /healthz.php
+          volumeMounts:
+            - name: index-html
+              mountPath: /usr/share/nginx/html
+            - name: conf
+              mountPath: /etc/nginx/conf.d
+        - name: php
+          image: {{.Values.core.php.image.repo}}:{{.Values.core.php.image.tag}}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: passwd
+                  name: pg-password
+          ports:
+            - name: php
+              protocol: TCP
+              containerPort: 9000
+          volumeMounts:
+            - name: index-html
+              mountPath: /usr/share/nginx/html
+        - name: nginx-prometheus
+          image: nginx/nginx-prometheus-exporter
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9113
+              name: http-metrics
+      volumes:
+        - name: index-html
+          configMap:
+            name: nginx-index
+            items:
+              - key: index
+                path: index.php
+              - key: healthz
+                path: healthz.php
+              - key: common
+                path: common.php
+        - name: conf
+          configMap:
+            name: nginx-conf
+            items:
+              - key: default
+                path: default.conf
+              - key: metrics
+                path: metrics.conf

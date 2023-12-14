@@ -1,0 +1,29 @@
+{{ template "chart.header" . }}
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+## Installation
+
+```shell
+helm install oci://harbor.infra.nl1.eschercloud.dev/charts/{{ template "chart.name" . }} --values values.yaml
+```
+
+## Updating the Chart
+Make sure you've run and resolved any issues using the following as failures of these will cause the pipeline/actions to fail.
+```
+yamllint charts/{{ template "chart.name" . }}/Chart.yaml  --config-file .github/ct.yaml
+yamllint charts/{{ template "chart.name" . }}/values.yaml  --config-file .github/ct.yaml
+
+helm-docs
+```
+
+## Configuration
+
+The following table lists the configurable parameters of the chart and the default values.
+
+{{ template "chart.valuesSection" . }}

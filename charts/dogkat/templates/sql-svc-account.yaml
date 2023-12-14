@@ -1,0 +1,13 @@
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: postgresql
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- include "e2e-testing.annotations" . | nindent 4 }}
+    {{- include "e2e-testing.psql.annotations" . | nindent 4 }}
+  labels:
+    {{- include "e2e-testing.labels" . | nindent 4 }}
+    {{- include "e2e-testing.psql.labels" . | nindent 4 }}

@@ -1,0 +1,26 @@
+{{- if .Values.monitoring.serviceMonitor.enabled -}}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nginx-e2e
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- include "e2e-testing.annotations" . | nindent 4 }}
+    {{- include "e2e-testing.nginx.annotations" . | nindent 4 }}
+  labels:
+    {{- include "e2e-testing.labels" . | nindent 4 }}
+    {{- include "e2e-testing.nginx.labels" . | nindent 4 }}
+spec:
+  endpoints:
+    - interval: 1m
+      path: /metrics
+      port: http-metrics
+  jobLabel: nginx-e2e
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      {{- include "e2e-testing.nginx.annotations" . | nindent 6 }}
+{{- end}}
