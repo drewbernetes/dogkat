@@ -86,7 +86,7 @@ The following table lists the configurable parameters of the chart and the defau
 | core.nginx.image.tag | string | `"1.25-alpine"` | The tag to be used |
 | core.nginx.resources | object | `{}` |  |
 | core.nginx.serviceAccountName | string | `"nginx"` |  |
-| core.php.image.repo | string | `"drewviles"` | The repo to be used |
+| core.php.image.repo | string | `"drewviles/php-pdo"` | The repo to be used |
 | core.php.image.tag | string | `"v1.1.0"` | The tag to be used |
 | core.postgres.image.repo | string | `"postgres"` | The repo to be used |
 | core.postgres.image.tag | string | `"16-alpine"` | The tag to be used |

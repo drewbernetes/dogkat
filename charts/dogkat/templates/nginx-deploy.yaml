@@ -56,6 +56,10 @@ spec:
           terminationMessagePolicy: File
           imagePullPolicy: IfNotPresent
           env:
+            - name: POSTGRES_USER
+              value: "e2e"
+            - name: POSTGRES_DB
+              value: "e2e"
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -87,6 +91,10 @@ spec:
           terminationMessagePolicy: File
           imagePullPolicy: IfNotPresent
           env:
+            - name: POSTGRES_USER
+              value: "e2e"
+            - name: POSTGRES_DB
+              value: "e2e"
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

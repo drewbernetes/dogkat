@@ -66,10 +66,6 @@ spec:
                 secretKeyRef:
                   key: passwd
                   name: pg-password
-            - name: POSTGRES_USER
-              value: "e2e-user"
-            - name: POSTGRES_DB
-              value: "e2e-user"
           ports:
             - containerPort: 5432
               name: sql

@@ -1,70 +1,21 @@
----
-
-# Default values for HA e2e-testing basic.
 core:
+  enabled: true
   nginx:
-    image:
-      # -- The repo to be used
-      repo: nginx
-      # -- The tag to be used
-      tag: 1.23-alpine
-    serviceAccountName: "nginx"
-    resources: {}
-    # requests:
-    #   memory: "500Mi"
-    #   cpu: "500m"
-    # limits:
-    #   memory: "1Gi"
-    #   cpu: "1000m"
-  php:
-    image:
-      # -- The repo to be used
-      repo: drewviles
-      # -- The tag to be used
-      tag: v1.1.0
-
+    resources:
+      requests:
+        cpu: "1"
+        memory: 1Gi
   postgres:
-    image:
-      # -- The repo to be used
-      repo: postgres
-      # -- The tag to be used
-      tag: 14.5-alpine
-    serviceAccountName: postgresql
-    statefulset:
+    statefulSet:
       persistentData:
-        enabled: false
-        className: "fast-disks"
-        size: 10Gi
-      env:
-        postgresPassword: "e2e-password"
-        postgresUser: "e2e-user"
-        postgresDB: "e2e-user"
-
+        enabled: true
+        storageClassName: cinder
 gpu:
-  enabled: true
-  numberOfGPUs: 1
-  image:
-    # -- The repo to be used
-    repo: postgres
-    # -- The tag to be used
-    tag: 16-alpine
-
+  enabled: false
+  numberOfGPUs: 0
 ingress:
-  enabled: true
-  annotations: {}
-  # cert-manager.io/cluster-issuer: "letsencrypt-prod"
-  # external-dns.alpha.kubernetes.io/target: "example.uk"
-  # external-dns.alpha.kubernetes.io/hostname: "example.uk"
-  # external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
-  className: nginx
-  host: test.example.uk
-  tls:
-    - hosts:
-        - test.example.uk
-      secretName: test-secret
-
-monitoring:
-  grafana:
-    dashboards: true
-  serviceMonitor:
-    enabled: true
+  annotations: null
+  className: ""
+  enabled: false
+  host: ""
+  tls: null

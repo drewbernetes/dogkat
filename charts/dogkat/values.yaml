@@ -20,7 +20,7 @@ core:
   php:
     image:
       # -- The repo to be used
-      repo: drewviles
+      repo: drewviles/php-pdo
       # -- The tag to be used
       tag: v1.1.0
 
