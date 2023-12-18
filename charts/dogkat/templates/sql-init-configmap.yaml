@@ -14,7 +14,13 @@ data:
   "init-user-db.sh": |
     #!/bin/bash
     set -e
-    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOF
+    export PGPASSWORD=$POSTGRES_PASSWORD
+    psql -U $POSTGRES_USER -tc "CREATE DATABASE e2e;"
+    psql -U $POSTGRES_USER -tc "CREATE USER e2e WITH ENCRYPTED PASSWORD '$POSTGRES_PASSWORD';"
+    psql -U $POSTGRES_USER -tc "GRANT ALL PRIVILEGES ON DATABASE e2e TO e2e;"
+    psql -U $POSTGRES_USER -d e2e -tc "GRANT ALL ON SCHEMA public TO e2e;"
+
+    psql -U e2e --dbname e2e <<-EOF
     	CREATE TABLE IF NOT EXISTS web (id SERIAL PRIMARY KEY, value VARCHAR(10) NOT NULL );
         INSERT INTO web (value) VALUES('ok');
     EOF
