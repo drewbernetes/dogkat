@@ -1,4 +1,4 @@
-{{- if .Values.monitoring.grafana.dashboards -}}
+{{- if and .Values.monitoring.grafana.dashboards (or .Values.core.enabled  .Values.ingress.enabled) -}}
 ---
 
 apiVersion: v1

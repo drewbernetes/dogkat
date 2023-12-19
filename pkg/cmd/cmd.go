@@ -1,5 +1,5 @@
 /*
-Copyright 2022 EscherCloud.
+Copyright 2024 EscherCloud.
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,31 +16,33 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/eschercloudai/k8s-e2e-tester/pkg/cmd/delete"
-	"github.com/eschercloudai/k8s-e2e-tester/pkg/cmd/validate"
+	"github.com/eschercloudai/dogkat/pkg/cmd/delete"
+	"github.com/eschercloudai/dogkat/pkg/cmd/util/config"
+	"github.com/eschercloudai/dogkat/pkg/cmd/validate"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	"k8s.io/kubectl/pkg/cmd/util"
 )
 
 // init is auto run by cobra - all commands should be added here.
 func newRootCommand() *cobra.Command {
-	configFlags := genericclioptions.NewConfigFlags(true)
-	f := util.NewFactory(configFlags)
+	cobra.OnInitialize(config.InitConfig)
 
 	cmd := &cobra.Command{
 		Use: "k8s-e2e-tester",
 		Long: `Deploys resources to allow End-2-End testing to be conducted. 
 It can be used to test most elements of a cluster to ensure consistent stability and functionality.
-Documentation is available here: https://github.com/eschercloudai/k8s-e2e-tester/blob/main/README.md`,
+Documentation is available here: https://github.com/eschercloudai/dogkat/blob/main/README.md`,
 	}
 
+	configFlags := genericclioptions.NewConfigFlags(true)
+
 	commands := []*cobra.Command{
-		validate.NewValidateCommand(f),
-		delete.NewDeleteCommand(f),
+		validate.NewValidateCommand(configFlags),
+		delete.NewDeleteCommand(configFlags),
 		NewVersionCmd(),
 	}
 
+	// Add default k8s flags
 	configFlags.AddFlags(cmd.PersistentFlags())
 
 	cmd.AddCommand(commands...)
@@ -50,35 +52,3 @@ Documentation is available here: https://github.com/eschercloudai/k8s-e2e-tester
 func Generate() *cobra.Command {
 	return newRootCommand()
 }
-
-// determineTestCase will parse the flags and run the appropriate test
-//func determineTestCase() {
-//	if testAllFlag {
-//		runCoreTests(valuesFile)
-//		//test_cases.CoreWorkloadChecks(valuesFile, namespaceName, clientsets)
-//		//TODO: Add more here as more are added.
-//	} else {
-//		if testWorkloadsFlag {
-//			runCoreTests(valuesFile)
-//			//test_cases.CoreWorkloadChecks(valuesFile, namespaceName, clientsets)
-//		}
-//	}
-//}
-
-// parseResource will read through the supplied manifest file and work out what kind of API resource they are.
-//func parseResource(manifest string) resources.ApiResource {
-//	decode := scheme.Codecs.UniversalDeserializer().Decode
-//	obj, _, err := decode([]byte(manifest), nil, nil)
-//	if err != nil {
-//		log.Printf("There was an error decoding: %s, %s\n", manifest, err)
-//		return nil
-//	}
-//
-//	r := resources.ParseResourceKind(obj)
-//	if r == nil {
-//		return nil
-//	}
-//
-//	r.GetClient(namespaceName, cmd.clientsets)
-//	return r
-//}

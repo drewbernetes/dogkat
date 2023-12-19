@@ -1,3 +1,4 @@
+{{- if or .Values.core.enabled  .Values.ingress.enabled -}}
 ---
 
 apiVersion: v1
@@ -11,3 +12,4 @@ metadata:
   labels:
     {{- include "e2e-testing.labels" . | nindent 4 }}
     {{- include "e2e-testing.nginx.labels" . | nindent 4 }}
+{{- end }}

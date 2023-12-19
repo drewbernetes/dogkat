@@ -1,9 +1,10 @@
+{{- if or .Values.core.enabled  .Values.ingress.enabled -}}
 ---
 
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: postgres
+  name: web-database
   namespace: {{ .Release.Namespace }}
   annotations:
     {{- include "e2e-testing.annotations" . | nindent 4 }}
@@ -16,3 +17,4 @@ spec:
   selector:
     matchLabels:
       app: database-backend
+{{- end }}

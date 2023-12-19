@@ -1,3 +1,4 @@
+{{- if or .Values.core.enabled  .Values.ingress.enabled -}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -24,3 +25,4 @@ data:
     	CREATE TABLE IF NOT EXISTS web (id SERIAL PRIMARY KEY, value VARCHAR(10) NOT NULL );
         INSERT INTO web (value) VALUES('ok');
     EOF
+{{- end }}

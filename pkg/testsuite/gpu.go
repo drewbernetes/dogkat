@@ -1,5 +1,5 @@
 /*
-Copyright 2022 EscherCloud.
+Copyright 2024 EscherCloud.
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,31 +18,53 @@ package testsuite
 import (
 	"context"
 	"errors"
-	"github.com/eschercloudai/k8s-e2e-tester/pkg/tracing"
-	"github.com/eschercloudai/k8s-e2e-tester/pkg/workloads/coreworkloads"
+	"github.com/eschercloudai/dogkat/pkg/helm"
+	"github.com/eschercloudai/dogkat/pkg/workloads"
 	v1 "k8s.io/api/core/v1"
+	"k8s.io/client-go/rest"
 	"log"
 	"strings"
 )
 
-func TestGPU(pod *coreworkloads.Pod, pushGateway string) error {
-	tracer := tracing.Duration{JobName: "e2e_workloads", PushURL: pushGateway}
-	tracer.SetupMetricsGatherer("dogkat_test_gpu_duration_seconds", "Times the testing of the GPU resource")
-	tracer.Start()
+type VectorTest struct {
+	Test
+	Pod  *workloads.Pod
+	Logs *rest.Request
+}
 
-	log.Printf("checking pod logs in %s for PASSED status\n", pod.Resource.Name)
-	logs := pod.Client.CoreV1().Pods(pod.Resource.Namespace).GetLogs(pod.Resource.Name, &v1.PodLogOptions{})
+// NewVectorTest allows the logs for the vector_add program to be checked to make sure it passed.
+func NewVectorTest(p *workloads.Pod, c *helm.Client) *VectorTest {
+	name := "gpu_vector_test"
+	description := "Times the testing of the GPU resource to bring a GPU node in and run a vector add program"
+	t := NewTest(c, name, description)
 
-	logRaw, err := logs.DoRaw(context.Background())
+	return &VectorTest{
+		Test: t,
+		Pod:  p,
+	}
+}
+
+// Init prepares the test with initial conditions so that a starting point can be used to validate later
+func (v *VectorTest) Init() {}
+
+// Run the actual test
+func (v *VectorTest) Run() error {
+	v.Logs = v.Pod.PodInterface.GetLogs(v.Pod.Pod.Name, &v1.PodLogOptions{})
+	return nil
+}
+
+// Validate compares the end result of the test with the values set in the Init stage allowing a comparison to see if the test passed.
+// There is no metrics gathering here because by the time the logs are checked, the chart will have deployed and the
+// test run already so those metrics are more relevant than any that could be gathered here.
+func (v *VectorTest) Validate() error {
+	raw, err := v.Logs.DoRaw(context.Background())
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 
-	if !strings.Contains(string(logRaw), "Test PASSED") {
+	if !strings.Contains(string(raw), "Test PASSED") {
 		return errors.New("the test failed to complete - check the logs for more information")
 	}
-	log.Println("Test passed")
-	tracer.CompleteGathering()
 	return nil
 }

@@ -1,8 +1,0 @@
-#These will be added to the project and removed from this ignore file as they are validated and tested.
-daemonset.go
-gateway.go
-destinationrule.go
-job.go
-peerauthentication.go
-servicemonitor.go
-virtualservice.go
