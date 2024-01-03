@@ -21,6 +21,7 @@ import (
 	"github.com/eschercloudai/dogkat/pkg/tracing"
 )
 
+
 type TestCase interface {
 	Init()
 	Run() error

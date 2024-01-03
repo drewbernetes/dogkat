@@ -128,6 +128,7 @@ func (c *ScalingTest) Validate() error {
 		return fmt.Errorf("the nodes didn't scale. old value: %d, new value %d\n", c.StartingNodes, c.EndNodes)
 	}
 
+	log.Printf("Completed Test: %s\n", c.Test.Name)
 	return nil
 }
 

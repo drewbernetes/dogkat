@@ -49,6 +49,7 @@ func (v *VectorTest) Init() {}
 
 // Run the actual test
 func (v *VectorTest) Run() error {
+	log.Printf("Running Test: %s\n", v.Test.Name)
 	v.Logs = v.Pod.PodInterface.GetLogs(v.Pod.Pod.Name, &v1.PodLogOptions{})
 	return nil
 }
@@ -66,5 +67,6 @@ func (v *VectorTest) Validate() error {
 	if !strings.Contains(string(raw), "Test PASSED") {
 		return errors.New("the test failed to complete - check the logs for more information")
 	}
+	log.Printf("Completed Test: %s\n", v.Test.Name)
 	return nil
 }

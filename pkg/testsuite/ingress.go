@@ -63,6 +63,7 @@ func (i *HostNamePropagationTest) Run() error {
 	if tracing.Gatherer().Enabled {
 		i.Tracing.Start()
 	}
+	log.Printf("Running Test: %s\n", i.Test.Name)
 
 	resolved := false
 	retries := 20
@@ -133,5 +134,6 @@ func (i *HostNamePropagationTest) Validate() error {
 	}
 
 	log.Printf("Response from the page was: %s\n", result.Data)
+	log.Printf("Completed Test: %s\n", i.Test.Name)
 	return nil
 }

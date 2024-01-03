@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/eschercloudai/dogkat/pkg/constants"
+	"github.com/eschercloudai/dogkat/pkg/util"
 	"github.com/eschercloudai/dogkat/pkg/util/options"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
@@ -35,7 +36,7 @@ type Chart struct {
 }
 
 // NewChart unpacks the tgz making the Chart accessible for installation and supplied a Chart back.
-func NewChart(cl *Client, testType string, o options.Options) (*Chart, error) {
+func NewChart(cl *Client, testType util.TestTypes, o options.Options) (*Chart, error) {
 	// Download Chart
 	downloadPath := fmt.Sprintf("%s/%s-%s.tgz", "/tmp", constants.ChartName, o.Version)
 	_, err := os.Stat(downloadPath)
@@ -62,16 +63,16 @@ func NewChart(cl *Client, testType string, o options.Options) (*Chart, error) {
 }
 
 // loadOptionsToValues takes the inputted options via the config file and turns them into valid chart values.
-func (c *Chart) loadOptionsToValues(testType string, o options.Options) {
+func (c *Chart) loadOptionsToValues(testType util.TestTypes, o options.Options) {
 	c.Values = ChartValues{}
-	switch testType {
-	case constants.TestCore:
+	if testType.Core {
 		c.Values.Core = setCoreValues(o.CoreOptions)
-	case constants.TestGPU:
-		c.Values.Gpu = setGPUValues(o.GPUOptions)
-	case constants.TestIngress:
-		c.Values.Core = setCoreValues(o.CoreOptions)
+	}
+	if testType.Ingress {
 		c.Values.Ingress = setIngressValues(o.IngressOptions)
+	}
+	if testType.GPU {
+		c.Values.Gpu = setGPUValues(o.GPUOptions)
 	}
 }
 

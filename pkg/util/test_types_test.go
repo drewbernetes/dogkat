@@ -13,23 +13,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package constants
-
-const (
-	Version     = "v0.0.1-beta.7"
-	ChartName   = "dogkat"
-	ReleaseName = "dogkat-testing"
-	RepoURL     = "https://eschercloudai.github.io/dogkat"
-
-	TestCore    = "core"
-	TestGPU     = "gpu"
-	TestIngress = "ingress"
-	TestAll     = "all"
-
-	GPUName   = "gpu-test"
-	NginxName = "nginx-e2e"
-	PGSqlName = "web-database"
-
-	MetricsPrefix  = "dogkat_test"
-	MetricsJobName = "dogkat_workloads"
-)
+package util

@@ -22,6 +22,7 @@ import (
 	"github.com/eschercloudai/dogkat/pkg/helm"
 	"github.com/eschercloudai/dogkat/pkg/testsuite"
 	"github.com/eschercloudai/dogkat/pkg/tracing"
+	"github.com/eschercloudai/dogkat/pkg/util"
 	"github.com/eschercloudai/dogkat/pkg/util/options"
 	"github.com/eschercloudai/dogkat/pkg/workloads"
 	"github.com/spf13/cobra"
@@ -62,13 +63,16 @@ the required test suite will run against the resources to ensure everything is w
 			// Parse config items
 			o := options.NewOptions(configFlags)
 
-			// Determine test type
-			testType := constants.TestCore
-			if o.GPUOptions.Enabled {
-				testType = constants.TestGPU
+			// Determine test types
+			testType := util.TestTypes{}
+			if o.CoreOptions.Enabled {
+				testType.Core = true
 			}
 			if o.IngressOptions.Enabled {
-				testType = constants.TestIngress
+				testType.Ingress = true
+			}
+			if o.GPUOptions.Enabled {
+				testType.GPU = true
 			}
 
 			m := tracing.NewGatherer()
@@ -76,7 +80,7 @@ the required test suite will run against the resources to ensure everything is w
 
 			// Configure and start metrics for Chart deploy
 			if m.Enabled {
-				n := fmt.Sprintf("%s_chart_deployment", testType)
+				n := fmt.Sprintf("%s_chart_deployment", testType.GetType())
 				d := "Times the deployment of the chart before running tests"
 				chartTracer = tracing.NewCollector(m.PushGateway, n, d)
 				chartTracer.Start()
@@ -123,7 +127,7 @@ the required test suite will run against the resources to ensure everything is w
 			log.Println("waiting for resources to be ready")
 			//Check STS and Deployment are deployed - we can presume everything else is as these two make use of mounting secrets, configmaps, volumes etc.
 			var coreDeployment *workloads.Deployment
-			if testType == constants.TestCore {
+			if testType.Core {
 				coreDeployment, err = checkCoreReady(client)
 				if err != nil {
 					return err
@@ -131,7 +135,7 @@ the required test suite will run against the resources to ensure everything is w
 			}
 
 			var ingressResource *workloads.Ingress
-			if testType == constants.TestIngress {
+			if testType.Ingress {
 				_, err = checkCoreReady(client)
 				if err != nil {
 					return err
@@ -143,7 +147,7 @@ the required test suite will run against the resources to ensure everything is w
 			}
 
 			var gpuPod *workloads.Pod
-			if testType == constants.TestGPU {
+			if testType.GPU {
 				gpuPod, err = checkGPUReady(client)
 				if err != nil {
 					return err
@@ -161,14 +165,14 @@ the required test suite will run against the resources to ensure everything is w
 
 			// Configure and start metrics for tests
 			if m.Enabled {
-				n := fmt.Sprintf("%s_duration_seconds", testType)
-				d := fmt.Sprintf("Times the %s e2e test takes to complete", testType)
+				n := fmt.Sprintf("%s_duration_seconds", testType.GetType())
+				d := fmt.Sprintf("Times the %s e2e test takes to complete", testType.GetType())
 				fullTracer = tracing.NewCollector(m.PushGateway, n, d)
 				fullTracer.Start()
 			}
 
 			// Run tests
-			if o.CoreOptions.Enabled {
+			if testType.Core {
 				t := testsuite.NewScalingTest(coreDeployment, client)
 				t.Init(o.CoreOptions.ScaleTo)
 
@@ -180,7 +184,18 @@ the required test suite will run against the resources to ensure everything is w
 				}
 			}
 
-			if o.GPUOptions.Enabled {
+			if testType.Ingress {
+				t := testsuite.NewEndpointTest(ingressResource, client)
+				t.Init(o.IngressOptions.Host, o.IngressOptions.EnableTLS)
+				if err = t.Run(); err != nil {
+					return err
+				}
+				if err = t.Validate(); err != nil {
+					return err
+				}
+			}
+
+			if testType.GPU {
 				t := testsuite.NewVectorTest(gpuPod, client)
 				if err = t.Run(); err != nil {
 					return err
@@ -190,17 +205,6 @@ the required test suite will run against the resources to ensure everything is w
 				}
 
 				// TODO: Implement a GPU Scale test?
-			}
-
-			if o.IngressOptions.Enabled {
-				t := testsuite.NewEndpointTest(ingressResource, client)
-				t.Init(o.IngressOptions.Host, o.IngressOptions.EnableTLS)
-				if err = t.Run(); err != nil {
-					return err
-				}
-				if err = t.Validate(); err != nil {
-					return err
-				}
 			}
 
 			if m.Enabled {
