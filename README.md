@@ -61,3 +61,19 @@ Test GPU
 ```shell
 e2e-test validate gpu --number-of-gpus 1
 ```
+
+
+## Using The Chart
+
+```shell
+helm install oci:///charts/dogkat --values values.yaml
+```
+
+## Updating the Chart
+Make sure you've run and resolved any issues using the following as failures of these will cause the pipeline/actions to fail.
+```
+yamllint charts/dogkat/Chart.yaml  --config-file .github/ct.yaml
+yamllint charts/dogkat/values.yaml  --config-file .github/ct.yaml
+
+helm-docs
+```

@@ -1,0 +1,24 @@
+chart:
+  version: 0.1.0-beta.1
+metrics:
+  enabled: false
+  pushGatewayURI: http://prometheus-push-gateway.prometheus:9091
+core:
+  enabled: true
+  cpu: 1
+  memory: 1Gi
+  storageClassName: "cinder"
+  scaleTo: 7
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: "escher.dev"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  tls:
+    enable: false
+    host: "escher.dev"
+    secretName: "dogkat-ingress-secret"
+gpu:
+  enabled: true
+  numberOfGPUs: 1

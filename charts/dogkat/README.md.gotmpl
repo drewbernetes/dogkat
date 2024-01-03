@@ -10,10 +10,11 @@
 ## Installation
 
 ```shell
-helm install oci://harbor.infra.nl1.eschercloud.dev/charts/{{ template "chart.name" . }} --values values.yaml
+helm install https://eschercloudai.github.io/dogkat/{{ template "chart.name" . }} --values values.yaml
 ```
 
 ## Updating the Chart
+
 Make sure you've run and resolved any issues using the following as failures of these will cause the pipeline/actions to fail.
 ```
 yamllint charts/{{ template "chart.name" . }}/Chart.yaml  --config-file .github/ct.yaml

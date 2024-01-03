@@ -3,6 +3,7 @@
 # Default values for HA e2e-testing basic.
 
 core:
+  enabled: false
   nginx:
     image:
       # -- The repo to be used
@@ -30,13 +31,13 @@ core:
       repo: postgres
       # -- The tag to be used
       tag: 16-alpine
-    statefulset:
+    statefulSet:
       persistentData:
         enabled: true
         storageClassName: "cinder"
 
 gpu:
-  enabled: true
+  enabled: false
   numberOfGPUs: 1
   image:
     # -- The repo to be used
@@ -46,7 +47,7 @@ gpu:
   resources: {}
 
 ingress:
-  enabled: true
+  enabled: false
   annotations: {}
   # cert-manager.io/cluster-issuer: "letsencrypt-prod"
   # external-dns.alpha.kubernetes.io/target: "example.uk"
@@ -61,6 +62,6 @@ ingress:
 
 monitoring:
   grafana:
-    dashboards: true
+    dashboards: false
   serviceMonitor:
-    enabled: true
+    enabled: false

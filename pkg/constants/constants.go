@@ -1,5 +1,5 @@
 /*
-Copyright 2022 EscherCloud.
+Copyright 2024 EscherCloud.
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,20 +16,19 @@ limitations under the License.
 package constants
 
 const (
-	Version    = "v0.0.1-beta.4"
-	DBUser     = "e2e-user"
-	DBPassword = "e2e-password"
-	DBName     = "e2e-user"
+	Version     = "v0.0.1-beta.7"
+	ChartName   = "dogkat"
+	ReleaseName = "dogkat-testing"
+	RepoURL     = "https://eschercloudai.github.io/dogkat"
 
-	GPUName = "gpu-test"
+	TestCore    = "core"
+	TestGPU     = "gpu"
+	TestIngress = "ingress"
 
-	NginxConfName  = "nginx-conf"
-	NginxPagesName = "nginx-index"
-	NginxSAName    = "nginx-sa"
-	NginxName      = "nginx-e2e"
+	GPUName   = "gpu-test"
+	NginxName = "nginx-e2e"
+	PGSqlName = "web-database"
 
-	PGSqlConfName   = "sql-init"
-	PGSqlSAName     = "postgresql-sa"
-	PGSqlPasswdName = "pg-password"
-	PGSqlName       = "database-e2e"
+	MetricsPrefix  = "dogkat_test"
+	MetricsJobName = "dogkat_workloads"
 )

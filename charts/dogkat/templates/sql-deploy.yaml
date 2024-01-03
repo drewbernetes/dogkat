@@ -1,3 +1,4 @@
+{{- if or .Values.core.enabled  .Values.ingress.enabled -}}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -51,7 +52,7 @@ spec:
             - -c
             - rm -rf /var/lib/postgresql/data/*
             - rm -rf /var/lib/postgresql/data/.*
-          {{- if (eq true .Values.core.postgres.statefulset.persistentData.enabled)}}
+          {{- if (eq true .Values.core.postgres.statefulSet.persistentData.enabled)}}
           volumeMounts:
             - name: data
               mountPath: "/var/lib/postgresql/data"
@@ -84,7 +85,7 @@ spec:
           configMap:
             name: sql-init
             defaultMode: 0755
-      {{- if (eq false .Values.core.postgres.statefulset.persistentData.enabled)}}
+      {{- if (eq false .Values.core.postgres.statefulSet.persistentData.enabled)}}
         - name: data
           emptyDir: { }
       {{- else }}
@@ -93,9 +94,11 @@ spec:
         name: data
       spec:
         accessModes: [ "ReadWriteOnce" ]
-        storageClassName: {{.Values.core.postgres.statefulset.persistentData.storageClassName}}
+        storageClassName: {{.Values.core.postgres.statefulSet.persistentData.storageClassName }}
         volumeMode: Filesystem
         resources:
           requests:
             storage: 10Gi
+      {{- end }}
+
 {{- end }}

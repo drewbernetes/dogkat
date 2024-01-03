@@ -1,3 +1,4 @@
+{{- if or .Values.core.enabled  .Values.ingress.enabled -}}
 ---
 
 apiVersion: apps/v1
@@ -132,3 +133,4 @@ spec:
                 path: default.conf
               - key: metrics
                 path: metrics.conf
+{{- end }}

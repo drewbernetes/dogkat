@@ -1,3 +1,4 @@
+{{- if or .Values.core.enabled  .Values.ingress.enabled -}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -105,3 +106,4 @@ data:
       header("HTTP/1.0 200 OK");
       echo json_encode(array("success" => true, "data" => "ok"));
     ?>
+{{- end }}
