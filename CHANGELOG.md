@@ -8,6 +8,12 @@
 
 ### Deprecated
 
+## [ 2024/01/03 - v0.1.1 ]
+
+### Changed/Added
+* Added ability to run multiple or all tests in one go
+* Updated go modules
+
 ## [ 2024/01/03 - v0.1.0 ]
 
 ### Changed/Added
