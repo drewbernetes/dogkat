@@ -30,27 +30,27 @@ func (t *TestTypes) GetType() string {
 	test := ""
 	if t.Core {
 		if test == "" {
-			test = fmt.Sprintf("%s", constants.TestCore)
+			test = constants.TestCore
 		} else {
 			test = fmt.Sprintf("%s_%s", test, constants.TestCore)
 		}
 	}
 	if t.Ingress {
 		if test == "" {
-			test = fmt.Sprintf("%s", constants.TestIngress)
+			test = constants.TestIngress
 		} else {
 			test = fmt.Sprintf("%s_%s", test, constants.TestIngress)
 		}
 	}
 	if t.GPU {
 		if test == "" {
-			test = fmt.Sprintf("%s", constants.TestGPU)
+			test = constants.TestGPU
 		} else {
 			test = fmt.Sprintf("%s_%s", test, constants.TestGPU)
 		}
 	}
 	if t.Core && t.Ingress && t.GPU {
-		test = fmt.Sprintf(constants.TestAll)
+		test = constants.TestAll
 	}
 
 	return test
