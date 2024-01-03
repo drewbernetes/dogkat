@@ -2,6 +2,31 @@ apiVersion: v1
 entries:
   dogkat:
   - apiVersion: v2
+    appVersion: 0.1.1
+    created: "2024-01-03T12:45:04.660863803Z"
+    description: 'End-2-End testing for GPUs and some core resources '
+    digest: faf4a7b87717387e330af82b67177f8560f6bc1d9e31d6b4a0837366e4c808f8
+    keywords:
+    - dogkat
+    - end-2-end
+    - high-availability
+    - ingress
+    - storage
+    maintainers:
+    - email: d.viles@eschercloud.ai
+      name: drew-viles
+    - email: n.jones@eschercloud.ai
+      name: yankcrime
+    - email: s.murray@eschercloud.ai
+      name: spjmurray
+    name: dogkat
+    sources:
+    - https://github.com/eschercloudai/dogkat/tree/main/charts/dogkat
+    type: application
+    urls:
+    - https://github.com/eschercloudai/dogkat/releases/download/dogkat-0.1.1/dogkat-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
     appVersion: 0.1.0
     created: "2024-01-03T10:41:36.768196185Z"
     description: 'End-2-End testing for GPUs and some core resources '
@@ -101,4 +126,4 @@ entries:
     urls:
     - https://github.com/eschercloudai/dogkat/releases/download/dogkat-0.0.0/dogkat-0.0.0.tgz
     version: 0.0.0
-generated: "2024-01-03T10:41:36.768213478Z"
+generated: "2024-01-03T12:45:04.660885935Z"
