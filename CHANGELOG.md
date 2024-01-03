@@ -8,6 +8,19 @@
 
 ### Deprecated
 
+## [ 2024/01/03 - v0.1.0 ]
+
+### Changed/Added
+* Rewritten (nearly) the entire codebase
+* Added new helm chart to use as the source of the resources to deploy
+* Added ability to build new chart on release - chart is manually version defined for now while using the chart-releaser-action
+* Improved some checks around the tests that are run as part of the refactor
+
+### Fixed
+
+### Deprecated
+* built in workloads in favor of helm chart
+
 ## [ 2023/11/27 - v0.1.0-beta.5 ]
 
 ### Changed/Added
