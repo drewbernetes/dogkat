@@ -45,6 +45,8 @@ gpu:
     # -- The tag to be used
     tag: vectoradd-cuda11.2.1
   resources: {}
+  nodeLabelSelectors:
+    nvidia.com/gpu.present: "true"
 
 ingress:
   enabled: false

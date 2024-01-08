@@ -14,13 +14,14 @@ metadata:
     {{- include "e2e-testing.gpu.labels" . | nindent 4 }}
 spec:
   restartPolicy: OnFailure
+  nodeSelector:
+    {{- toYaml .Values.gpu.nodeLabelSelectors| nindent 4 }}
   containers:
     - name: nvidia-vectoradd
       image: {{.Values.gpu.image.repo}}:{{.Values.gpu.image.tag}}
       terminationMessagePath: /dev/termination-log
       terminationMessagePolicy: File
       imagePullPolicy: IfNotPresent
-
       {{- if .Values.gpu.resources }}
       resources:
         "nvidia.com/gpu": {{ .Values.gpu.numberOfGPUs }}

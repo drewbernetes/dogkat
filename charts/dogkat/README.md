@@ -42,6 +42,7 @@ The following table lists the configurable parameters of the chart and the defau
 | gpu.enabled | bool | `false` |  |
 | gpu.image.repo | string | `"nvidia/samples"` | The repo to be used |
 | gpu.image.tag | string | `"vectoradd-cuda11.2.1"` | The tag to be used |
+| gpu.nodeLabelSelectors."nvidia.com/gpu.present" | string | `"true"` |  |
 | gpu.numberOfGPUs | int | `1` |  |
 | gpu.resources | object | `{}` |  |
 | ingress.annotations | object | `{}` |  |
