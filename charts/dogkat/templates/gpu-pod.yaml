@@ -15,7 +15,7 @@ metadata:
 spec:
   restartPolicy: OnFailure
   nodeSelector:
-    nvidia.com/gpu.present: "true"
+    {{- toYaml .Values.gpu.nodeLabelSelectors| nindent 4 }}
   containers:
     - name: nvidia-vectoradd
       image: {{.Values.gpu.image.repo}}:{{.Values.gpu.image.tag}}
