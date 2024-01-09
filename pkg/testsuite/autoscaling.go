@@ -76,11 +76,16 @@ func (c *ScalingTest) Run() error {
 	log.Printf("Running Test: %s\n", c.Test.Name)
 	log.Printf("Node count before Scale %v\n", c.StartingNodes)
 
-	// Increase the replicas
-	c.Deployment.Deployment.Spec.Replicas = helpers.IntPtr(c.TargetReplicas)
-
 	re := retry.RetryOnConflict(retry.DefaultRetry, func() error {
-		d, err := c.Deployment.Update(context.Background(), c.Deployment.Deployment, metav1.UpdateOptions{})
+		deploy, err := c.Deployment.Get()
+		if err != nil {
+			return err
+		}
+
+		// Increase the replicas
+		deploy.Spec.Replicas = helpers.IntPtr(c.TargetReplicas)
+
+		d, err := c.Deployment.Update(context.Background(), deploy, metav1.UpdateOptions{})
 		if err != nil {
 			return err
 		}
