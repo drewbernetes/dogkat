@@ -57,10 +57,10 @@ func NewDeleteCommand(cf *genericclioptions.ConfigFlags) *cobra.Command {
 				return err
 			}
 
-			if err = deleteNamespaceOnSuccess(client.KubeClient, *cf.Namespace); err != nil {
+			if err = deleteNamespaceOnSuccess(client.KubeClient, *configFlags.Namespace); err != nil {
 				return err
 			}
-			
+
 			return nil
 		},
 	}
