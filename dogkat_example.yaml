@@ -1,16 +1,27 @@
+# The chart version can be defined here
 chart:
-  version: 0.1.0-beta.1
+  version: 0.1.2
+# Enable to generate metrics and send to a prometheus push gateway
 metrics:
   enabled: false
   pushGatewayURI: http://prometheus-push-gateway.prometheus:9091
+# Core test settings - this will test that a basic web application with:
+# * Deployments & StatefulSets using affinity/anti-affinity
+# * PDBs, Secrets, ConfigMap
+# * Secrets
+# * ConfigMaps
+# * Volumes
+# It will also test node scaling works by scaling the nginx deployment out to the value provided.
 core:
-  enabled: true
+  enabled: false
   cpu: 1
   memory: 1Gi
   storageClassName: "cinder"
   scaleTo: 7
+# This will deploy the core resources along with an Ingress to confirm LoadBalancing services work.
+# This will require CertManager and ExternalDNS to be configured - DogKat does not deploy these.
 ingress:
-  enabled: true
+  enabled: false
   ingressClassName: nginx
   host: "escher.dev"
   annotations:
@@ -19,6 +30,7 @@ ingress:
     enable: false
     host: "escher.dev"
     secretName: "dogkat-ingress-secret"
+# This will deploy a basic Nvidia vector add pod to ensure the GPU is working correctly.
 gpu:
-  enabled: true
+  enabled: false
   numberOfGPUs: 1

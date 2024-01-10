@@ -1,5 +1,6 @@
 /*
 Copyright 2024 EscherCloud.
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -66,8 +67,9 @@ func (i *HostNamePropagationTest) Run() error {
 	log.Printf("Running Test: %s\n", i.Test.Name)
 
 	resolved := false
-	retries := 20
+	retries := 300
 
+	log.Println("Waiting up to 5 minutes for endpoint to respond")
 	for !resolved {
 		if retries <= 0 {
 			return fmt.Errorf("couldn't resolve the endpoint - maybe it's not propagated yet or hasn't been created\n")
@@ -75,22 +77,13 @@ func (i *HostNamePropagationTest) Run() error {
 
 		next := func() {
 			retries--
-			time.Sleep(time.Second * 5)
+			time.Sleep(time.Second * 1)
 		}
 
 		resp, err := http.Get(i.Hostname)
 		if err != nil {
-			// Try and catch some common errors that may resolve
-			if strings.Contains(err.Error(), strings.ToLower("no such host")) {
-				log.Printf("dns not propagated for %s\n", i.Hostname)
-				next()
-				continue
-			} else if strings.Contains(err.Error(), "x509: certificate") {
-				log.Printf("There is a certificate error for %s - Have you got a problem with cert-manager or external DNS?\n", i.Hostname)
-				next()
-				continue
-			} else if strings.Contains(err.Error(), "No address associated with hostname") {
-				log.Printf("Address error for %s\n", i.Hostname)
+			// Try and catch some common errors that may resolve themselves
+			if strings.Contains(err.Error(), strings.ToLower("no such host")) || strings.Contains(err.Error(), "x509: certificate") || strings.Contains(err.Error(), "No address associated with hostname") {
 				next()
 				continue
 			} else {

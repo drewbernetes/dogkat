@@ -1,5 +1,6 @@
 /*
 Copyright 2024 EscherCloud.
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +17,7 @@ limitations under the License.
 package constants
 
 const (
-	Version     = "v0.0.1-beta.7"
+	Version     = "v0.1.2"
 	ChartName   = "dogkat"
 	ReleaseName = "dogkat-testing"
 	RepoURL     = "https://eschercloudai.github.io/dogkat"

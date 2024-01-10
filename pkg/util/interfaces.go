@@ -14,20 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package options
+package util
 
 import (
-	"github.com/spf13/viper"
+	"io"
 )
 
-type GPUOptions struct {
-	Enabled      bool
-	NumberOfGPUs string
-}
+//go:generate mockgen -source=interfaces.go -destination=../mock/interfaces.go -package=mock
 
-func newGPUOptions() GPUOptions {
-	return GPUOptions{
-		Enabled:      viper.GetBool("gpu.enabled"),
-		NumberOfGPUs: viper.GetString("gpu.numberOfGPUs"),
-	}
+type S3Interface interface {
+	PutToS3(string, string, string, io.ReadSeeker) error
 }

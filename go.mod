@@ -3,9 +3,12 @@ module github.com/eschercloudai/dogkat
 go 1.21
 
 require (
+	github.com/gophercloud/gophercloud v1.8.0
 	github.com/prometheus/client_golang v1.18.0
+	github.com/rhnvrm/simples3 v0.8.3
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
+	go.uber.org/mock v0.4.0
 	golang.org/x/net v0.19.0
 	helm.sh/helm/v3 v3.13.3
 	k8s.io/api v0.29.0

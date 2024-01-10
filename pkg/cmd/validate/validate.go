@@ -1,5 +1,6 @@
 /*
 Copyright 2024 EscherCloud.
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,6 +17,7 @@ limitations under the License.
 package validate
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/eschercloudai/dogkat/pkg/constants"
@@ -30,6 +32,7 @@ import (
 	"helm.sh/helm/v3/pkg/storage/driver"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"log"
+	"os"
 )
 
 //TODO: Enable these if/when they are implemented
@@ -49,6 +52,11 @@ import (
 //		log.Fatalln(err)
 //	}
 //}
+
+type Tracker struct {
+	TestName  string
+	Completed bool
+}
 
 func NewValidateCommand(cf *genericclioptions.ConfigFlags) *cobra.Command {
 	configFlags := cf
@@ -172,37 +180,65 @@ the required test suite will run against the resources to ensure everything is w
 			}
 
 			// Run tests
+			tracker := []Tracker{}
+
 			if testType.Core {
 				t := testsuite.NewScalingTest(coreDeployment, client)
 				t.Init(o.CoreOptions.ScaleTo)
+
+				track := Tracker{
+					TestName: t.Name,
+				}
 
 				if err = t.Run(); err != nil {
 					return err
 				}
 				if err = t.Validate(); err != nil {
-					return err
+					track.Completed = false
+				} else {
+					track.Completed = true
 				}
+
+				tracker = append(tracker, track)
 			}
 
 			if testType.Ingress {
 				t := testsuite.NewEndpointTest(ingressResource, client)
 				t.Init(o.IngressOptions.Host, o.IngressOptions.EnableTLS)
+
+				track := Tracker{
+					TestName: t.Name,
+				}
+
 				if err = t.Run(); err != nil {
 					return err
 				}
 				if err = t.Validate(); err != nil {
-					return err
+					track.Completed = false
+				} else {
+					track.Completed = true
 				}
+
+				tracker = append(tracker, track)
 			}
 
 			if testType.GPU {
 				t := testsuite.NewVectorTest(gpuPod, client)
+
+				track := Tracker{
+					TestName: t.Name,
+				}
+
 				if err = t.Run(); err != nil {
 					return err
 				}
 				if err = t.Validate(); err != nil {
-					return err
+					track.Completed = false
+				} else {
+					track.Completed = true
 				}
+
+				tracker = append(tracker, track)
 
 				// TODO: Implement a GPU Scale test?
 			}
@@ -213,12 +249,47 @@ the required test suite will run against the resources to ensure everything is w
 				}
 			}
 
+			// Check to see if any tests failed validation (failed runs will result in the program exiting
+			err = checkForFailedTests(tracker)
+			if err != nil {
+				return err
+			}
+
 			log.Println("tests complete")
 			return nil
 		},
 	}
 
 	return cmd
+}
+
+func checkForFailedTests(tracker []Tracker) error {
+	failedTests := false
+	e := "the following tests failed: "
+
+	for _, v := range tracker {
+		if !v.Completed {
+			e = fmt.Sprintf("%s %s", e, v.TestName)
+			failedTests = true
+		}
+	}
+
+	data, err := json.Marshal(tracker)
+	if err != nil {
+		log.Println("couldn't marshall the results data")
+	}
+
+	if data != nil {
+		if err = os.WriteFile("/tmp/results.json", data, 0644); err != nil {
+			log.Println("couldn't create results file")
+		}
+	}
+
+	if failedTests {
+		return fmt.Errorf("%s\n", e)
+	}
+
+	return nil
 }
 
 // checkCoreReady validates that the Deployment, StatefulSet and the PDB for both are in a ready state.
