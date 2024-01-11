@@ -17,7 +17,7 @@ limitations under the License.
 package constants
 
 const (
-	Version     = "v0.1.2"
+	Version     = "v0.1.3"
 	ChartName   = "dogkat"
 	ReleaseName = "dogkat-testing"
 	RepoURL     = "https://eschercloudai.github.io/dogkat"
