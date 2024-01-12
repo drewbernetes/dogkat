@@ -8,28 +8,51 @@
 
 ### Deprecated
 
+## [ 2024/01/03 - v0.1.4 ]
+
+### Fixed
+
+* Updated test tracking to enable the test itself to create the tracker as some data was being missed.
+
+## [ 2024/01/03 - v0.1.3 ]
+
+### Changed/Added
+
+* Added test tracking to write a results file out
+
+## [ 2024/01/03 - v0.1.2 ]
+
+### Changed/Added
+
+* Updated process to fetch deployment before updating it to prevent an error "Operation cannot be fulfilled"
+* minor pipeline update to add skip-existing to chart release
+
 ## [ 2024/01/03 - v0.1.1 ]
 
 ### Changed/Added
-* Added ability to run multiple or all tests in one go
-* Updated go modules
+
+* Minor updates to test processing for better detection and to prevent failures of the whole app if one fails
 
 ## [ 2024/01/03 - v0.1.0 ]
 
 ### Changed/Added
+
 * Rewritten (nearly) the entire codebase
 * Added new helm chart to use as the source of the resources to deploy
-* Added ability to build new chart on release - chart is manually version defined for now while using the chart-releaser-action
+* Added ability to build new chart on release - chart is manually version defined for now while using the
+  chart-releaser-action
 * Improved some checks around the tests that are run as part of the refactor
 
 ### Fixed
 
 ### Deprecated
+
 * built in workloads in favor of helm chart
 
 ## [ 2023/11/27 - v0.1.0-beta.5 ]
 
 ### Changed/Added
+
 * Updated container scanner
 * Updated go modules
 * Switched to chainguard Golang image
