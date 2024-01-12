@@ -8,19 +8,25 @@
 
 ### Deprecated
 
-## [ 2024/01/03 - v0.1.4 ]
+## [ 2024/01/12 - v0.1.5 ]
+
+### Fixed
+
+* Outputted results file now has quotes around the completed result
+
+## [ 2024/01/12 - v0.1.4 ]
 
 ### Fixed
 
 * Updated test tracking to enable the test itself to create the tracker as some data was being missed.
 
-## [ 2024/01/03 - v0.1.3 ]
+## [ 2024/01/11 - v0.1.3 ]
 
 ### Changed/Added
 
 * Added test tracking to write a results file out
 
-## [ 2024/01/03 - v0.1.2 ]
+## [ 2024/01/09 - v0.1.2 ]
 
 ### Changed/Added
 
