@@ -46,6 +46,7 @@ type ScalingTest struct {
 	StartingReplicas int32
 	TargetReplicas   int32
 	Deployment       *workloads.Deployment
+	Tracker          *TestTracker
 }
 
 // NewScalingTest returns a new Scaling test which will check the cluster autoscaler works.
@@ -57,6 +58,15 @@ func NewScalingTest(d *workloads.Deployment, c *helm.Client) *ScalingTest {
 	return &ScalingTest{
 		Test:       t,
 		Deployment: d,
+		Tracker: &TestTracker{
+			Name: name,
+			Description: `The scaling test has been designed to test node auto-scaling as well as some other core components.
+It deploys a basic web service as a Deployment and database as a StatefulSet along with some Secrets, Configmaps, Pod Disruption Budgets and some other core resources.
+The purpose of this test is to ensure that a basic workload can be deployed. When queried, the website returns an 'ok' value which is pulled from the database otherwise it throws and error.
+This confirms the functionality of CoreDNS within the cluster. Once deployed, it scales the nginx (web) workload up to the specified value in the config supplied which, if enough, will trigger a node scale.
+If the nodes do not scale up, then an error is returned.`,
+			Completed: false,
+		},
 	}
 }
 
@@ -135,6 +145,8 @@ func (c *ScalingTest) Validate() error {
 	}
 
 	log.Printf("Completed Test: %s\n", c.Test.Name)
+
+	c.Tracker.Completed = true
 	return nil
 }
 

@@ -29,8 +29,9 @@ import (
 
 type VectorTest struct {
 	Test
-	Pod  *workloads.Pod
-	Logs *rest.Request
+	Pod     *workloads.Pod
+	Logs    *rest.Request
+	Tracker *TestTracker
 }
 
 // NewVectorTest allows the logs for the vector_add program to be checked to make sure it passed.
@@ -42,6 +43,14 @@ func NewVectorTest(p *workloads.Pod, c *helm.Client) *VectorTest {
 	return &VectorTest{
 		Test: t,
 		Pod:  p,
+		Tracker: &TestTracker{
+			Name: name,
+			Description: `The GPU tester will deploy an NVIDIA CUDA Pod which runs a simple vector add. 
+The success of this Pod will determine if the GPU is available and functioning. 
+This will not confirm the validity of licenses, only functionality of the GPU at the time of the test running. If a valid
+license is not deployed the performance of the GPU will degrade over time.`,
+			Completed: false,
+		},
 	}
 }
 
@@ -69,5 +78,7 @@ func (v *VectorTest) Validate() error {
 		return errors.New("the test failed to complete - check the logs for more information")
 	}
 	log.Printf("Completed Test: %s\n", v.Test.Name)
+
+	v.Tracker.Completed = true
 	return nil
 }

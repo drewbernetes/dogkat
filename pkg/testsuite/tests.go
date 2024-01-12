@@ -28,6 +28,12 @@ type TestCase interface {
 	Validate() error
 }
 
+type TestTracker struct {
+	Name        string
+	Description string
+	Completed   bool
+}
+
 type Test struct {
 	Client      *helm.Client
 	Tracing     *tracing.Duration

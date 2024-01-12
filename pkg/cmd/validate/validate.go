@@ -53,12 +53,6 @@ import (
 //	}
 //}
 
-type TestTracker struct {
-	Name        string
-	Description string
-	Completed   bool
-}
-
 func NewValidateCommand(cf *genericclioptions.ConfigFlags) *cobra.Command {
 	configFlags := cf
 
@@ -181,76 +175,47 @@ the required test suite will run against the resources to ensure everything is w
 			}
 
 			// Run tests
-			tracker := []TestTracker{}
+			tracker := []testsuite.TestTracker{}
 
 			if testType.Core {
 				t := testsuite.NewScalingTest(coreDeployment, client)
 				t.Init(o.CoreOptions.ScaleTo)
 
-				track := TestTracker{
-					Name: t.Name,
-					Description: `The scaling test has been designed to test node auto-scaling as well as some other core components.
-It deploys a basic web service as a Deployment and database as a StatefulSet along with some Secrets, Configmaps, Pod Disruption Budgets and some other core resources.
-The purpose of this test is to ensure that a basic workload can be deployed. When queried, the website returns an 'ok' value which is pulled from the database otherwise it throws and error.
-This confirms the functionality of CoreDNS within the cluster. Once deployed, it scales the nginx (web) workload up to the specified value in the config supplied which, if enough, will trigger a node scale.
-If the nodes do not scale up, then an error is returned.`,
-				}
-
 				if err = t.Run(); err != nil {
 					return err
 				}
 				if err = t.Validate(); err != nil {
-					track.Completed = false
-				} else {
-					track.Completed = true
+					log.Println(err)
 				}
 
-				tracker = append(tracker, track)
+				tracker = append(tracker, *t.Tracker)
 			}
 
 			if testType.Ingress {
 				t := testsuite.NewEndpointTest(ingressResource, client)
 				t.Init(o.IngressOptions.Host, o.IngressOptions.EnableTLS)
 
-				track := TestTracker{
-					Name: t.Name,
-					Description: `The ingress test makes use of the core scaling test in that it deploys the web/database service however it also deploys an Ingress resource.
-This test requires External DNS and Cert-Manager to be deployed to function correctly as it will use them to create the DNS record and generate the cert.`,
-				}
-
 				if err = t.Run(); err != nil {
 					return err
 				}
 				if err = t.Validate(); err != nil {
-					track.Completed = false
-				} else {
-					track.Completed = true
+					log.Println(err)
 				}
 
-				tracker = append(tracker, track)
+				tracker = append(tracker, *t.Tracker)
 			}
 
 			if testType.GPU {
 				t := testsuite.NewVectorTest(gpuPod, client)
 
-				track := TestTracker{
-					Name: t.Name,
-					Description: `The GPU tester will deploy an NVIDIA CUDA Pod which runs a simple vector add. 
-The success of this Pod will determine if the GPU is available and functioning. 
-This will not confirm the validity of licenses, only functionality of the GPU at the time of the test running. If a valid
-license is not deployed the performance of the GPU will degrade over time.`,
-				}
-
 				if err = t.Run(); err != nil {
 					return err
 				}
 				if err = t.Validate(); err != nil {
-					track.Completed = false
-				} else {
-					track.Completed = true
+					log.Println(err)
 				}
 
-				tracker = append(tracker, track)
+				tracker = append(tracker, *t.Tracker)
 
 				// TODO: Implement a GPU Scale test?
 			}
@@ -275,7 +240,7 @@ license is not deployed the performance of the GPU will degrade over time.`,
 	return cmd
 }
 
-func checkForFailedTests(tracker []TestTracker) error {
+func checkForFailedTests(tracker []testsuite.TestTracker) error {
 	failedTests := false
 	e := "the following tests failed: "
 

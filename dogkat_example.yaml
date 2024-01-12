@@ -1,6 +1,6 @@
 # The chart version can be defined here
 chart:
-  version: 0.1.2
+  version: 0.0.0
 # Enable to generate metrics and send to a prometheus push gateway
 metrics:
   enabled: false

@@ -77,3 +77,23 @@ yamllint charts/dogkat/values.yaml  --config-file .github/ct.yaml
 
 helm-docs
 ```
+## Development
+
+To test any changes the app should be run against a cluster using a pre-built chart.
+
+```shell
+helm package --app-version 0.0.0 --version 0.0.0 charts/dogkat -d /tmp/
+```
+
+Then using the `dogkat-example.yaml`, you can deploy the pre-packaged chart 
+
+```shell
+go run cmd/dogkat/main.go validate -n dogkat
+```
+
+Be sure to run `helm-docs`, `ct`, and `golangci-lint` to ensure it passes pipeline tests
+```shell
+helm-docs
+ct lint --all --config .github/ct.yaml
+golangci-lint run --out-format=github-actions --timeout=3m
+```

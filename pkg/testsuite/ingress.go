@@ -36,6 +36,7 @@ type HostNamePropagationTest struct {
 	Hostname       string
 	ResponseBody   []byte
 	ResponseStatus int
+	Tracker        *TestTracker
 }
 
 func NewEndpointTest(i *workloads.Ingress, c *helm.Client) *HostNamePropagationTest {
@@ -46,6 +47,12 @@ func NewEndpointTest(i *workloads.Ingress, c *helm.Client) *HostNamePropagationT
 	return &HostNamePropagationTest{
 		Test:    t,
 		Ingress: i,
+		Tracker: &TestTracker{
+			Name: name,
+			Description: `The ingress test makes use of the core scaling test in that it deploys the web/database service however it also deploys an Ingress resource.
+This test requires External DNS and Cert-Manager to be deployed to function correctly as it will use them to create the DNS record and generate the cert.`,
+			Completed: false,
+		},
 	}
 }
 
@@ -128,5 +135,7 @@ func (i *HostNamePropagationTest) Validate() error {
 
 	log.Printf("Response from the page was: %s\n", result.Data)
 	log.Printf("Completed Test: %s\n", i.Test.Name)
+
+	i.Tracker.Completed = true
 	return nil
 }
