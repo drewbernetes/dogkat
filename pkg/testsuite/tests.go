@@ -29,9 +29,9 @@ type TestCase interface {
 }
 
 type TestTracker struct {
-	Name        string
-	Description string
-	Completed   bool
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Completed   bool   `json:"completed,string"`
 }
 
 type Test struct {
