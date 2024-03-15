@@ -18,10 +18,10 @@ package testsuite
 
 import (
 	"fmt"
-	"github.com/eschercloudai/dogkat/pkg/helm"
-	"github.com/eschercloudai/dogkat/pkg/helpers"
-	"github.com/eschercloudai/dogkat/pkg/tracing"
-	"github.com/eschercloudai/dogkat/pkg/workloads"
+	"github.com/drewbernetes/dogkat/pkg/helm"
+	"github.com/drewbernetes/dogkat/pkg/helpers"
+	"github.com/drewbernetes/dogkat/pkg/tracing"
+	"github.com/drewbernetes/dogkat/pkg/workloads"
 	"golang.org/x/net/context"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"

@@ -17,7 +17,7 @@ limitations under the License.
 package main
 
 import (
-	"github.com/eschercloudai/dogkat/pkg/cmd"
+	"github.com/drewbernetes/dogkat/pkg/cmd"
 	"os"
 )
 

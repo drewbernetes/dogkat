@@ -18,7 +18,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/eschercloudai/dogkat/pkg/constants"
+	"github.com/drewbernetes/dogkat/pkg/constants"
 	"github.com/spf13/cobra"
 )
 

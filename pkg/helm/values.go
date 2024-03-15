@@ -17,7 +17,7 @@ limitations under the License.
 package helm
 
 import (
-	"github.com/eschercloudai/dogkat/pkg/util/options"
+	"github.com/drewbernetes/dogkat/pkg/util/options"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	"strconv"
 )

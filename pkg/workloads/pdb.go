@@ -17,7 +17,7 @@ limitations under the License.
 package workloads
 
 import (
-	"github.com/eschercloudai/dogkat/pkg/helm"
+	"github.com/drewbernetes/dogkat/pkg/helm"
 	"golang.org/x/net/context"
 	policyv1 "k8s.io/api/policy/v1"
 	optsv1 "k8s.io/apimachinery/pkg/apis/meta/v1"

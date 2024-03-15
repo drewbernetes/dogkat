@@ -20,7 +20,7 @@ const (
 	Version     = "v0.1.3"
 	ChartName   = "dogkat"
 	ReleaseName = "dogkat-testing"
-	RepoURL     = "https://eschercloudai.github.io/dogkat"
+	RepoURL     = "https://drewbernetes.github.io/dogkat"
 
 	TestCore    = "core"
 	TestGPU     = "gpu"

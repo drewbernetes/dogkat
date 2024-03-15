@@ -19,8 +19,8 @@ package testsuite
 import (
 	"context"
 	"errors"
-	"github.com/eschercloudai/dogkat/pkg/helm"
-	"github.com/eschercloudai/dogkat/pkg/workloads"
+	"github.com/drewbernetes/dogkat/pkg/helm"
+	"github.com/drewbernetes/dogkat/pkg/workloads"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/rest"
 	"log"

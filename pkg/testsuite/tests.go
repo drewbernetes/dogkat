@@ -18,8 +18,8 @@ package testsuite
 
 import (
 	"fmt"
-	"github.com/eschercloudai/dogkat/pkg/helm"
-	"github.com/eschercloudai/dogkat/pkg/tracing"
+	"github.com/drewbernetes/dogkat/pkg/helm"
+	"github.com/drewbernetes/dogkat/pkg/tracing"
 )
 
 type TestCase interface {

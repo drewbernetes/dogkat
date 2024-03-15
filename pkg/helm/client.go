@@ -18,7 +18,7 @@ package helm
 
 import (
 	"fmt"
-	"github.com/eschercloudai/dogkat/pkg/constants"
+	"github.com/drewbernetes/dogkat/pkg/constants"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/cli"
 	"helm.sh/helm/v3/pkg/release"

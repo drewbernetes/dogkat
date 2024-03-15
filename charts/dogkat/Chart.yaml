@@ -19,6 +19,6 @@ keywords:
   - ingress
   - storage
 sources:
-  - https://github.com/eschercloudai/dogkat/tree/main/charts/dogkat
+  - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
 description: |
   End-2-End testing for GPUs and some core resources

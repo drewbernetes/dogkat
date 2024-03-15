@@ -18,7 +18,7 @@ package tracing
 
 import (
 	"fmt"
-	"github.com/eschercloudai/dogkat/pkg/constants"
+	"github.com/drewbernetes/dogkat/pkg/constants"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/push"
 	"time"

@@ -19,9 +19,9 @@ package helm
 import (
 	"errors"
 	"fmt"
-	"github.com/eschercloudai/dogkat/pkg/constants"
-	"github.com/eschercloudai/dogkat/pkg/util"
-	"github.com/eschercloudai/dogkat/pkg/util/options"
+	"github.com/drewbernetes/dogkat/pkg/constants"
+	"github.com/drewbernetes/dogkat/pkg/util"
+	"github.com/drewbernetes/dogkat/pkg/util/options"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
