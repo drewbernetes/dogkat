@@ -1,5 +1,5 @@
 /*
-Copyright 2024 EscherCloud.
+Copyright 2024 Drewbernetes.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/eschercloudai/dogkat/pkg/cmd/delete"
-	"github.com/eschercloudai/dogkat/pkg/cmd/util/config"
-	"github.com/eschercloudai/dogkat/pkg/cmd/validate"
+	"github.com/drewbernetes/dogkat/pkg/cmd/delete"
+	"github.com/drewbernetes/dogkat/pkg/cmd/util/config"
+	"github.com/drewbernetes/dogkat/pkg/cmd/validate"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
@@ -32,7 +32,7 @@ func newRootCommand() *cobra.Command {
 		Use: "k8s-e2e-tester",
 		Long: `Deploys resources to allow End-2-End testing to be conducted. 
 It can be used to test most elements of a cluster to ensure consistent stability and functionality.
-Documentation is available here: https://github.com/eschercloudai/dogkat/blob/main/README.md`,
+Documentation is available here: https://github.com/drewbernetes/dogkat/blob/main/README.md`,
 	}
 
 	configFlags := genericclioptions.NewConfigFlags(true)

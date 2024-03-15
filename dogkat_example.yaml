@@ -23,12 +23,12 @@ core:
 ingress:
   enabled: false
   ingressClassName: nginx
-  host: "escher.dev"
+  host: "hudson-viles.uk"
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
   tls:
     enable: false
-    host: "escher.dev"
+    host: "hudson-viles.uk"
     secretName: "dogkat-ingress-secret"
 # This will deploy a basic Nvidia vector add pod to ensure the GPU is working correctly.
 gpu:

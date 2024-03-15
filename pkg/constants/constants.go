@@ -1,5 +1,5 @@
 /*
-Copyright 2024 EscherCloud.
+Copyright 2024 Drewbernetes.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ const (
 	Version     = "v0.1.3"
 	ChartName   = "dogkat"
 	ReleaseName = "dogkat-testing"
-	RepoURL     = "https://eschercloudai.github.io/dogkat"
+	RepoURL     = "https://drewbernetes.github.io/dogkat"
 
 	TestCore    = "core"
 	TestGPU     = "gpu"

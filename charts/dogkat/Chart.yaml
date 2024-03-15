@@ -7,11 +7,7 @@ appVersion: 0.1.5
 type: application
 maintainers:
   - name: drew-viles
-    email: "d.viles@eschercloud.ai"
-  - name: yankcrime
-    email: "n.jones@eschercloud.ai"
-  - name: spjmurray
-    email: "s.murray@eschercloud.ai"
+    email: "drew@hudson-viles.uk"
 keywords:
   - dogkat
   - end-2-end
@@ -19,6 +15,6 @@ keywords:
   - ingress
   - storage
 sources:
-  - https://github.com/eschercloudai/dogkat/tree/main/charts/dogkat
+  - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
 description: |
   End-2-End testing for GPUs and some core resources

@@ -1,5 +1,5 @@
 /*
-Copyright 2024 EscherCloud.
+Copyright 2024 Drewbernetes.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,12 +16,10 @@ limitations under the License.
 
 package util
 
-import (
-	"io"
-)
+import "os"
 
 //go:generate mockgen -source=interfaces.go -destination=../mock/interfaces.go -package=mock
 
 type S3Interface interface {
-	PutToS3(string, string, string, io.ReadSeeker) error
+	PutToS3(string, *os.File) error
 }

@@ -1,5 +1,5 @@
 /*
-Copyright 2024 EscherCloud.
+Copyright 2024 Drewbernetes.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/eschercloudai/dogkat/pkg/helm"
-	"github.com/eschercloudai/dogkat/pkg/tracing"
-	"github.com/eschercloudai/dogkat/pkg/workloads"
+	"github.com/drewbernetes/dogkat/pkg/helm"
+	"github.com/drewbernetes/dogkat/pkg/tracing"
+	"github.com/drewbernetes/dogkat/pkg/workloads"
 	"io"
 	"log"
 	"net/http"

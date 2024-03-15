@@ -7,7 +7,7 @@ End-2-End testing for GPUs and some core resources
 ## Installation
 
 ```shell
-helm install https://eschercloudai.github.io/dogkat/dogkat --values values.yaml
+helm install https://drewbernetes.github.io/dogkat/dogkat --values values.yaml
 ```
 
 ## Updating the Chart

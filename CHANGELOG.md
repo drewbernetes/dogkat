@@ -8,6 +8,13 @@
 
 ### Deprecated
 
+## [ 2024/03/15 - v0.1.6 ]
+
+### Changed
+
+* Removed a load of branding
+* Switched S3 uploader over to my own
+
 ## [ 2024/01/12 - v0.1.5 ]
 
 ### Fixed

@@ -1,5 +1,5 @@
 /*
-Copyright 2024 EscherCloud.
+Copyright 2024 Drewbernetes.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package s3
 
 import (
 	"fmt"
-	"github.com/eschercloudai/dogkat/pkg/mock"
-	"github.com/eschercloudai/dogkat/pkg/util"
+	"github.com/drewbernetes/dogkat/pkg/mock"
+	"github.com/drewbernetes/dogkat/pkg/util"
 	"go.uber.org/mock/gomock"
 	"os"
 	"testing"
@@ -27,7 +27,7 @@ import (
 
 func put(s util.S3Interface) error {
 	f := createFile()
-	t := s.PutToS3("text/plain", "path/results.json", "results.json", f)
+	t := s.PutToS3("path/results.json", f)
 	removeFile(f)
 	return t
 }
@@ -39,7 +39,7 @@ func TestPutToS3(t *testing.T) {
 
 	f := createFile()
 
-	m.EXPECT().PutToS3(gomock.Eq("text/plain"), gomock.Eq("path/results.json"), gomock.Eq("results.json"), gomock.Eq(f)).Return(nil)
+	m.EXPECT().PutToS3(gomock.Eq("path/results.json"), gomock.Eq(f)).Return(nil)
 	if err := put(m); err != nil {
 		t.Error(err)
 	}

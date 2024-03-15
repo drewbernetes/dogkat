@@ -9,7 +9,7 @@
 package mock
 
 import (
-	io "io"
+	os "os"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"
@@ -39,15 +39,15 @@ func (m *MockS3Interface) EXPECT() *MockS3InterfaceMockRecorder {
 }
 
 // PutToS3 mocks base method.
-func (m *MockS3Interface) PutToS3(arg0, arg1, arg2 string, arg3 io.ReadSeeker) error {
+func (m *MockS3Interface) PutToS3(arg0 string, arg1 *os.File) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PutToS3", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "PutToS3", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // PutToS3 indicates an expected call of PutToS3.
-func (mr *MockS3InterfaceMockRecorder) PutToS3(arg0, arg1, arg2, arg3 any) *gomock.Call {
+func (mr *MockS3InterfaceMockRecorder) PutToS3(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutToS3", reflect.TypeOf((*MockS3Interface)(nil).PutToS3), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutToS3", reflect.TypeOf((*MockS3Interface)(nil).PutToS3), arg0, arg1)
 }

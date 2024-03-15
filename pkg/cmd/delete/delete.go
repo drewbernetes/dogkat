@@ -1,5 +1,5 @@
 /*
-Copyright 2024 EscherCloud.
+Copyright 2024 Drewbernetes.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package delete
 import (
 	"context"
 	"errors"
-	"github.com/eschercloudai/dogkat/pkg/helm"
-	"github.com/eschercloudai/dogkat/pkg/util/options"
+	"github.com/drewbernetes/dogkat/pkg/helm"
+	"github.com/drewbernetes/dogkat/pkg/util/options"
 	"github.com/spf13/cobra"
 	"helm.sh/helm/v3/pkg/storage/driver"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

@@ -1,5 +1,5 @@
 /*
-Copyright 2024 EscherCloud.
+Copyright 2024 Drewbernetes.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package s3
 
 import (
 	"fmt"
-	"github.com/rhnvrm/simples3"
-	"io"
+	s3 "github.com/drewbernetes/simple-s3"
+	"os"
 )
 
 type S3 struct {
@@ -27,31 +27,20 @@ type S3 struct {
 	AccessKey string
 	SecretKey string
 	Bucket    string
-	s3Conn    *simples3.S3
 }
 
 // PutToS3 Pushes a file to an S3 bucket.
-func (s *S3) PutToS3(contentType, key, fileName string, body io.ReadSeeker) error {
-	s3Conn := simples3.New("us-east-1", s.AccessKey, s.SecretKey)
-	s3Conn.SetEndpoint(s.Endpoint)
+func (s *S3) PutToS3(key string, body *os.File) error {
+	s3Conn, err := s3.New(s.Endpoint, s.AccessKey, s.SecretKey, s.Bucket, "us-east-1")
+	if err != nil {
+		return err
+	}
 
 	// Put the file into S3.
-	input := simples3.UploadInput{
-		Bucket:      s.Bucket,
-		ObjectKey:   key,
-		ContentType: contentType,
-		FileName:    fileName,
-		Body:        body,
-	}
-	_, err := s.upload(input)
+	err = s3Conn.Put(key, body)
 	if err != nil {
 		return fmt.Errorf("failed to push file to S3: %v\n", err)
 	}
 
 	return nil
-}
-
-// PutToS3 Pushes a file to an S3 bucket.
-func (s *S3) upload(input simples3.UploadInput) (simples3.PutResponse, error) {
-	return s.s3Conn.FilePut(input)
 }
