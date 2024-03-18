@@ -109,7 +109,7 @@ spec:
             - name: index-html
               mountPath: /usr/share/nginx/html
         - name: nginx-prometheus
-          image: nginx/nginx-prometheus-exporter
+          image: {{.Values.core.nginx.exporterImage.repo}}:{{.Values.core.nginx.exporterImage.tag}}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9113
