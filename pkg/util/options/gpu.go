@@ -21,13 +21,15 @@ import (
 )
 
 type GPUOptions struct {
-	Enabled      bool
-	NumberOfGPUs string
+	Enabled            bool
+	NumberOfGPUs       string
+	NodeLabelSelectors map[string]string
 }
 
 func newGPUOptions() GPUOptions {
 	return GPUOptions{
-		Enabled:      viper.GetBool("gpu.enabled"),
-		NumberOfGPUs: viper.GetString("gpu.numberOfGPUs"),
+		Enabled:            viper.GetBool("gpu.enabled"),
+		NumberOfGPUs:       viper.GetString("gpu.numberOfGPUs"),
+		NodeLabelSelectors: viper.GetStringMapString("gpu.nodeLabelSelectors"),
 	}
 }

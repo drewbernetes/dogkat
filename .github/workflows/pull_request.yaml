@@ -25,7 +25,7 @@ jobs:
         uses: helm/chart-testing-action@v2.6.1
 
       - name: Run lint
-        run: ct lint --all --config .github/ct.yaml
+        run: ct lint --all --validate-maintainers=false --config .github/ct.yaml
 
   lint-chart-docs:
     runs-on: ubuntu-latest

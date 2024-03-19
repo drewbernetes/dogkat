@@ -85,7 +85,6 @@ func (c *Client) PullChart(chartVersion, path string) error {
 
 // Install the chart as a release onto the cluster.
 func (c *Client) Install(chart *Chart) (*release.Release, error) {
-
 	client := action.NewInstall(c.Configuration)
 	client.CreateNamespace = true
 	client.ReleaseName = constants.ReleaseName

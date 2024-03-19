@@ -67,13 +67,13 @@ func NewChart(cl *Client, testType util.TestTypes, o options.Options) (*Chart, e
 func (c *Chart) loadOptionsToValues(testType util.TestTypes, o options.Options) {
 	c.Values = ChartValues{}
 	if testType.Core {
-		c.Values.Core = setCoreValues(o.CoreOptions)
+		c.Values.Core = *setCoreValues(o.CoreOptions)
 	}
 	if testType.Ingress {
-		c.Values.Ingress = setIngressValues(o.IngressOptions)
+		c.Values.Ingress = *setIngressValues(o.IngressOptions)
 	}
 	if testType.GPU {
-		c.Values.Gpu = setGPUValues(o.GPUOptions)
+		c.Values.Gpu = *setGPUValues(o.GPUOptions)
 	}
 }
 

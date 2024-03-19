@@ -62,7 +62,6 @@ Test GPU
 e2e-test validate gpu --number-of-gpus 1
 ```
 
-
 ## Using The Chart
 
 ```shell
@@ -70,13 +69,16 @@ helm install oci:///charts/dogkat --values values.yaml
 ```
 
 ## Updating the Chart
-Make sure you've run and resolved any issues using the following as failures of these will cause the pipeline/actions to fail.
-```
-yamllint charts/dogkat/Chart.yaml  --config-file .github/ct.yaml
-yamllint charts/dogkat/values.yaml  --config-file .github/ct.yaml
 
-helm-docs
+Make sure you've run and resolved any issues using the following as failures of these will cause the pipeline/actions to
+fail.
+
 ```
+helm-docs
+ct lint --all --validate-maintainers=false --config .github/ct.yaml
+golangci-lint run --out-format=github-actions --timeout=3m
+```
+
 ## Development
 
 To test any changes the app should be run against a cluster using a pre-built chart.
@@ -85,15 +87,9 @@ To test any changes the app should be run against a cluster using a pre-built ch
 helm package --app-version 0.0.0 --version 0.0.0 charts/dogkat -d /tmp/
 ```
 
-Then using the `dogkat-example.yaml`, you can deploy the pre-packaged chart 
+Then copy the `dogkat-example.yaml` into `/tmp/` and make any required edits. Once done, you can deploy the pre-packaged
+chart.
 
 ```shell
 go run cmd/dogkat/main.go validate -n dogkat
-```
-
-Be sure to run `helm-docs`, `ct`, and `golangci-lint` to ensure it passes pipeline tests
-```shell
-helm-docs
-ct lint --all --config .github/ct.yaml
-golangci-lint run --out-format=github-actions --timeout=3m
 ```

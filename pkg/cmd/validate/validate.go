@@ -317,7 +317,9 @@ func checkCoreReady(client *helm.Client) (*workloads.Deployment, error) {
 	}
 
 	for range resources {
-		<-checksCompleted
+		if <-checksCompleted != nil {
+			return nil, err
+		}
 	}
 
 	return d, nil

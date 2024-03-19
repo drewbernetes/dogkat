@@ -17,7 +17,7 @@ limitations under the License.
 package constants
 
 const (
-	Version     = "v0.1.8"
+	Version     = "v0.1.9"
 	ChartName   = "dogkat"
 	ReleaseName = "dogkat-testing"
 	RepoURL     = "https://drewbernetes.github.io/dogkat"

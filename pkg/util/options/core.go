@@ -20,12 +20,21 @@ import (
 	"github.com/spf13/viper"
 )
 
+type ImageOptions struct {
+	Repo string
+	Tag  string
+}
+
 type CoreOptions struct {
-	Enabled      bool
-	CPU          string
-	Memory       string
-	StorageClass string
-	ScaleTo      int32
+	Enabled       bool
+	CPU           string
+	Memory        string
+	StorageClass  string
+	ScaleTo       int32
+	Nginx         ImageOptions
+	NginxExporter ImageOptions
+	PHP           ImageOptions
+	Postgres      ImageOptions
 }
 
 func newCoreOptions() CoreOptions {
@@ -35,5 +44,21 @@ func newCoreOptions() CoreOptions {
 		Memory:       viper.GetString("core.memory"),
 		StorageClass: viper.GetString("core.storageClassName"),
 		ScaleTo:      viper.GetInt32("core.scaleTo"),
+		Nginx: ImageOptions{
+			Repo: viper.GetString("core.nginx.image.repo"),
+			Tag:  viper.GetString("core.nginx.image.tag"),
+		},
+		NginxExporter: ImageOptions{
+			Repo: viper.GetString("core.nginxExporter.image.repo"),
+			Tag:  viper.GetString("core.nginxExporter.image.tag"),
+		},
+		PHP: ImageOptions{
+			Repo: viper.GetString("core.php.image.repo"),
+			Tag:  viper.GetString("core.php.image.tag"),
+		},
+		Postgres: ImageOptions{
+			Repo: viper.GetString("core.postgres.image.repo"),
+			Tag:  viper.GetString("core.postgres.image.tag"),
+		},
 	}
 }
