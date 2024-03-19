@@ -8,6 +8,13 @@
 
 ### Deprecated
 
+## [ 2024/03/19 - v0.1.8 ]
+
+### Changed
+
+* CHART: Enabled overriding of images to deploy
+* CHART: Set default images to SHA256 instead of tags to improve security
+
 ## [ 2024/03/19 - v0.1.7 ]
 
 ### Changed
