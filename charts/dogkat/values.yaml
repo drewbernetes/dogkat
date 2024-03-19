@@ -35,7 +35,7 @@ core:
       # -- The repo to be used
       repo: postgres@sha256
       # -- The tag to be used
-      tag: sha256:49fd8c13fbd0eb92572df9884ca41882a036beac0f12e520274be85e7e7806e9  # 16.2-alpine
+      tag: 49fd8c13fbd0eb92572df9884ca41882a036beac0f12e520274be85e7e7806e9  # 16.2-alpine
     statefulSet:
       persistentData:
         enabled: true

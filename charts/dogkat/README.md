@@ -1,6 +1,6 @@
 # dogkat
 
-![Version: 0.1.7](https://img.shields.io/badge/Version-0.1.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.7](https://img.shields.io/badge/AppVersion-0.1.7-informational?style=flat-square)
+![Version: 0.1.8](https://img.shields.io/badge/Version-0.1.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.8](https://img.shields.io/badge/AppVersion-0.1.8-informational?style=flat-square)
 
 End-2-End testing for GPUs and some core resources
 
@@ -38,7 +38,7 @@ The following table lists the configurable parameters of the chart and the defau
 | core.php.image.repo | string | `"drewviles/php-pdo@sha256"` | The repo to be used |
 | core.php.image.tag | string | `"253465d95c3fa68871c2ccc6c67d4ed5ee500563fbbfee3b54a9544f8025d1d6"` | The tag to be used |
 | core.postgres.image.repo | string | `"postgres@sha256"` | The repo to be used |
-| core.postgres.image.tag | string | `"sha256:49fd8c13fbd0eb92572df9884ca41882a036beac0f12e520274be85e7e7806e9"` | The tag to be used |
+| core.postgres.image.tag | string | `"49fd8c13fbd0eb92572df9884ca41882a036beac0f12e520274be85e7e7806e9"` | The tag to be used |
 | core.postgres.statefulSet.persistentData.enabled | bool | `true` |  |
 | core.postgres.statefulSet.persistentData.storageClassName | string | `"cinder"` |  |
 | gpu.enabled | bool | `false` |  |
