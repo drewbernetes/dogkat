@@ -32,11 +32,11 @@ jobs:
           s3-bucket: "trivyignores"
           s3-path: "dogkat"
           fail-build: false
-          add-latest-tag: false
-          publish-image: false
+          add-latest-tag: true
+          publish-image: true
           cosign-private-key: ${{secrets.COSIGN_KEY}}
           cosign-password: ${{secrets.COSIGN_PASSWORD}}
-          cosign-tlog: false
+          cosign-tlog: true
           dockerfile-path: docker
 
   release:
