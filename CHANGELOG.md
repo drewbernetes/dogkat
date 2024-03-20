@@ -8,6 +8,15 @@
 
 ### Deprecated
 
+## [ 2024/03/20 - v0.1.9 ]
+
+### Changed
+
+* CHART: Updated some default values
+* BINARY: Updated the values passed in to allow overriding the images the chart uses
+* BINARY: Updated go modules
+* CONFIG: Updated the values passed to dogkat for consistency and to allow image overrides
+
 ## [ 2024/03/19 - v0.1.8 ]
 
 ### Changed

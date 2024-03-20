@@ -29,8 +29,8 @@ func newRootCommand() *cobra.Command {
 	cobra.OnInitialize(config.InitConfig)
 
 	cmd := &cobra.Command{
-		Use: "k8s-e2e-tester",
-		Long: `Deploys resources to allow End-2-End testing to be conducted. 
+		Use: "dogkat",
+		Long: `Deploys resources to allow End-2-End testing to be conducted.
 It can be used to test most elements of a cluster to ensure consistent stability and functionality.
 Documentation is available here: https://github.com/drewbernetes/dogkat/blob/main/README.md`,
 	}

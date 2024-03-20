@@ -31,11 +31,23 @@ type ChartValues struct {
 type CoreValues struct {
 	Enabled  bool        `yaml:"enabled"`
 	Nginx    NginxValues `yaml:"nginx"`
+	PHP      PHPValues   `yaml:"php"`
 	Postgres PGValues    `yaml:"postgres"`
 }
 
+type RepoTagValues struct {
+	Repo string `yaml:"repo"`
+	Tag  string `yaml:"tag"`
+}
+
 type NginxValues struct {
-	Resources ResourceValues `yaml:"resources"`
+	Image         RepoTagValues  `yaml:"image"`
+	ExporterImage RepoTagValues  `yaml:"exporterImage"`
+	Resources     ResourceValues `yaml:"resources"`
+}
+
+type PHPValues struct {
+	Image RepoTagValues `yaml:"image"`
 }
 
 type ResourceValues struct {
@@ -48,6 +60,7 @@ type RequestValues struct {
 }
 
 type PGValues struct {
+	Image       RepoTagValues     `yaml:"image"`
 	StatefulSet StatefulSetValues `yaml:"statefulSet"`
 }
 
@@ -70,7 +83,7 @@ type IngressValues struct {
 	Annotations map[string]string `yaml:"annotations"`
 	ClassName   string            `yaml:"className"`
 	Host        string            `yaml:"host"`
-	Tls         []TLSValues       `yaml:"tls"`
+	TLS         []TLSValues       `yaml:"tls"`
 }
 
 type TLSValues struct {
@@ -78,60 +91,89 @@ type TLSValues struct {
 	SecretName string   `yaml:"secretName"`
 }
 
-func setCoreValues(o options.CoreOptions) CoreValues {
-	v := CoreValues{
-		Enabled: true,
-		Nginx: NginxValues{
-			Resources: ResourceValues{
-				Requests: RequestValues{
-					Cpu:    o.CPU,
-					Memory: o.Memory,
+func setCoreValues(o options.CoreOptions) *CoreValues {
+	if o.Enabled {
+		v := &CoreValues{
+			Enabled: o.Enabled,
+			Nginx: NginxValues{
+				Image: RepoTagValues{
+					Repo: o.Nginx.Repo,
+					Tag:  o.Nginx.Tag,
+				},
+				ExporterImage: RepoTagValues{
+					Repo: o.NginxExporter.Repo,
+					Tag:  o.NginxExporter.Tag,
+				},
+				Resources: ResourceValues{
+					Requests: RequestValues{
+						Cpu:    o.CPU,
+						Memory: o.Memory,
+					},
 				},
 			},
-		},
-	}
+			PHP: PHPValues{
+				Image: RepoTagValues{
+					Repo: o.PHP.Repo,
+					Tag:  o.PHP.Tag,
+				},
+			},
+			Postgres: PGValues{
+				Image: RepoTagValues{
+					Repo: o.Postgres.Repo,
+					Tag:  o.Postgres.Tag,
+				},
+			},
+		}
 
-	if o.StorageClass != "" {
-		v.Postgres = PGValues{
-			StatefulSet: StatefulSetValues{
+		if o.StorageClass != "" {
+			v.Postgres.StatefulSet = StatefulSetValues{
 				PersistentData: PDValues{
 					Enabled:          true,
 					StorageClassName: o.StorageClass,
 				},
-			},
+			}
+		}
+		return v
+	}
+
+	return nil
+}
+
+func setGPUValues(o options.GPUOptions) *GPUValues {
+	if o.Enabled {
+		gpus, err := strconv.Atoi(o.NumberOfGPUs)
+		if err != nil {
+			return &GPUValues{
+				Enabled:      o.Enabled,
+				NumberOfGPUs: 1,
+			}
+		}
+		return &GPUValues{
+			Enabled:      o.Enabled,
+			NumberOfGPUs: gpus,
 		}
 	}
 
-	return v
+	return nil
 }
 
-func setGPUValues(o options.GPUOptions) GPUValues {
-	gpus, err := strconv.Atoi(o.NumberOfGPUs)
-	if err != nil {
-		return GPUValues{
-			Enabled:      true,
-			NumberOfGPUs: 1,
-		}
-	}
-	return GPUValues{
-		Enabled:      true,
-		NumberOfGPUs: gpus,
-	}
-}
-
-func setIngressValues(o options.IngressOptions) IngressValues {
-	v := IngressValues{
-		Enabled:     true,
-		Annotations: o.Annotations,
-		ClassName:   o.IngressClass,
-		Host:        o.Host,
-		Tls: []TLSValues{
-			{
-				Hosts:      []string{o.TLSHost},
-				SecretName: o.TLSSecretName,
+func setIngressValues(o options.IngressOptions) *IngressValues {
+	if o.Enabled {
+		v := &IngressValues{
+			Enabled:     o.Enabled,
+			Annotations: o.Annotations,
+			ClassName:   o.IngressClass,
+			Host:        o.Host,
+			TLS: []TLSValues{
+				{
+					Hosts:      []string{o.TLSHost},
+					SecretName: o.TLSSecretName,
+				},
 			},
-		},
+		}
+
+		return v
 	}
 
-	return v
+	return nil
 }

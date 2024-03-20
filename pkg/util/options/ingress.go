@@ -36,7 +36,7 @@ func newIngressOptions() IngressOptions {
 		IngressClass:  viper.GetString("ingress.ingressClassName"),
 		Host:          viper.GetString("ingress.host"),
 		Annotations:   viper.GetStringMapString("ingress.annotations"),
-		EnableTLS:     viper.GetBool("ingress.tls.enable"),
+		EnableTLS:     viper.GetBool("ingress.tls.enabled"),
 		TLSHost:       viper.GetString("ingress.tls.host"),
 		TLSSecretName: viper.GetString("ingress.tls.secretName"),
 	}

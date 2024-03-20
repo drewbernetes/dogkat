@@ -14,7 +14,7 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - name: Build Local Container
+      - name: Build Container
         uses: drewbernetes/container-security-action@v0.0.2
         if: github.event_name != 'pull_request'
         id: build-and-scan
