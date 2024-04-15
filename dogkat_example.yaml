@@ -20,8 +20,8 @@ core:
   scaleTo: 7
   nginx:
     image:
-      repo: registry.infra.poc.dev.nscale.com/docker-cache/nginx@sha265
-      tag: 02d8d94023878cedf3e3acc55372932a9ba1478b6e2f3357786d916c2af743ba # 1.25.4-alpine
+      repo: cgr.dev/chainguard/nginx
+      tag: latest # 1.25.4
   nginxExporter:
     image:
       repo: registry.infra.poc.dev.nscale.com/docker-cache/nginx/nginx-prometheus-exporter@sha256
@@ -29,11 +29,11 @@ core:
   php:
     image:
       repo: registry.infra.poc.dev.nscale.com/docker-cache/drewviles/php-pdo@sha256
-      tag: 253465d95c3fa68871c2ccc6c67d4ed5ee500563fbbfee3b54a9544f8025d1d6 # v1.1.0
+      tag: 27bacb42ac9bd8dc4b1d49cac40763eba0fa18b9ebaa4f6792383fe5ec27eded # v1.2.0
   postgres:
     image:
-      repo: registry.infra.poc.dev.nscale.com/docker-cache/postgres@sha256
-      tag: 49fd8c13fbd0eb92572df9884ca41882a036beac0f12e520274be85e7e7806e9 # 16.2-alpine
+      repo: postgres@sha256
+      tag: 49fd8c13fbd0eb92572df9884ca41882a036beac0f12e520274be85e7e7806e9  # 16.2-alpine
 # This will deploy the core resources along with an Ingress to confirm LoadBalancing services work.
 # This will require CertManager and ExternalDNS to be configured - DogKat does not deploy these.
 ingress:

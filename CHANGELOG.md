@@ -8,6 +8,12 @@
 
 ### Deprecated
 
+## [ 2024/04/15 - v0.1.10 ]
+
+### Changed
+
+* BINARY: Updated go modules
+
 ## [ 2024/03/20 - v0.1.9 ]
 
 ### Changed

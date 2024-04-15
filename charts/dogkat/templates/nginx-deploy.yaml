@@ -74,12 +74,12 @@ spec:
           ports:
             - name: http
               protocol: TCP
-              containerPort: 80
+              containerPort: 8080
           readinessProbe:
             initialDelaySeconds: 30
             periodSeconds: 5
             httpGet:
-              port: 80
+              port: 8080
               path: /healthz.php
           volumeMounts:
             - name: index-html
@@ -131,6 +131,4 @@ spec:
             items:
               - key: default
                 path: default.conf
-              - key: metrics
-                path: metrics.conf
 {{- end }}

@@ -1,6 +1,6 @@
 # dogkat
 
-![Version: 0.1.9](https://img.shields.io/badge/Version-0.1.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.9](https://img.shields.io/badge/AppVersion-0.1.9-informational?style=flat-square)
+![Version: 0.1.10](https://img.shields.io/badge/Version-0.1.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.10](https://img.shields.io/badge/AppVersion-0.1.10-informational?style=flat-square)
 
 End-2-End testing for GPUs and some core resources
 
@@ -31,12 +31,12 @@ The following table lists the configurable parameters of the chart and the defau
 | core.enabled | bool | `false` |  |
 | core.nginx.exporterImage.repo | string | `"nginx/nginx-prometheus-exporter@sha256"` |  |
 | core.nginx.exporterImage.tag | string | `"d710e0ff2505a7037dd21e47eae07025010c0de08a6247d1a704824823becfd0"` |  |
-| core.nginx.image.repo | string | `"nginx@sha256"` |  |
-| core.nginx.image.tag | string | `"02d8d94023878cedf3e3acc55372932a9ba1478b6e2f3357786d916c2af743ba"` |  |
+| core.nginx.image.repo | string | `"cgr.dev/chainguard/nginx"` |  |
+| core.nginx.image.tag | string | `"latest"` |  |
 | core.nginx.resources | object | `{}` |  |
 | core.nginx.serviceAccountName | string | `"nginx"` |  |
-| core.php.image.repo | string | `"drewviles/php-pdo@sha256"` |  |
-| core.php.image.tag | string | `"253465d95c3fa68871c2ccc6c67d4ed5ee500563fbbfee3b54a9544f8025d1d6"` |  |
+| core.php.image.repo | string | `"registry.infra.poc.dev.nscale.com/docker-cache/drewviles/php-pdo@sha256"` |  |
+| core.php.image.tag | string | `"27bacb42ac9bd8dc4b1d49cac40763eba0fa18b9ebaa4f6792383fe5ec27eded"` |  |
 | core.postgres.image.repo | string | `"postgres@sha256"` |  |
 | core.postgres.image.tag | string | `"49fd8c13fbd0eb92572df9884ca41882a036beac0f12e520274be85e7e7806e9"` |  |
 | core.postgres.statefulSet.persistentData.enabled | bool | `true` |  |
