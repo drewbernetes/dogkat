@@ -21,7 +21,7 @@ core:
     #   cpu: "1000m"
   php:
     image:
-      repo: registry.infra.poc.dev.nscale.com/docker-cache/drewviles/php-pdo@sha256
+      repo: drewviles/php-pdo@sha256
       tag: 27bacb42ac9bd8dc4b1d49cac40763eba0fa18b9ebaa4f6792383fe5ec27eded  # v1.2.0
   postgres:
     image:

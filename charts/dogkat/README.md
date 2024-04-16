@@ -35,7 +35,7 @@ The following table lists the configurable parameters of the chart and the defau
 | core.nginx.image.tag | string | `"latest"` |  |
 | core.nginx.resources | object | `{}` |  |
 | core.nginx.serviceAccountName | string | `"nginx"` |  |
-| core.php.image.repo | string | `"registry.infra.poc.dev.nscale.com/docker-cache/drewviles/php-pdo@sha256"` |  |
+| core.php.image.repo | string | `"drewviles/php-pdo@sha256"` |  |
 | core.php.image.tag | string | `"27bacb42ac9bd8dc4b1d49cac40763eba0fa18b9ebaa4f6792383fe5ec27eded"` |  |
 | core.postgres.image.repo | string | `"postgres@sha256"` |  |
 | core.postgres.image.tag | string | `"49fd8c13fbd0eb92572df9884ca41882a036beac0f12e520274be85e7e7806e9"` |  |

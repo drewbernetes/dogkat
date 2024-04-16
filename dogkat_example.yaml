@@ -24,11 +24,11 @@ core:
       tag: latest # 1.25.4
   nginxExporter:
     image:
-      repo: registry.infra.poc.dev.nscale.com/docker-cache/nginx/nginx-prometheus-exporter@sha256
+      repo: nginx/nginx-prometheus-exporter@sha256
       tag: d710e0ff2505a7037dd21e47eae07025010c0de08a6247d1a704824823becfd0 # 1.1.0
   php:
     image:
-      repo: registry.infra.poc.dev.nscale.com/docker-cache/drewviles/php-pdo@sha256
+      repo: drewviles/php-pdo@sha256
       tag: 27bacb42ac9bd8dc4b1d49cac40763eba0fa18b9ebaa4f6792383fe5ec27eded # v1.2.0
   postgres:
     image:
