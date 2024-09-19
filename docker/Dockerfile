@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM cgr.dev/chainguard/go:latest as go-builder
+FROM cgr.dev/chainguard/go:latest AS go-builder
 
 WORKDIR /app
 

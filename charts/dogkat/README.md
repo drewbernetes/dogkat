@@ -1,6 +1,6 @@
 # dogkat
 
-![Version: 0.1.10](https://img.shields.io/badge/Version-0.1.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.10](https://img.shields.io/badge/AppVersion-0.1.10-informational?style=flat-square)
+![Version: 0.1.11](https://img.shields.io/badge/Version-0.1.11-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.11](https://img.shields.io/badge/AppVersion-0.1.11-informational?style=flat-square)
 
 End-2-End testing for GPUs and some core resources
 
@@ -30,20 +30,20 @@ The following table lists the configurable parameters of the chart and the defau
 |-----|------|---------|-------------|
 | core.enabled | bool | `false` |  |
 | core.nginx.exporterImage.repo | string | `"nginx/nginx-prometheus-exporter@sha256"` |  |
-| core.nginx.exporterImage.tag | string | `"d710e0ff2505a7037dd21e47eae07025010c0de08a6247d1a704824823becfd0"` |  |
+| core.nginx.exporterImage.tag | string | `"6477cf3bddc4e042d3496856fb2e8e382301bac47fb18cb83924389717261cb1"` |  |
 | core.nginx.image.repo | string | `"cgr.dev/chainguard/nginx"` |  |
 | core.nginx.image.tag | string | `"latest"` |  |
 | core.nginx.resources | object | `{}` |  |
 | core.nginx.serviceAccountName | string | `"nginx"` |  |
 | core.php.image.repo | string | `"drewviles/php-pdo@sha256"` |  |
-| core.php.image.tag | string | `"27bacb42ac9bd8dc4b1d49cac40763eba0fa18b9ebaa4f6792383fe5ec27eded"` |  |
+| core.php.image.tag | string | `"4485f4a33423d3ca5cceb2600e72e32550ce98ce628c05dc175c7a5763faa616"` |  |
 | core.postgres.image.repo | string | `"postgres@sha256"` |  |
-| core.postgres.image.tag | string | `"49fd8c13fbd0eb92572df9884ca41882a036beac0f12e520274be85e7e7806e9"` |  |
+| core.postgres.image.tag | string | `"d898b0b78a2627cb4ee63464a14efc9d296884f1b28c841b0ab7d7c42f1fffdf"` |  |
 | core.postgres.statefulSet.persistentData.enabled | bool | `true` |  |
-| core.postgres.statefulSet.persistentData.storageClassName | string | `"cinder"` |  |
+| core.postgres.statefulSet.persistentData.storageClassName | string | `"longhorn"` |  |
 | gpu.enabled | bool | `false` |  |
 | gpu.image.repo | string | `"nvcr.io/nvidia/k8s/cuda-sample@sha256"` | The repo to be used |
-| gpu.image.tag | string | `"04a20bfaf69363ec3f15fc1cdb0abc0efabeb6fb6b3a1b9cf4a575ae7b1d81d1"` | The tag to be used |
+| gpu.image.tag | string | `"ac53daee629763d712e1361b77e4c4f4ad146148f9dffc6288a75732270c6e85"` | The tag to be used |
 | gpu.nodeLabelSelectors."nvidia.com/gpu.present" | string | `"true"` |  |
 | gpu.numberOfGPUs | int | `1` |  |
 | gpu.resources | object | `{}` |  |

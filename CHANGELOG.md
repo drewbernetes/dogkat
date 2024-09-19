@@ -8,6 +8,13 @@
 
 ### Deprecated
 
+## [ 2024/09/19 - v0.1.11 ]
+
+### Changed/Added
+* Updated modules
+* Updated GitHub actions to use latest versions
+* Updated images used by dogkat to latest versions
+
 ## [ 2024/04/15 - v0.1.10 ]
 
 ### Changed

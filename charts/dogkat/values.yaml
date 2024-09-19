@@ -10,7 +10,7 @@ core:
       tag: latest  # 1.25.4
     exporterImage:
       repo: nginx/nginx-prometheus-exporter@sha256
-      tag: d710e0ff2505a7037dd21e47eae07025010c0de08a6247d1a704824823becfd0  # 1.1.0
+      tag: 6477cf3bddc4e042d3496856fb2e8e382301bac47fb18cb83924389717261cb1
     serviceAccountName: "nginx"
     resources: {}
     # requests:
@@ -22,15 +22,15 @@ core:
   php:
     image:
       repo: drewviles/php-pdo@sha256
-      tag: 27bacb42ac9bd8dc4b1d49cac40763eba0fa18b9ebaa4f6792383fe5ec27eded  # v1.2.0
+      tag: 4485f4a33423d3ca5cceb2600e72e32550ce98ce628c05dc175c7a5763faa616
   postgres:
     image:
       repo: postgres@sha256
-      tag: 49fd8c13fbd0eb92572df9884ca41882a036beac0f12e520274be85e7e7806e9  #  16.2-alpine
+      tag: d898b0b78a2627cb4ee63464a14efc9d296884f1b28c841b0ab7d7c42f1fffdf
     statefulSet:
       persistentData:
         enabled: true
-        storageClassName: "cinder"
+        storageClassName: "longhorn"
 
 gpu:
   enabled: false
@@ -39,7 +39,7 @@ gpu:
     # -- The repo to be used
     repo: nvcr.io/nvidia/k8s/cuda-sample@sha256
     # -- The tag to be used
-    tag: 04a20bfaf69363ec3f15fc1cdb0abc0efabeb6fb6b3a1b9cf4a575ae7b1d81d1  # 11.7.1
+    tag: ac53daee629763d712e1361b77e4c4f4ad146148f9dffc6288a75732270c6e85  # 12.5.0
   resources: {}
   nodeLabelSelectors:
     nvidia.com/gpu.present: "true"
