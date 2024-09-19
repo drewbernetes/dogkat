@@ -2,8 +2,8 @@
 
 apiVersion: v2
 name: dogkat
-version: 0.1.10
-appVersion: 0.1.10
+version: 0.1.11
+appVersion: 0.1.11
 type: application
 maintainers:
   - name: drew-viles
