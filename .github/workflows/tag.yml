@@ -31,7 +31,6 @@ jobs:
           s3-secret-key: ${{secrets.S3_SECRET_KEY}}
           s3-bucket: "trivyignores"
           s3-path: "dogkat"
-          fail-build: false
           add-latest-tag: true
           publish-image: true
           cosign-private-key: ${{secrets.COSIGN_KEY}}
