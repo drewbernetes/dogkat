@@ -8,7 +8,7 @@
 
 ### Deprecated
 
-## [ 2024/09/19 - v0.1.11 ]
+## [ 2024/09/19 - v0.1.12 ]
 
 ### Changed/Added
 * Updated modules to support new containerd release (and others)
