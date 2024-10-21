@@ -11,6 +11,11 @@
 ## [ 2024/09/19 - v0.1.11 ]
 
 ### Changed/Added
+* Updated modules to support new containerd release (and others)
+
+## [ 2024/09/19 - v0.1.11 ]
+
+### Changed/Added
 * Updated modules
 * Updated GitHub actions to use latest versions
 * Updated images used by dogkat to latest versions
