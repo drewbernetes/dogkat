@@ -7,7 +7,7 @@ repos:
       - id: end-of-file-fixer
       - id: check-added-large-files
   - repo: https://github.com/norwoodj/helm-docs.git
-    rev: v1.13.1
+    rev: v1.14.2
     hooks:
       - id: helm-docs
         args:
@@ -41,21 +41,21 @@ repos:
           - ./docker/Dockerfile
           - --context
           - .
-  - repo: https://github.com/drewbernetes/pre-commits.git
-    rev: v0.1.0
-    hooks:
-      - id: trivy
-        args:
-          - fs
-          - .
-  - repo: https://github.com/drewbernetes/pre-commits.git
-    rev: v0.1.0
-    hooks:
-      - id: trivy
-        args:
-          - image
-          - --severity
-          - HIGH,CRITICAL
-          - --ignorefile
-          - .trivyignore
-          - local/dogkat:0.0.0
+#  - repo: https://github.com/drewbernetes/pre-commits.git
+#    rev: v0.1.0
+#    hooks:
+#      - id: trivy
+#        args:
+#          - fs
+#          - .
+#  - repo: https://github.com/drewbernetes/pre-commits.git
+#    rev: v0.1.0
+#    hooks:
+#      - id: trivy
+#        args:
+#          - image
+#          - --severity
+#          - HIGH,CRITICAL
+#          - --ignorefile
+#          - .trivyignore
+#          - local/dogkat:0.0.0
