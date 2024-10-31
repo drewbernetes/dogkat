@@ -58,20 +58,7 @@ jobs:
 
       - name: Build binaries
         run: |
-          for goos in darwin linux windows; do
-            for goarch in amd64 arm arm64; do
-              # Skip unsupported combinations
-              if [[ "$goos" == "darwin" && "$goarch" == "arm" ]]; then continue; fi
-              if [[ "$goos" == "windows" && ! "$goarch" == "amd64" ]]; then continue; fi
-
-              output_file="${{github.repository}}-$goos-$goarch"
-              if [[ "$goos" == "windows" ]]; then output_file="$output_file.exe"; fi
-
-              GOOS=$goos GOARCH=$goarch CGO_ENABLED=0 go build -o $output_file cmd/dogkat/main.go
-              files="$files\n$output_file"
-            done
-          done
-          echo "files=$files" >> $GITHUB_ENV
+          make all
 
       - name: Release Notes
         run: |
@@ -82,7 +69,13 @@ jobs:
         with:
           body_path: ".github/RELEASE-TEMPLATE.md"
           draft: false
-          files: ${{ env.files }}
+          files:
+            bin/dogkat-linux-amd64
+            bin/dogkat-linux-arm64
+            bin/dogkat-darwin-amd64
+            bin/dogkat-darwin-arm64
+            bin/dogkat-windows-amd64
+            bin/dogkat-windows-arm64
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

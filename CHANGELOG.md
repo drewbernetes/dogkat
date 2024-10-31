@@ -8,6 +8,13 @@
 
 ### Deprecated
 
+## [ 2024/10/30 - v0.1.13 ]
+
+### Changed/Added
+* Updated modules
+* Updated pipeline
+* Updated app and chart versions
+
 ## [ 2024/09/19 - v0.1.12 ]
 
 ### Changed/Added

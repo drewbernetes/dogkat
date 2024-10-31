@@ -16,8 +16,25 @@ limitations under the License.
 
 package constants
 
+import (
+	"fmt"
+	"os"
+	"path"
+)
+
+var (
+
+	// Version is the release version
+	Version string
+
+	// Revision is the git revision set via the Makefile
+	Revision string
+
+	// Application is the name of the application set via the Makefile
+	Application = path.Base(os.Args[0])
+)
+
 const (
-	Version     = "v0.1.13"
 	ChartName   = "dogkat"
 	ReleaseName = "dogkat-testing"
 	RepoURL     = "https://drewbernetes.github.io/dogkat"
@@ -34,3 +51,7 @@ const (
 	MetricsPrefix  = "dogkat_test"
 	MetricsJobName = "dogkat_workloads"
 )
+
+func VersionPrint() {
+	fmt.Printf("%s/%s (revision/%s)\n", Application, Version, Revision)
+}
