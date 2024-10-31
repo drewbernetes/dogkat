@@ -73,6 +73,7 @@ jobs:
           version: latest
           skip-cache: true
           args: --timeout=3m --skip-dirs=charts
+
   test-golang:
     name: Run tests
     runs-on: ubuntu-24.04
