@@ -1,332 +1,332 @@
 apiVersion: v1
 entries:
   dogkat:
-  - apiVersion: v2
-    appVersion: 0.1.14
-    created: "2024-10-31T13:24:06.234173976Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: 78f57c5f1f5c774826a76dc37183b0fb5d11fd922ec4c1e48c5924be1504ef20
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: drew@hudson-viles.uk
-      name: drew-viles
-    name: dogkat
-    sources:
-    - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.14/dogkat-0.1.14.tgz
-    version: 0.1.14
-  - apiVersion: v2
-    appVersion: 0.1.13
-    created: "2024-10-30T22:19:59.052871504Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: a0317580683e186e30abd7f7e2e145a8b3ba1970b55d0a71e73dd9f658ee24f1
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: drew@hudson-viles.uk
-      name: drew-viles
-    name: dogkat
-    sources:
-    - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.13/dogkat-0.1.13.tgz
-    version: 0.1.13
-  - apiVersion: v2
-    appVersion: 0.1.11
-    created: "2024-09-19T11:22:38.315101723Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: 8df18d0f46e88dfe9091122b63c53aeff453e9a6213ee9741207ff57409bd498
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: drew@hudson-viles.uk
-      name: drew-viles
-    name: dogkat
-    sources:
-    - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.11/dogkat-0.1.11.tgz
-    version: 0.1.11
-  - apiVersion: v2
-    appVersion: 0.1.10
-    created: "2024-04-16T07:59:25.545373712Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: 02b9756e6b1f9af8302cf218ec0a5cd23c38740dcd79f02e29ae27d82448d34c
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: drew@hudson-viles.uk
-      name: drew-viles
-    name: dogkat
-    sources:
-    - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.10/dogkat-0.1.10.tgz
-    version: 0.1.10
-  - apiVersion: v2
-    appVersion: 0.1.9
-    created: "2024-03-20T09:19:08.586822536Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: 309d7a6dca5413ff93ca05b12c46aeab3dec7660c94ed0ff4ec0aa6b586337fe
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: drew@hudson-viles.uk
-      name: drew-viles
-    name: dogkat
-    sources:
-    - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.9/dogkat-0.1.9.tgz
-    version: 0.1.9
-  - apiVersion: v2
-    appVersion: 0.1.8
-    created: "2024-03-19T10:02:25.552493033Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: 9a260b0d7e0c4e8ae9314b298f04ccda14f44c89831d23f6200f661a0869e5c0
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: drew@hudson-viles.uk
-      name: drew-viles
-    name: dogkat
-    sources:
-    - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.8/dogkat-0.1.8.tgz
-    version: 0.1.8
-  - apiVersion: v2
-    appVersion: 0.1.7
-    created: "2024-03-19T09:01:04.469509844Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: 8f9e1a11aee8661a5c591db41652b4505a7185345d5f613587666374f41dce6d
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: drew@hudson-viles.uk
-      name: drew-viles
-    name: dogkat
-    sources:
-    - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.7/dogkat-0.1.7.tgz
-    version: 0.1.7
-  - apiVersion: v2
-    appVersion: 0.1.5
-    created: "2024-01-12T15:49:29.671675244Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: 7de4ba2540b630583401c014b28201028922b60acf25cd7e94c0f7913c668b5d
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: d.viles@eschercloud.ai
-      name: drew-viles
-    - email: n.jones@eschercloud.ai
-      name: yankcrime
-    - email: s.murray@eschercloud.ai
-      name: spjmurray
-    name: dogkat
-    sources:
-    - https://github.com/eschercloudai/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/eschercloudai/dogkat/releases/download/dogkat-0.1.5/dogkat-0.1.5.tgz
-    version: 0.1.5
-  - apiVersion: v2
-    appVersion: 0.1.4
-    created: "2024-01-12T12:19:14.606516892Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: cac859377cd8dac49ff82e4e82433d501970d5fc2f3a043eed33eb4c8b5b2b21
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: d.viles@eschercloud.ai
-      name: drew-viles
-    - email: n.jones@eschercloud.ai
-      name: yankcrime
-    - email: s.murray@eschercloud.ai
-      name: spjmurray
-    name: dogkat
-    sources:
-    - https://github.com/eschercloudai/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/eschercloudai/dogkat/releases/download/dogkat-0.1.4/dogkat-0.1.4.tgz
-    version: 0.1.4
-  - apiVersion: v2
-    appVersion: 0.1.3
-    created: "2024-01-11T16:42:27.526070735Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: cb1dcbb8bffde6800dae7741cb7efd85562484e6a1e02585e8eafe5efc06fa2b
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: d.viles@eschercloud.ai
-      name: drew-viles
-    - email: n.jones@eschercloud.ai
-      name: yankcrime
-    - email: s.murray@eschercloud.ai
-      name: spjmurray
-    name: dogkat
-    sources:
-    - https://github.com/eschercloudai/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/eschercloudai/dogkat/releases/download/dogkat-0.1.3/dogkat-0.1.3.tgz
-    version: 0.1.3
-  - apiVersion: v2
-    appVersion: 0.1.2
-    created: "2024-01-08T15:40:36.012093917Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: 9caf7e84cff50196962e69384433363bd5a4c5da982a2314b87361ded41fa8cf
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: d.viles@eschercloud.ai
-      name: drew-viles
-    - email: n.jones@eschercloud.ai
-      name: yankcrime
-    - email: s.murray@eschercloud.ai
-      name: spjmurray
-    name: dogkat
-    sources:
-    - https://github.com/eschercloudai/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/eschercloudai/dogkat/releases/download/dogkat-0.1.2/dogkat-0.1.2.tgz
-    version: 0.1.2
-  - apiVersion: v2
-    appVersion: 0.1.1
-    created: "2024-01-03T12:45:04.660863803Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: faf4a7b87717387e330af82b67177f8560f6bc1d9e31d6b4a0837366e4c808f8
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: d.viles@eschercloud.ai
-      name: drew-viles
-    - email: n.jones@eschercloud.ai
-      name: yankcrime
-    - email: s.murray@eschercloud.ai
-      name: spjmurray
-    name: dogkat
-    sources:
-    - https://github.com/eschercloudai/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/eschercloudai/dogkat/releases/download/dogkat-0.1.1/dogkat-0.1.1.tgz
-    version: 0.1.1
-  - apiVersion: v2
-    appVersion: 0.1.0
-    created: "2024-01-03T10:41:36.768196185Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: bf56acb8c73f8ce08681c3758bcadd8125a82e7a50211575316641f3c71d5c36
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: d.viles@eschercloud.ai
-      name: drew-viles
-    - email: n.jones@eschercloud.ai
-      name: yankcrime
-    - email: s.murray@eschercloud.ai
-      name: spjmurray
-    name: dogkat
-    sources:
-    - https://github.com/eschercloudai/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/eschercloudai/dogkat/releases/download/dogkat-0.1.0/dogkat-0.1.0.tgz
-    version: 0.1.0
-  - apiVersion: v2
-    appVersion: 0.1.0
-    created: "2024-01-03T10:20:33.716634532Z"
-    description: 'End-2-End testing for GPUs and some core resources '
-    digest: 21d74c45a56d3b0458bf79b84441d21a4ecc0ccd0ab6b9c59b475e4a9f86ad6f
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: d.viles@eschercloud.ai
-      name: drew-viles
-    - email: n.jones@eschercloud.ai
-      name: yankcrime
-    - email: s.murray@eschercloud.ai
-      name: spjmurray
-    name: dogkat
-    sources:
-    - https://github.com/eschercloudai/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/eschercloudai/dogkat/releases/download/dogkat-0.1.0-beta.1/dogkat-0.1.0-beta.1.tgz
-    version: 0.1.0-beta.1
-  - apiVersion: v1
-    appVersion: 0.0.0
-    created: "2023-12-14T12:35:25.279761121Z"
-    description: '# DogKat End-2-End testing  This setup will deploy a multi-replica
+    - apiVersion: v2
+      appVersion: 0.1.14
+      created: "2024-10-31T13:24:06.234173976Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: 78f57c5f1f5c774826a76dc37183b0fb5d11fd922ec4c1e48c5924be1504ef20
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.14/dogkat-0.1.14.tgz
+      version: 0.1.14
+    - apiVersion: v2
+      appVersion: 0.1.13
+      created: "2024-10-30T22:19:59.052871504Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: a0317580683e186e30abd7f7e2e145a8b3ba1970b55d0a71e73dd9f658ee24f1
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.13/dogkat-0.1.13.tgz
+      version: 0.1.13
+    - apiVersion: v2
+      appVersion: 0.1.11
+      created: "2024-09-19T11:22:38.315101723Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: 8df18d0f46e88dfe9091122b63c53aeff453e9a6213ee9741207ff57409bd498
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.11/dogkat-0.1.11.tgz
+      version: 0.1.11
+    - apiVersion: v2
+      appVersion: 0.1.10
+      created: "2024-04-16T07:59:25.545373712Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: 02b9756e6b1f9af8302cf218ec0a5cd23c38740dcd79f02e29ae27d82448d34c
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.10/dogkat-0.1.10.tgz
+      version: 0.1.10
+    - apiVersion: v2
+      appVersion: 0.1.9
+      created: "2024-03-20T09:19:08.586822536Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: 309d7a6dca5413ff93ca05b12c46aeab3dec7660c94ed0ff4ec0aa6b586337fe
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.9/dogkat-0.1.9.tgz
+      version: 0.1.9
+    - apiVersion: v2
+      appVersion: 0.1.8
+      created: "2024-03-19T10:02:25.552493033Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: 9a260b0d7e0c4e8ae9314b298f04ccda14f44c89831d23f6200f661a0869e5c0
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.8/dogkat-0.1.8.tgz
+      version: 0.1.8
+    - apiVersion: v2
+      appVersion: 0.1.7
+      created: "2024-03-19T09:01:04.469509844Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: 8f9e1a11aee8661a5c591db41652b4505a7185345d5f613587666374f41dce6d
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.7/dogkat-0.1.7.tgz
+      version: 0.1.7
+    - apiVersion: v2
+      appVersion: 0.1.5
+      created: "2024-01-12T15:49:29.671675244Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: 7de4ba2540b630583401c014b28201028922b60acf25cd7e94c0f7913c668b5d
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+        - email: nick@nscale.com
+          name: yankcrime
+        - email: simon@nscale.com
+          name: spjmurray
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.5/dogkat-0.1.5.tgz
+      version: 0.1.5
+    - apiVersion: v2
+      appVersion: 0.1.4
+      created: "2024-01-12T12:19:14.606516892Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: cac859377cd8dac49ff82e4e82433d501970d5fc2f3a043eed33eb4c8b5b2b21
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+        - email: nick@nscale.com
+          name: yankcrime
+        - email: simon@nscale.com
+          name: spjmurray
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.4/dogkat-0.1.4.tgz
+      version: 0.1.4
+    - apiVersion: v2
+      appVersion: 0.1.3
+      created: "2024-01-11T16:42:27.526070735Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: cb1dcbb8bffde6800dae7741cb7efd85562484e6a1e02585e8eafe5efc06fa2b
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+        - email: nick@nscale.com
+          name: yankcrime
+        - email: simon@nscale.com
+          name: spjmurray
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.3/dogkat-0.1.3.tgz
+      version: 0.1.3
+    - apiVersion: v2
+      appVersion: 0.1.2
+      created: "2024-01-08T15:40:36.012093917Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: 9caf7e84cff50196962e69384433363bd5a4c5da982a2314b87361ded41fa8cf
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+        - email: nick@nscale.com
+          name: yankcrime
+        - email: simon@nscale.com
+          name: spjmurray
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.2/dogkat-0.1.2.tgz
+      version: 0.1.2
+    - apiVersion: v2
+      appVersion: 0.1.1
+      created: "2024-01-03T12:45:04.660863803Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: faf4a7b87717387e330af82b67177f8560f6bc1d9e31d6b4a0837366e4c808f8
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+        - email: nick@nscale.com
+          name: yankcrime
+        - email: simon@nscale.com
+          name: spjmurray
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.1/dogkat-0.1.1.tgz
+      version: 0.1.1
+    - apiVersion: v2
+      appVersion: 0.1.0
+      created: "2024-01-03T10:41:36.768196185Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: bf56acb8c73f8ce08681c3758bcadd8125a82e7a50211575316641f3c71d5c36
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+        - email: nick@nscale.com
+          name: yankcrime
+        - email: simon@nscale.com
+          name: spjmurray
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.0/dogkat-0.1.0.tgz
+      version: 0.1.0
+    - apiVersion: v2
+      appVersion: 0.1.0
+      created: "2024-01-03T10:20:33.716634532Z"
+      description: 'End-2-End testing for GPUs and some core resources '
+      digest: 21d74c45a56d3b0458bf79b84441d21a4ecc0ccd0ab6b9c59b475e4a9f86ad6f
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+        - email: nick@nscale.com
+          name: yankcrime
+        - email: simon@nscale.com
+          name: spjmurray
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.1.0-beta.1/dogkat-0.1.0-beta.1.tgz
+      version: 0.1.0-beta.1
+    - apiVersion: v1
+      appVersion: 0.0.0
+      created: "2023-12-14T12:35:25.279761121Z"
+      description: '# DogKat End-2-End testing  This setup will deploy a multi-replica
       deployment with a web frontend and a database backend. They are in reality not
       linked and do not have a valid application but the test is to ensure we can
       spin things up using affinity and ant-affinity, volumes and more.  ## Features
@@ -352,25 +352,25 @@ entries:
       a pod is always online to ensure no downtime during upgrades  ## Automated Testing:
       Check out [E2E Tester](https://github.com/drew-viles/k8s-e2e-tester) for an
       automated tester which will fire tests against this chart. '
-    digest: d29db100480ea8b07620bae17227c3310d5fa3d9c675d96cf4d21d4337674c70
-    keywords:
-    - dogkat
-    - end-2-end
-    - high-availability
-    - ingress
-    - storage
-    maintainers:
-    - email: d.viles@eschercloud.ai
-      name: drew-viles
-    - email: n.jones@eschercloud.ai
-      name: yankcrime
-    - email: s.murray@eschercloud.ai
-      name: spjmurray
-    name: dogkat
-    sources:
-    - https://github.com/eschercloudai/dogkat/tree/main/charts/dogkat
-    type: application
-    urls:
-    - https://github.com/eschercloudai/dogkat/releases/download/dogkat-0.0.0/dogkat-0.0.0.tgz
-    version: 0.0.0
+      digest: d29db100480ea8b07620bae17227c3310d5fa3d9c675d96cf4d21d4337674c70
+      keywords:
+        - dogkat
+        - end-2-end
+        - high-availability
+        - ingress
+        - storage
+      maintainers:
+        - email: drew@hudson-viles.uk
+          name: drew-viles
+        - email: nick@nscale.com
+          name: yankcrime
+        - email: simon@nscale.com
+          name: spjmurray
+      name: dogkat
+      sources:
+        - https://github.com/drewbernetes/dogkat/tree/main/charts/dogkat
+      type: application
+      urls:
+        - https://github.com/drewbernetes/dogkat/releases/download/dogkat-0.0.0/dogkat-0.0.0.tgz
+      version: 0.0.0
 generated: "2024-10-31T13:24:06.234293318Z"
