@@ -40,26 +40,32 @@ See below for a comprehensive list of tests and what can be confirmed using this
 
 ## Usage
 
-For details on how to use the tool, run `e2e-test --help`
+For details on how to use the tool, run `dogkat --help`
 
-## Examples
+### Examples
 
-Test core workloads with a defined storage class:
+#### Test core workloads with a defined storage class:
 
 ```shell
-e2e-test validate core --storage-class longhorn
+dogkat validate core --storage-class longhorn
 ```
 
-Test Ingress with tls:
+#### Test Ingress with tls:
 
 ```shell
-e2e-test validate ingress --storage-class longhorn --ingress-class nginx --enable-tls --annotations cert-manager.io/cluster-issuer=letsencrypt
+dogkat validate ingress --storage-class longhorn --ingress-class nginx --enable-tls --annotations cert-manager.io/cluster-issuer=letsencrypt
 ```
 
-Test GPU
+#### Test GPU
 
 ```shell
-e2e-test validate gpu --number-of-gpus 1
+dogkat validate gpu --number-of-gpus 1
+```
+
+#### Cleanup
+
+```shell
+dogkat delete
 ```
 
 ## Using The Chart

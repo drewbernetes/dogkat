@@ -17,7 +17,6 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
 	"github.com/drewbernetes/dogkat/pkg/constants"
 	"github.com/spf13/cobra"
 )
@@ -30,7 +29,7 @@ func NewVersionCmd() *cobra.Command {
 		Short: "Print this command's version",
 		Long:  "Print this command's version",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(constants.Version)
+			constants.VersionPrint()
 		},
 	}
 }
