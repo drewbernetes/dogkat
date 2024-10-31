@@ -58,7 +58,7 @@ jobs:
 
       - name: Build binaries
         run: |
-          make all
+          make all VERSION=${{ github.ref_name }}
 
       - name: Release Notes
         run: |
