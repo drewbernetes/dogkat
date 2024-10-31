@@ -69,7 +69,7 @@ jobs:
         with:
           body_path: ".github/RELEASE-TEMPLATE.md"
           draft: false
-          files:
+          files: |
             bin/dogkat-linux-amd64
             bin/dogkat-linux-arm64
             bin/dogkat-darwin-amd64
